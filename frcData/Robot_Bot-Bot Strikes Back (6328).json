@@ -1,10 +1,10 @@
 {
-  "sourceUrl": "https://grabcad.com/library/frc-6328-2020-northern-ct-competition-robot-1",
+  "sourceUrl": "https://cad.onshape.com/documents/cc566eb0195b26b436889a23/w/965bcb1860503c4949111a6d/e/bb0adeaa7ed3692762b5861a",
   "rotations": [
     { "axis": "x", "degrees": 90 },
-    { "axis": "z", "degrees": 180 }
+    { "axis": "z", "degrees": 90 }
   ],
-  "position": [0, -0.02, 0.09],
+  "position": [0.05, 0, 0.06],
   "cameras": [
     {
       "name": "Limelight",

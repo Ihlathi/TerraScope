@@ -1,4 +1,4 @@
-export interface FRCData {
+export interface AdvantageScopeAssets {
   field2ds: Config2d[];
   field3ds: Config3dField[];
   robots: Config3dRobot[];
@@ -6,7 +6,7 @@ export interface FRCData {
 }
 
 export interface Config2d {
-  title: string;
+  name: string;
   path: string;
 
   sourceUrl?: string;
@@ -17,7 +17,7 @@ export interface Config2d {
 }
 
 export interface Config3dField {
-  title: string;
+  name: string;
   path: string;
 
   sourceUrl?: string;
@@ -27,7 +27,7 @@ export interface Config3dField {
 }
 
 export interface Config3dRobot {
-  title: string;
+  name: string;
   path: string;
 
   sourceUrl?: string;
@@ -56,7 +56,7 @@ export interface Config3d_Rotation {
 }
 
 export interface ConfigJoystick {
-  title: string;
+  name: string;
   path: string;
 
   components: (ConfigJoystick_Button | ConfigJoystick_Joystick | ConfigJoystick_Axis)[];

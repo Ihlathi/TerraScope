@@ -19,6 +19,7 @@ import {
   rotation3dTo2d
 } from "../../shared/geometry";
 import { ALLIANCE_KEYS, getIsRedAlliance } from "../../shared/log/RobotState";
+import { canReadAsPose } from "../../shared/log/SemanticType";
 import {
   Field2dRendererCommand,
   Field2dRendererCommand_AnyObj,
@@ -267,7 +268,7 @@ export default class Field2dController implements TabController {
       let isHeatmap = source.type === "heatmap";
       let pose3ds: AnnotatedPose3d[] = [];
       if (!isHeatmap) {
-        if (time !== null) {
+        if (time !== null && canReadAsPose(source.logType)) {
           pose3ds = grabPosesAuto(window.log, source.logKey, source.logType, time, this.UUID);
         }
       } else {
@@ -284,7 +285,9 @@ export default class Field2dController implements TabController {
               ? timeRangeRaw
               : "enabled";
         }
-        pose3ds = grabHeatmapData(window.log, source.logKey, source.logType, timeRange, this.UUID);
+        if (canReadAsPose(source.logType)) {
+          pose3ds = grabHeatmapData(window.log, source.logKey, source.logType, timeRange, this.UUID);
+        }
       }
       let poses = pose3ds.map(annotatedPose3dTo2d);
 
@@ -305,9 +308,11 @@ export default class Field2dController implements TabController {
           }
           timestamps.push(endTime);
           timestamps.forEach((sampleTime) => {
-            let poses = grabPosesAuto(window.log, source.logKey, source.logType, sampleTime, this.UUID).map((x) =>
-              annotatedPose3dTo2d(x)
-            );
+            let poses = (
+              canReadAsPose(source.logType)
+                ? grabPosesAuto(window.log, source.logKey, source.logType, sampleTime, this.UUID)
+                : []
+            ).map((x) => annotatedPose3dTo2d(x));
             if (poses.length !== trails.length) return;
             if (fieldData !== undefined) {
               poses = convertFromCoordinateSystem(
@@ -339,14 +344,9 @@ export default class Field2dController implements TabController {
             if ("units" in child.options) {
               numberRotationUnits = child.options.units === "degrees" ? "degrees" : "radians";
             }
-            let rotations = grabPosesAuto(
-              window.log,
-              child.logKey,
-              child.logType,
-              time!,
-              this.UUID,
-              numberRotationUnits
-            );
+            let rotations = canReadAsPose(child.logType)
+              ? grabPosesAuto(window.log, child.logKey, child.logType, time!, this.UUID, numberRotationUnits)
+              : [];
             if (rotations.length > 0) {
               poses.forEach((value) => {
                 value.pose.rotation = rotation3dTo2d(rotations[0].pose.rotation);
@@ -356,7 +356,9 @@ export default class Field2dController implements TabController {
           }
 
           case "vision": {
-            let visionPose3ds = grabPosesAuto(window.log, child.logKey, child.logType, time!, this.UUID);
+            let visionPose3ds = canReadAsPose(child.logType)
+              ? grabPosesAuto(window.log, child.logKey, child.logType, time!, this.UUID)
+              : [];
             visionPose3ds.forEach((annotatedPose) => {
               annotatedPose.annotation.visionColor = child.options.color;
               annotatedPose.annotation.visionSize = child.options.size;

@@ -119,7 +119,7 @@ function setWindowTitle(name: string, status?: string) {
   let title =
     htmlEncode(name) +
     (status ? " (" + htmlEncode(status) + ")" : "") +
-    " &mdash; AdvantageScope" +
+    " &mdash; TerraScope" +
     (IS_LITE ? " Lite" : "") +
     (DISTRIBUTION === Distribution.LiteDS ? " (DS)" : "");
   document.getElementsByTagName("title")[0].innerHTML = title;

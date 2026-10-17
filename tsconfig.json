@@ -9,5 +9,6 @@
     "removeComments": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts", "src/hub/dataSources/jsonws/fixtureServer.ts"]
 }

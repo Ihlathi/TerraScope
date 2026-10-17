@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "rootDir": "src",
+    "outDir": "build/live-transport-test",
+    "lib": ["ESNext", "DOM"]
+  },
+  "files": ["src/hub/dataSources/jsonws/LiveFrameTransport.test.ts"]
+}

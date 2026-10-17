@@ -26,6 +26,7 @@ import { LiveDataSource, LiveDataSourceStatus } from "./dataSources/LiveDataSour
 import LiveDataTuner from "./dataSources/LiveDataTuner";
 import PhoenixDiagnosticsSource from "./dataSources/PhoenixDiagnosticsSource";
 import FTCDashboardSource from "./dataSources/ftcdashboard/FTCDashboardSource";
+import JsonWebSocketSource from "./dataSources/jsonws/JsonWebSocketSource";
 import { NT4Publisher, NT4PublisherStatus } from "./dataSources/nt4/NT4Publisher";
 import NT4Source, { NT4Mode } from "./dataSources/nt4/NT4Source";
 import RLOGServerSource from "./dataSources/rlog/RLOGServerSource";
@@ -454,6 +455,9 @@ function startLive(sourceType: "robot" | "sim" | "ds") {
       case "ftcdashboard":
         liveSource = new FTCDashboardSource();
         break;
+      case "jsonws":
+        liveSource = new JsonWebSocketSource();
+        break;
     }
   }
 
@@ -466,6 +470,9 @@ function startLive(sourceType: "robot" | "sim" | "ds") {
     if (window.preferences) {
       address = getRobotAddress(window.preferences, window.platform);
     }
+  }
+  if (!IS_LITE && sourceType !== "ds" && window.preferences && window.preferences.liveMode === "jsonws") {
+    address = window.preferences.robotAddress;
   }
 
   liveSource.connect(

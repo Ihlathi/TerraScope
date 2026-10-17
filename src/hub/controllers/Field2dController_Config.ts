@@ -7,6 +7,7 @@
 
 import { NeonColors, NeonColors_RedStart } from "../../shared/Colors";
 import { SourceListConfig } from "../../shared/SourceListConfig";
+import { SemanticType, structuredTypesFor } from "../../shared/log/SemanticType";
 import { SwerveArrangementValues } from "./SwerveController_Config";
 
 const Field2dController_Config: SourceListConfig = {
@@ -21,16 +22,7 @@ const Field2dController_Config: SourceListConfig = {
       symbol: "nearme",
       showInTypeName: true,
       color: "bumpers",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d]),
       showDocs: true,
       options: [
         {
@@ -49,16 +41,7 @@ const Field2dController_Config: SourceListConfig = {
       symbol: "nearmeoutline",
       showInTypeName: true,
       color: "color",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d]),
       showDocs: true,
       options: [
         {
@@ -78,20 +61,7 @@ const Field2dController_Config: SourceListConfig = {
       symbol: "target",
       showInTypeName: true,
       color: "color",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]",
-        "Translation2d",
-        "Translation3d",
-        "Translation2d[]",
-        "Translation3d[]"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d, SemanticType.Translation]),
       showDocs: true,
       options: [
         {
@@ -146,7 +116,7 @@ const Field2dController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: ["Rotation2d", "Rotation3d"],
+      sourceTypes: structuredTypesFor([SemanticType.Rotation], { shape: "scalar" }),
       showDocs: true,
       options: [],
       childOf: "robot",
@@ -159,7 +129,7 @@ const Field2dController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: ["Number"],
+      sourceTypes: structuredTypesFor([SemanticType.NumericSeries]),
       showDocs: false,
       options: [
         {
@@ -182,15 +152,10 @@ const Field2dController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "color",
       sourceTypes: [
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d[]",
-        "Transform3d[]",
-        "Translation2d[]",
-        "Translation3d[]",
-        "Trajectory",
-        "DifferentialSample[]",
-        "SwerveSample[]"
+        ...structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d, SemanticType.Translation], {
+          shape: "array"
+        }),
+        ...structuredTypesFor([SemanticType.Trajectory])
       ],
       showDocs: true,
       options: [
@@ -218,20 +183,7 @@ const Field2dController_Config: SourceListConfig = {
       symbol: "map",
       showInTypeName: true,
       color: "#ff0000",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]",
-        "Translation2d",
-        "Translation3d",
-        "Translation2d[]",
-        "Translation3d[]"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d, SemanticType.Translation]),
       showDocs: true,
       options: [
         {
@@ -258,19 +210,7 @@ const Field2dController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]",
-        "DifferentialSample[]",
-        "SwerveSample[]",
-        "Trajectory"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d, SemanticType.Trajectory]),
       showDocs: true,
       options: [
         {

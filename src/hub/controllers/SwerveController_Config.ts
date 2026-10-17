@@ -7,6 +7,7 @@
 
 import { NeonColors_RedStart } from "../../shared/Colors";
 import { SourceListConfig, SourceListOptionValueConfig } from "../../shared/SourceListConfig";
+import { SemanticType, structuredTypesFor } from "../../shared/log/SemanticType";
 
 export const SwerveArrangementValues: SourceListOptionValueConfig[] = [
   { display: "FL/FR/BL/BR", key: "0,1,2,3" },
@@ -74,7 +75,7 @@ const SwerveController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: ["Rotation2d", "Rotation3d"],
+      sourceTypes: structuredTypesFor([SemanticType.Rotation], { shape: "scalar" }),
       showDocs: true,
       options: [],
       previewType: "Rotation2d"
@@ -86,7 +87,7 @@ const SwerveController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: ["Number"],
+      sourceTypes: structuredTypesFor([SemanticType.NumericSeries]),
       showDocs: false,
       options: [
         {

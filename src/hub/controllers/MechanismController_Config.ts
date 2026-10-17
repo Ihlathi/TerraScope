@@ -6,6 +6,7 @@
 // at the root directory of this project.
 
 import { SourceListConfig } from "../../shared/SourceListConfig";
+import { SemanticType, structuredTypesFor } from "../../shared/log/SemanticType";
 
 const MechanismController_Config: SourceListConfig = {
   title: "Sources",
@@ -18,7 +19,7 @@ const MechanismController_Config: SourceListConfig = {
       symbol: "settings",
       showInTypeName: false,
       color: "#888888",
-      sourceTypes: ["Mechanism2d"],
+      sourceTypes: structuredTypesFor([SemanticType.MechanismJoint]),
       showDocs: true,
       options: []
     }

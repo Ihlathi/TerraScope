@@ -11,6 +11,7 @@ import Log from "./log/Log";
 import { getOrDefault } from "./log/LogUtil";
 import LoggableType from "./log/LoggableType";
 import { getRobotStateRanges } from "./log/RobotState";
+import { canReadAsPose } from "./log/SemanticType";
 import { Units } from "./units";
 import { indexArray, jsonCopy } from "./util";
 
@@ -232,6 +233,7 @@ export function grabPosesAuto(
   uuid?: string,
   numberRotationUnits?: "radians" | "degrees"
 ): AnnotatedPose3d[] {
+  if (!canReadAsPose(logType)) return [];
   switch (logType) {
     case "Number":
       return grabNumberRotation(log, key, timestamp, numberRotationUnits, uuid);

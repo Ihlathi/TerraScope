@@ -7,6 +7,7 @@
 
 import { SourceListState } from "../../shared/SourceListConfig";
 import { MechanismState, getMechanismState, mergeMechanismStates } from "../../shared/log/LogMechanismState";
+import { SemanticType, classifyStructuredType } from "../../shared/log/SemanticType";
 import { MechanismRendererCommand } from "../../shared/renderers/MechanismRenderer";
 import { createUUID } from "../../shared/util";
 import SourceList from "../SourceList";
@@ -50,6 +51,7 @@ export default class MechanismController implements TabController {
 
     let states: MechanismState[] = [];
     this.sourceList.getState(true).forEach((item) => {
+      if (classifyStructuredType(item.logType) !== SemanticType.MechanismJoint) return;
       let state = getMechanismState(window.log, item.logKey, time!);
       if (state !== null) states.push(state);
     });

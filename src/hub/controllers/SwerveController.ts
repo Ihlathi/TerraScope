@@ -13,6 +13,7 @@ import {
   grabRobotVelocities,
   rotation3dTo2d
 } from "../../shared/geometry";
+import { canReadAsPose } from "../../shared/log/SemanticType";
 import { Orientation } from "../../shared/renderers/Field2dRenderer";
 import { SwerveRendererCommand } from "../../shared/renderers/SwerveRenderer";
 import { clampValue, createUUID } from "../../shared/util";
@@ -156,7 +157,9 @@ export default class SwerveController implements TabController {
           color: source.options.color
         });
       } else {
-        let poses = grabPosesAuto(window.log, source.logKey, source.logType, time, this.UUID, units);
+        let poses = canReadAsPose(source.logType)
+          ? grabPosesAuto(window.log, source.logKey, source.logType, time, this.UUID, units)
+          : [];
         if (poses.length > 0) {
           rotation = rotation3dTo2d(poses[0].pose.rotation);
         }

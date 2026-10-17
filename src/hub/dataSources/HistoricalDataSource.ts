@@ -41,6 +41,7 @@ export class HistoricalDataSource {
     ".revlog": "wpilogWorker.js", // Converted to WPILOG by main process
     ".log": "roadRunnerWorker.js",
     ".csv": "csvWorker.js",
+    ".mcap": "mcapWorker.js",
     ".dslog": "dsLogWorker.js",
     ".dsevents": "dsLogWorker.js"
   };
@@ -85,7 +86,7 @@ export class HistoricalDataSource {
     this.refreshCallback = refreshCallback;
 
     this.setStatus(HistoricalDataSourceStatus.Reading);
-    if (["wpilog", "rlog", "csv", "log"].includes(extension)) {
+    if (["wpilog", "rlog", "csv", "log", "mcap"].includes(extension)) {
       setTimeout(() => {
         this.handleMainMessage({
           uuid: this.UUID,

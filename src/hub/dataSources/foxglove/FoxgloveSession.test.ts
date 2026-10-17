@@ -19,6 +19,8 @@ declare global {
     preferences?: { timestamps: string };
     selection: {
       getTimelineRange(): [number, number];
+      getTimelineIsMaxZoom(): boolean;
+      setTimelineRange(range: [number, number], isMaxZoom: boolean): void;
     };
   }
 }

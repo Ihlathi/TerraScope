@@ -7,8 +7,10 @@
 
 import CameraControls from "camera-controls";
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import WorkerManager from "../../hub/WorkerManager";
 import { AdvantageScopeAssets, BuiltIn3dFields, Config3dField, CoordinateSystem } from "../AdvantageScopeAssets";
+import { CUSTOM_FIELD_ID, customFieldInches, customFieldKey, sceneBounds } from "../CustomEnvironment";
 import { Rotation3d, rotationSequenceToQuaternion } from "../geometry";
 import { Units } from "../units";
 import { checkArrayType, clampValue } from "../util";
@@ -19,6 +21,7 @@ import {
 } from "./Field3dRenderer";
 import TabRenderer from "./TabRenderer";
 import makeAxesField from "./field3d/AxesField";
+import makeCustomField from "./field3d/CustomField";
 import makeEvergreenField from "./field3d/EvergreenField";
 import ObjectManager from "./field3d/ObjectManager";
 import AprilTagManager from "./field3d/objectManagers/AprilTagManager";
@@ -123,6 +126,7 @@ export default class Field3dRendererImpl implements TabRenderer {
   private robotLoadingCount = 0;
   private shouldLoadNewField = false;
   private isFieldLoading = false;
+  private customModelToken = 0;
   private aspectRatio: number | null = null;
   private lastCameraIndex = -1;
   private lastAutoDriverStation = -1;
@@ -353,6 +357,20 @@ export default class Field3dRendererImpl implements TabRenderer {
   private resetCamera(command: Field3dRendererCommand, isFTC: boolean, animate = true) {
     animate = animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.controls.minDistance = isFTC ? this.CONTROLS_MIN_DISTANCE_FTC : this.CONTROLS_MIN_DISTANCE_FRC;
+    if (command.customEnvironment && this.cameraIndex === -1) {
+      let bounds = sceneBounds(command.customEnvironment);
+      let span = Math.max(command.customEnvironment.lengthMeters, command.customEnvironment.widthMeters);
+      this.controls.setLookAt(
+        bounds.centerX,
+        Math.max(6, span * 0.45),
+        -bounds.centerY - Math.max(12, span * 0.8),
+        bounds.centerX,
+        0.5,
+        -bounds.centerY,
+        animate
+      );
+      return;
+    }
     if (this.cameraIndex === -1) {
       // Orbit field
       if (isFTC) {
@@ -431,6 +449,24 @@ export default class Field3dRendererImpl implements TabRenderer {
   }
 
   private getFieldConfig(command: Field3dRendererCommand): Config3dField | null {
+    if (command.customEnvironment) {
+      let inches = customFieldInches(command.customEnvironment);
+      return {
+        name: "Custom",
+        path: command.customAssetUrl ?? "",
+        id: CUSTOM_FIELD_ID,
+        isFTC: false,
+        coordinateSystem: "center-red",
+        useGrid: false,
+        rotations: [],
+        position: [command.customEnvironment.originXMeters, command.customEnvironment.originYMeters, 0],
+        widthInches: inches.widthInches,
+        heightInches: inches.heightInches,
+        driverStations: [],
+        gamePieces: [],
+        aprilTags: []
+      };
+    }
     if (window.assets === null) return null;
     let fieldConfig = [...window.assets.field3ds, ...BuiltIn3dFields].find(
       (fieldData) => fieldData.id === command.field
@@ -632,7 +668,9 @@ export default class Field3dRendererImpl implements TabRenderer {
     this.shouldRender = false;
 
     // Get field config
-    let fieldId = command.field;
+    let fieldId = command.customEnvironment
+      ? customFieldKey(command.customEnvironment, command.customAssetUrl ?? "")
+      : command.field;
     let fieldConfigTmp = this.getFieldConfig(command);
     this.fieldConfigCache = fieldConfigTmp;
     if (fieldConfigTmp === null) return;
@@ -769,6 +807,29 @@ export default class Field3dRendererImpl implements TabRenderer {
         );
         this.fieldStagedPieces = new THREE.Object3D();
         newFieldReady();
+      } else if (command.customEnvironment && fieldId.startsWith("custom:")) {
+        this.isFieldLoading = false;
+        this.customModelToken++;
+        this.field = makeCustomField(command.customEnvironment, this.MATERIAL_SPECULAR, this.MATERIAL_SHININESS);
+        this.fieldStagedPieces = new THREE.Object3D();
+        newFieldReady();
+        let assetUrl = command.customAssetUrl;
+        if (assetUrl) {
+          let token = this.customModelToken;
+          let loader = new GLTFLoader();
+          this.isFieldLoading = true;
+          loader.loadAsync(assetUrl).then(
+            (gltf) => {
+              if (token !== this.customModelToken || this.field === null) return;
+              this.field.add(gltf.scene);
+              this.shouldRender = true;
+              this.isFieldLoading = false;
+            },
+            () => {
+              if (token === this.customModelToken) this.isFieldLoading = false;
+            }
+          );
+        }
       } else {
         this.isFieldLoading = true;
         WorkerManager.request("../bundles/loadField.js", {

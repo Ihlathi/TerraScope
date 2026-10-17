@@ -1,0 +1,35 @@
+TerraScope
+Copyright (c) 2026 Liam Smith
+
+This program is a fork of AdvantageScope.
+
+AdvantageScope
+Copyright (c) 2021-2026 Littleton Robotics
+
+AdvantageScope is licensed under the BSD 3-Clause License. The full text is
+in the LICENSE file at the root of this repository. Redistributions of the
+source must keep that copyright notice, the license conditions, and the
+disclaimer. Binary distributions must reproduce them in the documentation
+or other materials provided with the distribution.
+
+The names of Littleton Robotics, FRC 6328 ("Mechanical Advantage"),
+AdvantageScope, and other AdvantageScope contributors may not be used to
+endorse or promote products derived from this software without specific
+prior written permission.
+
+Third-party components shipped with AdvantageScope keep their own notices:
+licenses/ACME Robotics.txt, licenses/Google Material Symbols.txt,
+licenses/The Blue Alliance.txt, and ThirdPartyLicenses.txt (generated).
+
+Modifications in this fork, as of the first TerraScope milestone:
+
+- The product is presented as TerraScope (window title, about text, and the
+  Electron product name). The npm package name, application id, log formats,
+  NetworkTables protocol, and file associations are unchanged.
+- ROADMAP.md records the project direction and which items the current
+  AdvantageScope code already implements.
+- docs/ARCHITECTURE.md and docs/PLAN.md were added.
+- README.md and this NOTICE describe the fork. CONTRIBUTING.md keeps the
+  upstream guidelines and adds a TerraScope-specific preface.
+
+Original source-file headers and the LICENSE file are unchanged.

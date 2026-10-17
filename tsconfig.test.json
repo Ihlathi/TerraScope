@@ -6,11 +6,15 @@
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-    "outDir": "build/mcap-test",
+    "outDir": "build/unit-test",
     "rootDir": "src",
     "lib": ["ESNext", "DOM"],
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true
   },
-  "files": ["src/hub/dataSources/mcap/MCAPDecoder.test.ts"]
+  "files": [
+    "src/hub/dataSources/mcap/MCAPDecoder.test.ts",
+    "src/hub/dataSources/csv/CSVDecoder.test.ts",
+    "src/hub/dataSources/json/JSONDecoder.test.ts"
+  ]
 }

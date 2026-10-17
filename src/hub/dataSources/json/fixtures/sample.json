@@ -1,0 +1,16 @@
+[
+  {
+    "Timestamp": 1,
+    "BatteryVoltage": 12.4,
+    "Enabled": true,
+    "Mode": "auto",
+    "pose": { "x": 1.5, "y": 2.5 }
+  },
+  {
+    "timestamp": 2,
+    "BatteryVoltage": 12.8,
+    "Enabled": false,
+    "Mode": "teleop",
+    "pose": { "x": 2, "y": 3 }
+  }
+]

@@ -6,6 +6,12 @@
 // at the root directory of this project.
 
 import { BuiltIn3dFields } from "../../shared/AdvantageScopeAssets";
+import {
+  CUSTOM_FIELD_ID,
+  CustomEnvironment,
+  DEFAULT_CUSTOM_ENVIRONMENT,
+  parseCustomEnvironment
+} from "../../shared/CustomEnvironment";
 import { SourceListItemState, SourceListOptionValueConfig, SourceListState } from "../../shared/SourceListConfig";
 import { IS_LITE } from "../../shared/buildConstants";
 import {
@@ -34,8 +40,16 @@ export default class Field3dController implements TabController {
 
   private XR_BUTTON: HTMLButtonElement;
   private FIELD_SELECT: HTMLSelectElement;
+  private SETTINGS: HTMLElement;
+  private LENGTH_INPUT: HTMLInputElement;
+  private WIDTH_INPUT: HTMLInputElement;
+  private ORIGIN_X_INPUT: HTMLInputElement;
+  private ORIGIN_Y_INPUT: HTMLInputElement;
+  private ASSET_INPUT: HTMLInputElement;
 
   private sourceList: SourceList;
+  private environment: CustomEnvironment = { ...DEFAULT_CUSTOM_ENVIRONMENT };
+  private assetUrl: string | null = null;
 
   constructor(root: HTMLElement) {
     this.sourceList = new SourceList(
@@ -43,13 +57,28 @@ export default class Field3dController implements TabController {
       Field3dController_Config,
       []
     );
-    let settings = root.getElementsByClassName("field-3d-settings")[0] as HTMLElement;
-    this.XR_BUTTON = settings.getElementsByClassName("xr-button")[0] as HTMLButtonElement;
-    this.FIELD_SELECT = settings.getElementsByClassName("field-select")[0] as HTMLSelectElement;
+    this.SETTINGS = root.getElementsByClassName("field-3d-settings")[0] as HTMLElement;
+    this.XR_BUTTON = this.SETTINGS.getElementsByClassName("xr-button")[0] as HTMLButtonElement;
+    this.FIELD_SELECT = this.SETTINGS.getElementsByClassName("field-select")[0] as HTMLSelectElement;
+    this.LENGTH_INPUT = this.SETTINGS.getElementsByClassName("custom-length")[0] as HTMLInputElement;
+    this.WIDTH_INPUT = this.SETTINGS.getElementsByClassName("custom-width")[0] as HTMLInputElement;
+    this.ORIGIN_X_INPUT = this.SETTINGS.getElementsByClassName("custom-origin-x")[0] as HTMLInputElement;
+    this.ORIGIN_Y_INPUT = this.SETTINGS.getElementsByClassName("custom-origin-y")[0] as HTMLInputElement;
+    this.ASSET_INPUT = this.SETTINGS.getElementsByClassName("custom-asset")[0] as HTMLInputElement;
+    this.ASSET_INPUT.addEventListener("change", () => {
+      this.replaceAssetUrl(this.ASSET_INPUT.files?.[0] ?? null);
+    });
+    (this.SETTINGS.getElementsByClassName("custom-asset-clear")[0] as HTMLButtonElement).addEventListener(
+      "click",
+      () => {
+        this.ASSET_INPUT.value = "";
+        this.replaceAssetUrl(null);
+      }
+    );
 
     // Set up XR button
     if (IS_LITE) {
-      Array.from(settings.getElementsByClassName("xr-control")).forEach((element) => {
+      Array.from(this.SETTINGS.getElementsByClassName("xr-control")).forEach((element) => {
         let htmlElement = element as HTMLElement;
         htmlElement.parentElement?.removeChild(htmlElement);
       });
@@ -86,8 +115,8 @@ export default class Field3dController implements TabController {
   /** Updates field select with the latest options. */
   private updateFieldOptions() {
     let value = this.FIELD_SELECT.value;
-    let frcGroup = this.FIELD_SELECT.firstElementChild as HTMLElement;
-    let ftcGroup = this.FIELD_SELECT.lastElementChild as HTMLElement;
+    let frcGroup = this.fieldGroup("FRC Fields");
+    let ftcGroup = this.fieldGroup("FTC Fields");
     while (frcGroup.firstChild) {
       frcGroup.removeChild(frcGroup.firstChild);
     }
@@ -104,6 +133,7 @@ export default class Field3dController implements TabController {
         (field.isFTC ? ftcGroup : frcGroup).appendChild(option);
       });
     }
+    options.push(CUSTOM_FIELD_ID);
     if (options.includes(value)) {
       this.FIELD_SELECT.value = value;
     } else {
@@ -115,12 +145,8 @@ export default class Field3dController implements TabController {
   /** Selects the default field based on whether the user prefers FTC. */
   private selectDefaultField() {
     let prefersFTC = window.preferences?.prefersFTC ?? false;
-    let primaryGroup = prefersFTC
-      ? (this.FIELD_SELECT.lastElementChild as HTMLElement)
-      : (this.FIELD_SELECT.firstElementChild as HTMLElement);
-    let secondaryGroup = prefersFTC
-      ? (this.FIELD_SELECT.firstElementChild as HTMLElement)
-      : (this.FIELD_SELECT.lastElementChild as HTMLElement);
+    let primaryGroup = prefersFTC ? this.fieldGroup("FTC Fields") : this.fieldGroup("FRC Fields");
+    let secondaryGroup = prefersFTC ? this.fieldGroup("FRC Fields") : this.fieldGroup("FTC Fields");
 
     if (primaryGroup.children.length > 0) {
       this.FIELD_SELECT.value = (primaryGroup.children[0] as HTMLOptionElement).value;
@@ -129,6 +155,34 @@ export default class Field3dController implements TabController {
     } else {
       this.FIELD_SELECT.selectedIndex = 0;
     }
+  }
+
+  private fieldGroup(label: string): HTMLOptGroupElement {
+    return this.FIELD_SELECT.querySelector(`optgroup[label="${label}"]`) as HTMLOptGroupElement;
+  }
+
+  private readEnvironment(): CustomEnvironment {
+    let parsed = parseCustomEnvironment(
+      Number(this.LENGTH_INPUT.value),
+      Number(this.WIDTH_INPUT.value),
+      Number(this.ORIGIN_X_INPUT.value),
+      Number(this.ORIGIN_Y_INPUT.value)
+    );
+    if (parsed) this.environment = parsed;
+    return this.environment;
+  }
+
+  private writeEnvironment(env: CustomEnvironment) {
+    this.environment = env;
+    this.LENGTH_INPUT.value = env.lengthMeters.toString();
+    this.WIDTH_INPUT.value = env.widthMeters.toString();
+    this.ORIGIN_X_INPUT.value = env.originXMeters.toString();
+    this.ORIGIN_Y_INPUT.value = env.originYMeters.toString();
+  }
+
+  private replaceAssetUrl(file: File | null) {
+    if (this.assetUrl) URL.revokeObjectURL(this.assetUrl);
+    this.assetUrl = file ? URL.createObjectURL(file) : null;
   }
 
   /** Updates source list with the latest robot models. */
@@ -154,6 +208,7 @@ export default class Field3dController implements TabController {
 
   /** Updates the robots, source button, and other options based on the selected value. */
   private updateFieldDependentControls() {
+    this.SETTINGS.classList.toggle("custom-open", this.FIELD_SELECT.value === CUSTOM_FIELD_ID);
     if (window.assets === null) return;
     let fieldConfig = [...window.assets.field3ds, ...BuiltIn3dFields].find(
       (game) => game.id === this.FIELD_SELECT.value
@@ -194,7 +249,8 @@ export default class Field3dController implements TabController {
   saveState(): unknown {
     return {
       sources: this.sourceList.getState(),
-      game: this.FIELD_SELECT.value
+      game: this.FIELD_SELECT.value,
+      customEnvironment: this.readEnvironment()
     };
   }
 
@@ -209,6 +265,18 @@ export default class Field3dController implements TabController {
       this.FIELD_SELECT.value = state.game;
       if (this.FIELD_SELECT.value === "") {
         this.selectDefaultField();
+      }
+    }
+    if ("customEnvironment" in state) {
+      let custom = state.customEnvironment;
+      if (typeof custom === "object" && custom !== null) {
+        let parsed = parseCustomEnvironment(
+          Number("lengthMeters" in custom ? custom.lengthMeters : NaN),
+          Number("widthMeters" in custom ? custom.widthMeters : NaN),
+          Number("originXMeters" in custom ? custom.originXMeters : NaN),
+          Number("originYMeters" in custom ? custom.originYMeters : NaN)
+        );
+        if (parsed) this.writeEnvironment(parsed);
       }
     }
     this.updateFieldDependentControls();
@@ -236,13 +304,17 @@ export default class Field3dController implements TabController {
     let time = window.selection.getRenderTime();
 
     // Get field data
-    let fieldData = [...(window.assets === null ? [] : window.assets.field3ds), ...BuiltIn3dFields].find(
-      (game) => game.id === this.FIELD_SELECT.value
-    );
-    let coordinateSystem =
-      (window.preferences?.coordinateSystem === "automatic"
-        ? fieldData?.coordinateSystem
-        : window.preferences?.coordinateSystem) ?? "center-red";
+    let customEnvironment = this.FIELD_SELECT.value === CUSTOM_FIELD_ID ? this.readEnvironment() : null;
+    let fieldData = customEnvironment
+      ? undefined
+      : [...(window.assets === null ? [] : window.assets.field3ds), ...BuiltIn3dFields].find(
+          (game) => game.id === this.FIELD_SELECT.value
+        );
+    let coordinateSystem = customEnvironment
+      ? "center-red"
+      : (window.preferences?.coordinateSystem === "automatic"
+          ? fieldData?.coordinateSystem
+          : window.preferences?.coordinateSystem) ?? "center-red";
 
     // Get alliance
     let isRedAlliance = time === null ? false : getIsRedAlliance(window.log, time);
@@ -520,13 +592,15 @@ export default class Field3dController implements TabController {
     });
 
     return {
-      field: this.FIELD_SELECT.value,
+      field: customEnvironment ? CUSTOM_FIELD_ID : this.FIELD_SELECT.value,
       isRedAlliance: isRedAlliance,
       coordinateSystem: coordinateSystem,
       objects: objects,
       cameraOverride: cameraOverride,
       autoDriverStation: getDriverStation(window.log, time!),
-      allRobotModels: [...allRobotModels]
+      allRobotModels: [...allRobotModels],
+      customEnvironment: customEnvironment,
+      customAssetUrl: customEnvironment ? this.assetUrl : null
     };
   }
 }

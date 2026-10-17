@@ -5,6 +5,13 @@
 // license that can be found in the LICENSE file
 // at the root directory of this project.
 
+import {
+  CUSTOM_FIELD_ID,
+  CustomEnvironment,
+  DEFAULT_CUSTOM_ENVIRONMENT,
+  parseCustomEnvironment,
+  toCenterFrame
+} from "../../shared/CustomEnvironment";
 import { SourceListItemState, SourceListState } from "../../shared/SourceListConfig";
 import {
   AnnotatedPose2d,
@@ -42,8 +49,15 @@ export default class Field2dController implements TabController {
   private SIZE_SWITCHER: HTMLElement;
   private FIELD_SELECT: HTMLSelectElement;
   private FIELD_SOURCE: HTMLElement;
+  private LENGTH_INPUT: HTMLInputElement;
+  private WIDTH_INPUT: HTMLInputElement;
+  private ORIGIN_X_INPUT: HTMLInputElement;
+  private ORIGIN_Y_INPUT: HTMLInputElement;
+  private ASSET_INPUT: HTMLInputElement;
 
   private sourceList: SourceList;
+  private environment: CustomEnvironment = { ...DEFAULT_CUSTOM_ENVIRONMENT };
+  private assetUrl: string | null = null;
 
   private orientationSetting = Orientation.DEG_0;
   private sizeSetting: "large" | "medium" | "small" = "large";
@@ -59,6 +73,21 @@ export default class Field2dController implements TabController {
     this.SIZE_SWITCHER = this.SETTINGS.getElementsByClassName("size-switcher")[0] as HTMLElement;
     this.FIELD_SELECT = this.SETTINGS.getElementsByClassName("field-select")[0] as HTMLSelectElement;
     this.FIELD_SOURCE = this.SETTINGS.getElementsByClassName("field-source")[0] as HTMLElement;
+    this.LENGTH_INPUT = this.SETTINGS.getElementsByClassName("custom-length")[0] as HTMLInputElement;
+    this.WIDTH_INPUT = this.SETTINGS.getElementsByClassName("custom-width")[0] as HTMLInputElement;
+    this.ORIGIN_X_INPUT = this.SETTINGS.getElementsByClassName("custom-origin-x")[0] as HTMLInputElement;
+    this.ORIGIN_Y_INPUT = this.SETTINGS.getElementsByClassName("custom-origin-y")[0] as HTMLInputElement;
+    this.ASSET_INPUT = this.SETTINGS.getElementsByClassName("custom-asset")[0] as HTMLInputElement;
+    this.ASSET_INPUT.addEventListener("change", () => {
+      this.replaceAssetUrl(this.ASSET_INPUT.files?.[0] ?? null);
+    });
+    (this.SETTINGS.getElementsByClassName("custom-asset-clear")[0] as HTMLButtonElement).addEventListener(
+      "click",
+      () => {
+        this.ASSET_INPUT.value = "";
+        this.replaceAssetUrl(null);
+      }
+    );
 
     // Set up field select
     this.FIELD_SELECT.addEventListener("change", () => {
@@ -101,8 +130,8 @@ export default class Field2dController implements TabController {
   /** Updates field select with the latest options. */
   private updateFieldOptions() {
     let value = this.FIELD_SELECT.value;
-    let frcGroup = this.FIELD_SELECT.firstElementChild as HTMLElement;
-    let ftcGroup = this.FIELD_SELECT.lastElementChild as HTMLElement;
+    let frcGroup = this.fieldGroup("FRC Fields");
+    let ftcGroup = this.fieldGroup("FTC Fields");
     while (frcGroup.firstChild) {
       frcGroup.removeChild(frcGroup.firstChild);
     }
@@ -119,6 +148,7 @@ export default class Field2dController implements TabController {
         (field.isFTC ? ftcGroup : frcGroup).appendChild(option);
       });
     }
+    options.push(CUSTOM_FIELD_ID);
     if (options.includes(value)) {
       this.FIELD_SELECT.value = value;
     } else {
@@ -130,12 +160,8 @@ export default class Field2dController implements TabController {
   /** Selects the default field based on whether the user prefers FTC. */
   private selectDefaultField() {
     let prefersFTC = window.preferences?.prefersFTC ?? false;
-    let primaryGroup = prefersFTC
-      ? (this.FIELD_SELECT.lastElementChild as HTMLElement)
-      : (this.FIELD_SELECT.firstElementChild as HTMLElement);
-    let secondaryGroup = prefersFTC
-      ? (this.FIELD_SELECT.firstElementChild as HTMLElement)
-      : (this.FIELD_SELECT.lastElementChild as HTMLElement);
+    let primaryGroup = prefersFTC ? this.fieldGroup("FTC Fields") : this.fieldGroup("FRC Fields");
+    let secondaryGroup = prefersFTC ? this.fieldGroup("FRC Fields") : this.fieldGroup("FTC Fields");
 
     if (primaryGroup.children.length > 0) {
       this.FIELD_SELECT.value = (primaryGroup.children[0] as HTMLOptionElement).value;
@@ -157,6 +183,35 @@ export default class Field2dController implements TabController {
       this.SETTINGS.classList.add("frc");
       this.SETTINGS.classList.remove("ftc");
     }
+    this.SETTINGS.classList.toggle("custom-open", this.FIELD_SELECT.value === CUSTOM_FIELD_ID);
+  }
+
+  private fieldGroup(label: string): HTMLOptGroupElement {
+    return this.FIELD_SELECT.querySelector(`optgroup[label="${label}"]`) as HTMLOptGroupElement;
+  }
+
+  private readEnvironment(): CustomEnvironment {
+    let parsed = parseCustomEnvironment(
+      Number(this.LENGTH_INPUT.value),
+      Number(this.WIDTH_INPUT.value),
+      Number(this.ORIGIN_X_INPUT.value),
+      Number(this.ORIGIN_Y_INPUT.value)
+    );
+    if (parsed) this.environment = parsed;
+    return this.environment;
+  }
+
+  private writeEnvironment(env: CustomEnvironment) {
+    this.environment = env;
+    this.LENGTH_INPUT.value = env.lengthMeters.toString();
+    this.WIDTH_INPUT.value = env.widthMeters.toString();
+    this.ORIGIN_X_INPUT.value = env.originXMeters.toString();
+    this.ORIGIN_Y_INPUT.value = env.originYMeters.toString();
+  }
+
+  private replaceAssetUrl(file: File | null) {
+    if (this.assetUrl) URL.revokeObjectURL(this.assetUrl);
+    this.assetUrl = file ? URL.createObjectURL(file) : null;
   }
 
   /** Updates the switcher elements to match the internal state. */
@@ -180,7 +235,8 @@ export default class Field2dController implements TabController {
       sources: this.sourceList.getState(),
       field: this.FIELD_SELECT.value,
       orientation: this.orientationSetting,
-      size: this.sizeSetting
+      size: this.sizeSetting,
+      customEnvironment: this.readEnvironment()
     };
   }
 
@@ -208,6 +264,18 @@ export default class Field2dController implements TabController {
     }
     if ("size" in state && (state.size === "large" || state.size === "medium" || state.size === "small")) {
       this.sizeSetting = state.size;
+    }
+    if ("customEnvironment" in state) {
+      let custom = state.customEnvironment;
+      if (typeof custom === "object" && custom !== null) {
+        let parsed = parseCustomEnvironment(
+          Number("lengthMeters" in custom ? custom.lengthMeters : NaN),
+          Number("widthMeters" in custom ? custom.widthMeters : NaN),
+          Number("originXMeters" in custom ? custom.originXMeters : NaN),
+          Number("originYMeters" in custom ? custom.originYMeters : NaN)
+        );
+        if (parsed) this.writeEnvironment(parsed);
+      }
     }
     this.updateFieldDependentControls();
     this.updateSwitchers();
@@ -468,11 +536,31 @@ export default class Field2dController implements TabController {
     }
 
     objects.reverse();
+    let customEnvironment = this.FIELD_SELECT.value === CUSTOM_FIELD_ID ? this.readEnvironment() : null;
+    if (customEnvironment) {
+      objects.forEach((object) => {
+        object.poses.forEach((pose) => {
+          pose.pose.translation = toCenterFrame(customEnvironment, pose.pose.translation);
+        });
+        if (object.type === "robot" || object.type === "ghost") {
+          object.visionTargets.forEach((pose) => {
+            pose.pose.translation = toCenterFrame(customEnvironment, pose.pose.translation);
+          });
+        }
+        if (object.type === "robot") {
+          object.trails = object.trails.map((trail) =>
+            trail.map((translation) => toCenterFrame(customEnvironment, translation))
+          );
+        }
+      });
+    }
     return {
       field: this.FIELD_SELECT.value,
       orientation: this.orientationSetting,
       size: size,
-      objects: objects
+      objects: objects,
+      customEnvironment: customEnvironment,
+      customAssetUrl: customEnvironment ? this.assetUrl : null
     };
   }
 }

@@ -15,6 +15,7 @@
   "files": [
     "src/hub/dataSources/mcap/MCAPDecoder.test.ts",
     "src/hub/dataSources/csv/CSVDecoder.test.ts",
-    "src/hub/dataSources/json/JSONDecoder.test.ts"
+    "src/hub/dataSources/json/JSONDecoder.test.ts",
+    "src/hub/dataSources/foxglove/FoxgloveSession.test.ts"
   ]
 }

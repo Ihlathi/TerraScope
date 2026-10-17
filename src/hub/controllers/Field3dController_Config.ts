@@ -7,6 +7,7 @@
 
 import { NeonColors, NeonColors_RedStart } from "../../shared/Colors";
 import { SourceListConfig } from "../../shared/SourceListConfig";
+import { SemanticType, structuredTypesFor } from "../../shared/log/SemanticType";
 import { SwerveArrangementValues } from "./SwerveController_Config";
 
 const Field3dController_Config: SourceListConfig = {
@@ -22,16 +23,7 @@ const Field3dController_Config: SourceListConfig = {
       showInTypeName: false,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d]),
       showDocs: true,
       options: [
         {
@@ -51,16 +43,7 @@ const Field3dController_Config: SourceListConfig = {
       symbol: "nearmeoutline",
       showInTypeName: true,
       color: "color",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d]),
       showDocs: true,
       options: [
         {
@@ -86,7 +69,7 @@ const Field3dController_Config: SourceListConfig = {
       symbol: "extension",
       showInTypeName: true,
       color: "#9370db",
-      sourceTypes: ["Pose3d", "Pose3d[]", "Transform3d", "Transform3d[]"],
+      sourceTypes: structuredTypesFor([SemanticType.Pose3d]),
       showDocs: true,
       options: [],
       childOf: "robot",
@@ -98,7 +81,7 @@ const Field3dController_Config: SourceListConfig = {
       symbol: "settings",
       showInTypeName: true,
       color: "#888888",
-      sourceTypes: ["Mechanism2d"],
+      sourceTypes: structuredTypesFor([SemanticType.MechanismJoint]),
       showDocs: true,
       options: [
         {
@@ -119,20 +102,7 @@ const Field3dController_Config: SourceListConfig = {
       symbol: "target",
       showInTypeName: true,
       color: "color",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]",
-        "Translation2d",
-        "Translation3d",
-        "Translation2d[]",
-        "Translation3d[]"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d, SemanticType.Translation]),
       showDocs: true,
       options: [
         {
@@ -187,7 +157,7 @@ const Field3dController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: ["Rotation2d", "Rotation3d"],
+      sourceTypes: structuredTypesFor([SemanticType.Rotation], { shape: "scalar" }),
       showDocs: true,
       options: [],
       childOf: "robot",
@@ -200,7 +170,7 @@ const Field3dController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: ["Number"],
+      sourceTypes: structuredTypesFor([SemanticType.NumericSeries]),
       showDocs: false,
       options: [
         {
@@ -222,7 +192,7 @@ const Field3dController_Config: SourceListConfig = {
       symbol: "chesspawn",
       showInTypeName: false,
       color: "#ffd700",
-      sourceTypes: ["Pose3d", "Pose3d[]", "Transform3d", "Transform3d[]", "Translation3d", "Translation3d[]"],
+      sourceTypes: structuredTypesFor([SemanticType.Pose3d, SemanticType.Translation], { dimension: 3 }),
       showDocs: true,
       options: [
         {
@@ -242,15 +212,10 @@ const Field3dController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "color",
       sourceTypes: [
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d[]",
-        "Transform3d[]",
-        "Translation2d[]",
-        "Translation3d[]",
-        "SwerveSample[]",
-        "DifferentialSample[]",
-        "Trajectory"
+        ...structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d, SemanticType.Translation], {
+          shape: "array"
+        }),
+        ...structuredTypesFor([SemanticType.Trajectory])
       ],
       showDocs: true,
       options: [
@@ -278,20 +243,7 @@ const Field3dController_Config: SourceListConfig = {
       symbol: "map",
       showInTypeName: true,
       color: "#ff0000",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]",
-        "Translation2d",
-        "Translation3d",
-        "Translation2d[]",
-        "Translation3d[]"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d, SemanticType.Translation]),
       showDocs: true,
       options: [
         {
@@ -318,7 +270,7 @@ const Field3dController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: ["Pose3d", "Pose3d[]", "Transform3d", "Transform3d[]", "Trajectory"],
+      sourceTypes: structuredTypesFor([SemanticType.Pose3d, SemanticType.Trajectory], { trajectorySamples: false }),
       showDocs: true,
       options: [
         {
@@ -352,7 +304,7 @@ const Field3dController_Config: SourceListConfig = {
       showInTypeName: true,
       color: "#000000",
       darkColor: "#ffffff",
-      sourceTypes: ["Pose3d", "Pose3d[]", "Transform3d", "Transform3d[]", "Trajectory"],
+      sourceTypes: structuredTypesFor([SemanticType.Pose3d, SemanticType.Trajectory], { trajectorySamples: false }),
       showDocs: true,
       options: [],
       previewType: "Pose3d"
@@ -363,17 +315,9 @@ const Field3dController_Config: SourceListConfig = {
       symbol: "navigation",
       showInTypeName: true,
       color: "color",
-      sourceTypes: [
-        "Pose2d",
-        "Pose3d",
-        "Pose2d[]",
-        "Pose3d[]",
-        "Transform2d",
-        "Transform3d",
-        "Transform2d[]",
-        "Transform3d[]",
-        "Trajectory"
-      ],
+      sourceTypes: structuredTypesFor([SemanticType.Pose2d, SemanticType.Pose3d, SemanticType.Trajectory], {
+        trajectorySamples: false
+      }),
       showDocs: true,
       options: [
         {
@@ -402,7 +346,7 @@ const Field3dController_Config: SourceListConfig = {
       symbol: "photocamera",
       showInTypeName: true,
       color: "#888888",
-      sourceTypes: ["Pose3d", "Transform3d"],
+      sourceTypes: structuredTypesFor([SemanticType.Pose3d], { shape: "scalar" }),
       showDocs: true,
       options: [],
       previewType: "Pose3d"

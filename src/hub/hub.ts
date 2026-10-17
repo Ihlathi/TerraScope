@@ -25,6 +25,7 @@ import { HistoricalDataSource, HistoricalDataSourceStatus } from "./dataSources/
 import { LiveDataSource, LiveDataSourceStatus } from "./dataSources/LiveDataSource";
 import LiveDataTuner from "./dataSources/LiveDataTuner";
 import PhoenixDiagnosticsSource from "./dataSources/PhoenixDiagnosticsSource";
+import FoxgloveSource from "./dataSources/foxglove/FoxgloveSource";
 import FTCDashboardSource from "./dataSources/ftcdashboard/FTCDashboardSource";
 import { NT4Publisher, NT4PublisherStatus } from "./dataSources/nt4/NT4Publisher";
 import NT4Source, { NT4Mode } from "./dataSources/nt4/NT4Source";
@@ -454,6 +455,9 @@ function startLive(sourceType: "robot" | "sim" | "ds") {
       case "ftcdashboard":
         liveSource = new FTCDashboardSource();
         break;
+      case "foxglove":
+        liveSource = new FoxgloveSource();
+        break;
     }
   }
 
@@ -466,6 +470,9 @@ function startLive(sourceType: "robot" | "sim" | "ds") {
     if (window.preferences) {
       address = getRobotAddress(window.preferences, window.platform);
     }
+  }
+  if (!IS_LITE && sourceType !== "ds" && window.preferences && window.preferences.liveMode === "foxglove") {
+    address = window.preferences.robotAddress;
   }
 
   liveSource.connect(

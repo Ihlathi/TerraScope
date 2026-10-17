@@ -2257,7 +2257,7 @@ function setupMenu() {
               }
             },
             { type: "separator" },
-            ...(["nt4", "nt4-akit", "nt4-systemcore", "phoenix", "rlog", "ftcdashboard"] as const).map(
+            ...(["nt4", "nt4-akit", "nt4-systemcore", "phoenix", "rlog", "ftcdashboard", "foxglove"] as const).map(
               (liveMode: LiveMode) => {
                 let item: Electron.MenuItemConstructorOptions = {
                   label: getLiveModeName(liveMode),
@@ -2290,7 +2290,7 @@ function setupMenu() {
               }
             },
             { type: "separator" },
-            ...(["nt4", "nt4-akit", "nt4-systemcore", "phoenix", "rlog", "ftcdashboard"] as const).map(
+            ...(["nt4", "nt4-akit", "nt4-systemcore", "phoenix", "rlog", "ftcdashboard", "foxglove"] as const).map(
               (liveMode: LiveMode) => {
                 let item: Electron.MenuItemConstructorOptions = {
                   label: getLiveModeName(liveMode),

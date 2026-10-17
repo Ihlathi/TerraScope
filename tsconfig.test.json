@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "build/mcap-test",
+    "rootDir": "src",
+    "lib": ["ESNext", "DOM"],
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "files": ["src/hub/dataSources/mcap/MCAPDecoder.test.ts"]
+}

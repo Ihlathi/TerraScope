@@ -148,6 +148,9 @@ export default (cliArgs) => {
           ? [
               "hub/dataSources/csv/csvWorker.ts",
               "hub/dataSources/mcap/mcapWorker.ts",
+              "hub/dataSources/csv/tsvWorker.ts",
+              "hub/dataSources/json/jsonWorker.ts",
+              "hub/dataSources/json/jsonlWorker.ts",
               "hub/dataSources/rlog/rlogWorker.ts",
               "hub/dataSources/roadrunnerlog/roadRunnerWorker.ts",
               "hub/dataSources/dslog/dsLogWorker.ts",

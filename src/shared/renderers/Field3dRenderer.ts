@@ -6,6 +6,7 @@
 // at the root directory of this project.
 
 import { CoordinateSystem } from "../AdvantageScopeAssets";
+import { CustomEnvironment } from "../CustomEnvironment";
 import { AnnotatedPose3d, ModuleVelocity } from "../geometry";
 import { MechanismState } from "../log/LogMechanismState";
 import Field3dRendererImpl from "./Field3dRendererImpl";
@@ -125,6 +126,8 @@ export type Field3dRendererCommand = {
   cameraOverride: AnnotatedPose3d | null;
   autoDriverStation: number;
   allRobotModels: string[];
+  customEnvironment: CustomEnvironment | null;
+  customAssetUrl: string | null;
 };
 
 export type Field3dRendererCommand_AnyObj =

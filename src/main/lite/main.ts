@@ -458,7 +458,7 @@ async function handleHubMessage(message: NamedMessage) {
             // App menu
             menuItems = [
               {
-                content: "About AdvantageScope Lite",
+                content: "About TerraScope Lite",
                 callback() {
                   let detailLines: string[] = [];
                   detailLines.push("Version: " + LITE_VERSION);
@@ -468,7 +468,12 @@ async function handleHubMessage(message: NamedMessage) {
                   detailLines.push("Build Date: " + BUILD_DATE);
                   detailLines.push("User Agent: " + navigator.userAgent);
                   let detail = detailLines.join("\n");
-                  window.alert("======= AdvantageScope Lite =======\n" + COPYRIGHT + "\n\n" + detail);
+                  window.alert(
+                    "======= TerraScope Lite =======\nBased on AdvantageScope by Littleton Robotics (FRC 6328).\n" +
+                      COPYRIGHT +
+                      "\n\n" +
+                      detail
+                  );
                 }
               },
               ...(DISTRIBUTION === Distribution.LiteDS

@@ -2059,7 +2059,7 @@ function setupMenu() {
       label: isMac ? "" : "App",
       submenu: [
         {
-          label: "About AdvantageScope",
+          label: "About TerraScope",
           click() {
             createAboutWindow();
           }
@@ -2729,7 +2729,7 @@ function setupMenu() {
   });
 }
 
-/** Creates the "About AdvantageScope" window. */
+/** Creates the "About TerraScope" window. */
 function createAboutWindow() {
   let detailLines: string[] = [];
   detailLines.push("Version: " + (app.isPackaged ? app.getVersion() : "Development"));
@@ -2744,8 +2744,8 @@ function createAboutWindow() {
     .showMessageBox({
       type: "info",
       title: "About",
-      message: "AdvantageScope",
-      detail: COPYRIGHT + "\n\n" + detail,
+      message: "TerraScope",
+      detail: "Based on AdvantageScope by Littleton Robotics (FRC 6328).\n\n" + COPYRIGHT + "\n\n" + detail,
       buttons: ["Close", process.platform === "win32" ? "Copy and Close" : "Copy & Close"],
       defaultId: 0,
       icon: WINDOW_ICON
@@ -2941,7 +2941,7 @@ function createHubWindow(state?: WindowState, layoutOverride?: any) {
             title: "Alert",
             message: (isAlpha() ? "Alpha" : "Beta") + " is complete",
             detail:
-              "The AdvantageScope " +
+              "The TerraScope " +
               (isAlpha() ? "alpha" : "beta") +
               " is complete. " +
               (DISTRIBUTION === Distribution.WPILib
@@ -2961,7 +2961,7 @@ function createHubWindow(state?: WindowState, layoutOverride?: any) {
             type: "info",
             title: "Alert",
             message: "Share feedback?",
-            detail: `Please take 30 seconds to share your experience using the AdvantageScope ${
+            detail: `Please take 30 seconds to share your experience using the TerraScope ${
               isAlpha() ? "alpha" : "beta"
             }. We'll keep this quick.`,
             buttons: ["Open", "Not Now"],
@@ -3813,9 +3813,9 @@ process.on("unhandledRejection", () => {});
 // Set WM_CLASS for Linux
 if (process.platform === "linux") {
   if (DISTRIBUTION === Distribution.WPILib) {
-    app.setName("AdvantageScope (WPILib)");
+    app.setName("TerraScope (WPILib)");
   } else {
-    app.setName("AdvantageScope");
+    app.setName("TerraScope");
   }
 }
 

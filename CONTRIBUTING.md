@@ -1,3 +1,13 @@
+# Contributing to TerraScope
+
+TerraScope is a fork of AdvantageScope. The upstream guidelines below still apply: do not break existing visualizations, log parsing, or compatibility with logs the application already opens.
+
+Open TerraScope issues and pull requests on [Ihlathi/TerraScope](https://github.com/Ihlathi/TerraScope). Do not open TerraScope issues or pull requests against the upstream Mechanical-Advantage/AdvantageScope repository. AdvantageScope's own maintainers remain the contact for upstream issues (software@team6328.org).
+
+The original source headers, `LICENSE`, and third-party notices must stay. See `NOTICE` for what this fork has changed.
+
+## Upstream guidelines
+
 # Contributing to AdvantageScope
 
 Thank you for your interest in contributing to **AdvantageScope**! This project is maintained by **Littleton Robotics** and the community, and is distributed as part of the **WPILib** project. To ensure that AdvantageScope remains reliable for all teams, we have established a set of guidelines for contributions.

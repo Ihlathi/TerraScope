@@ -1543,6 +1543,36 @@ div.setting-blocks input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 
+div.setting-blocks div.custom-environment {
+  display: none;
+  padding: 0 8px 8px;
+  font-size: 12px;
+  text-align: left;
+}
+
+div.setting-blocks.custom-open div.custom-environment {
+  display: block;
+}
+
+div.setting-blocks div.custom-environment span {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+div.setting-blocks div.custom-environment input {
+  width: 100%;
+  margin: 2px 0;
+  box-sizing: border-box;
+  font-size: 12px;
+}
+
+div.setting-blocks div.custom-environment button.custom-asset-clear {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
 @media (prefers-color-scheme: dark) {
   div.setting-blocks div.split div img.lighten {
     /* Lighten blue tone  */
@@ -1646,7 +1676,7 @@ div.field-3d-settings {
   height: 100%;
   right: 0%;
   width: 40%;
-  max-width: 200px;
+  max-width: 250px;
   border-left: 1px solid #ddd;
 
   overflow-x: hidden;

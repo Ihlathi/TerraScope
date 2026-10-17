@@ -20,7 +20,7 @@
     "download-owlet": "rolldown -c --configRunOwletDownload && node runOwletDownload.js",
     "format": "license-check-and-add add -f file-header-config.json && prettier --write .",
     "check-format": "license-check-and-add check -f file-header-config.json && prettier --check .",
-    "test": "node --experimental-strip-types --experimental-detect-module --test src/shared/log/SemanticType.test.ts",
+    "test": "node --experimental-strip-types --experimental-detect-module --test src/shared/log/SemanticType.test.ts src/shared/CustomEnvironment.test.ts",
     "wasm:compile": "node wasmCompile.mjs",
     "docs:start": "cd docs && npm run start && cd ..",
     "docs:build": "cd docs && npm run build && cd ..",

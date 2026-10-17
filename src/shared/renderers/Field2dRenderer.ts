@@ -6,6 +6,8 @@
 // at the root directory of this project.
 
 import ScrollSensor, { ScrollSensorMouseControl } from "../../hub/ScrollSensor";
+import { Config2d } from "../AdvantageScopeAssets";
+import { CustomEnvironment, customFieldInches, customFieldPixels, toCenterFrame } from "../CustomEnvironment";
 import { Field2dCameraMode } from "../Field2dCameraMode";
 import { AnnotatedPose2d, ModuleVelocity, Pose2d, Translation2d } from "../geometry";
 import { Units } from "../units";
@@ -35,6 +37,8 @@ export default class Field2dRenderer implements TabRenderer {
   private lastFieldCenter?: [number, number];
   private isFTC = false;
   private lastCommand: Field2dRendererCommand | null = null;
+  private customBitmap: ImageBitmap | null = null;
+  private customBitmapUrl = "";
 
   constructor(root: HTMLElement) {
     this.CONTAINER = root.getElementsByClassName("field-2d-canvas-container")[0] as HTMLElement;
@@ -59,15 +63,16 @@ export default class Field2dRenderer implements TabRenderer {
         let boundingWidth = isVertical ? containerHeight - Math.abs(visibleYOffset * 2) : containerWidth;
         let boundingHeight = isVertical ? containerWidth : containerHeight - Math.abs(visibleYOffset * 2);
 
-        let fieldData = window.assets?.field2ds.find((field) => field.id === this.lastCommand?.field);
-        if (!fieldData) return;
+        let layout = this.fieldLayout(this.lastCommand);
+        if (!layout) return;
+        let fieldData = layout.fieldData;
 
         let fieldWidth = fieldData.bottomRight[0] - fieldData.topLeft[0];
         let fieldHeight = fieldData.bottomRight[1] - fieldData.topLeft[1];
         let topMargin = fieldData.topLeft[1];
-        let bottomMargin = this.IMAGE.height - fieldData.bottomRight[1];
+        let bottomMargin = layout.imagePixelHeight - fieldData.bottomRight[1];
         let leftMargin = fieldData.topLeft[0];
-        let rightMargin = this.IMAGE.width - fieldData.bottomRight[0];
+        let rightMargin = layout.imagePixelWidth - fieldData.bottomRight[0];
         let margin = Math.min(topMargin, bottomMargin, leftMargin, rightMargin);
         let extendedFieldWidth = fieldWidth + margin * 2;
         let extendedFieldHeight = fieldHeight + margin * 2;
@@ -166,13 +171,53 @@ export default class Field2dRenderer implements TabRenderer {
     return this.aspectRatio;
   }
 
+  private fieldLayout(command: Field2dRendererCommand): {
+    fieldData: Config2d;
+    imagePixelWidth: number;
+    imagePixelHeight: number;
+  } | null {
+    if (command.customEnvironment) {
+      let fieldData = customConfig2d(command.customEnvironment);
+      return {
+        fieldData: fieldData,
+        imagePixelWidth: fieldData.bottomRight[0],
+        imagePixelHeight: fieldData.bottomRight[1]
+      };
+    }
+    let fieldData = window.assets?.field2ds.find((field) => field.id === command.field);
+    if (!fieldData) return null;
+    return { fieldData: fieldData, imagePixelWidth: this.IMAGE.width, imagePixelHeight: this.IMAGE.height };
+  }
+
+  private syncCustomBitmap(command: Field2dRendererCommand) {
+    let url = command.customAssetUrl ?? "";
+    if (url === this.customBitmapUrl) return;
+    this.customBitmapUrl = url;
+    this.customBitmap = null;
+    if (url === "") return;
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => createImageBitmap(blob))
+      .then((bitmap) => {
+        if (this.customBitmapUrl !== url) {
+          bitmap.close();
+          return;
+        }
+        this.customBitmap = bitmap;
+        this.imageLoadCount++;
+      })
+      .catch(() => {});
+  }
+
   render(command: Field2dRendererCommand): void {
     this.scrollSensor.periodic();
     this.lastCommand = command;
 
     // Get field data
-    let fieldData = window.assets?.field2ds.find((field) => field.id === command.field);
-    if (!fieldData) return;
+    this.syncCustomBitmap(command);
+    let layout = this.fieldLayout(command);
+    if (!layout) return;
+    let fieldData = layout.fieldData;
 
     if (fieldData.isFTC !== this.isFTC) {
       this.isFTC = fieldData.isFTC;
@@ -263,11 +308,15 @@ export default class Field2dRenderer implements TabRenderer {
     this.CANVAS.style.transform = `translate(-50%, -50%) rotate(${canvasRotation}rad)`;
 
     // Update image element
-    if (fieldData.path !== this.lastImageSource) {
-      this.lastImageSource = fieldData.path;
-      this.IMAGE.src = fieldData.path;
+    if (!command.customEnvironment) {
+      if (fieldData.path !== this.lastImageSource) {
+        this.lastImageSource = fieldData.path;
+        this.IMAGE.src = fieldData.path;
+      }
+      if (!(this.IMAGE.width > 0 && this.IMAGE.height > 0)) return;
     }
-    if (!(this.IMAGE.width > 0 && this.IMAGE.height > 0)) return;
+    let imagePixelWidth = command.customEnvironment ? layout.imagePixelWidth : this.IMAGE.width;
+    let imagePixelHeight = command.customEnvironment ? layout.imagePixelHeight : this.IMAGE.height;
 
     // Render background
     let fieldWidth = fieldData.bottomRight[0] - fieldData.topLeft[0];
@@ -315,9 +364,9 @@ export default class Field2dRenderer implements TabRenderer {
     fieldCenterY = targetFieldY + panFieldY;
 
     let topMargin = fieldData.topLeft[1];
-    let bottomMargin = this.IMAGE.height - fieldData.bottomRight[1];
+    let bottomMargin = imagePixelHeight - fieldData.bottomRight[1];
     let leftMargin = fieldData.topLeft[0];
-    let rightMargin = this.IMAGE.width - fieldData.bottomRight[0];
+    let rightMargin = imagePixelWidth - fieldData.bottomRight[0];
 
     let margin = Math.min(topMargin, bottomMargin, leftMargin, rightMargin);
     let extendedFieldWidth = fieldWidth + margin * 2;
@@ -356,8 +405,8 @@ export default class Field2dRenderer implements TabRenderer {
     let renderValues: [number, number, number, number] = [
       width * 0.5 - fieldCenterX * imageScalar,
       height * 0.5 - fieldCenterY * imageScalar,
-      this.IMAGE.width * imageScalar,
-      this.IMAGE.height * imageScalar
+      imagePixelWidth * imageScalar,
+      imagePixelHeight * imageScalar
     ];
 
     // Draw field image
@@ -370,11 +419,25 @@ export default class Field2dRenderer implements TabRenderer {
       let drawT = Math.max(imgDy, 0);
       let drawR = Math.min(imgDx + imgDw, width);
       let drawB = Math.min(imgDy + imgDh, height);
-      if (drawR > drawL && drawB > drawT) {
-        let sx = ((drawL - imgDx) / imgDw) * this.IMAGE.width;
-        let sy = ((drawT - imgDy) / imgDh) * this.IMAGE.height;
-        let sWidth = ((drawR - drawL) / imgDw) * this.IMAGE.width;
-        let sHeight = ((drawB - drawT) / imgDh) * this.IMAGE.height;
+      if (command.customEnvironment) {
+        context.fillStyle = "#c5c5c5";
+        context.fillRect(imgDx, imgDy, imgDw, imgDh);
+        context.strokeStyle = "#333333";
+        context.lineWidth = 2;
+        context.strokeRect(imgDx, imgDy, imgDw, imgDh);
+        if (this.customBitmap && drawR > drawL && drawB > drawT) {
+          let sx = ((drawL - imgDx) / imgDw) * this.customBitmap.width;
+          let sy = ((drawT - imgDy) / imgDh) * this.customBitmap.height;
+          let sWidth = ((drawR - drawL) / imgDw) * this.customBitmap.width;
+          let sHeight = ((drawB - drawT) / imgDh) * this.customBitmap.height;
+          context.imageSmoothingEnabled = false;
+          context.drawImage(this.customBitmap, sx, sy, sWidth, sHeight, drawL, drawT, drawR - drawL, drawB - drawT);
+        }
+      } else if (drawR > drawL && drawB > drawT) {
+        let sx = ((drawL - imgDx) / imgDw) * imagePixelWidth;
+        let sy = ((drawT - imgDy) / imgDh) * imagePixelHeight;
+        let sWidth = ((drawR - drawL) / imgDw) * imagePixelWidth;
+        let sHeight = ((drawB - drawT) / imgDh) * imagePixelHeight;
         context.imageSmoothingEnabled = false;
         context.drawImage(this.IMAGE, sx, sy, sWidth, sHeight, drawL, drawT, drawR - drawL, drawB - drawT);
       }
@@ -559,6 +622,37 @@ export default class Field2dRenderer implements TabRenderer {
       context.drawImage(heatmapCanvas, canvasFieldLeft, canvasFieldTop, canvasFieldWidth, canvasFieldHeight);
     }
 
+    if (command.customEnvironment && this.customBitmap === null) {
+      let custom = command.customEnvironment;
+      context.save();
+      context.strokeStyle = "rgba(0, 0, 0, 0.18)";
+      context.lineWidth = 1;
+      context.beginPath();
+      for (let x = custom.originXMeters; x <= custom.originXMeters + custom.lengthMeters + 1e-6; x += 1) {
+        let start = calcCoordinates(toCenterFrame(custom, [x, custom.originYMeters]));
+        let end = calcCoordinates(toCenterFrame(custom, [x, custom.originYMeters + custom.widthMeters]));
+        context.moveTo(start[0], start[1]);
+        context.lineTo(end[0], end[1]);
+      }
+      for (let y = custom.originYMeters; y <= custom.originYMeters + custom.widthMeters + 1e-6; y += 1) {
+        let start = calcCoordinates(toCenterFrame(custom, [custom.originXMeters, y]));
+        let end = calcCoordinates(toCenterFrame(custom, [custom.originXMeters + custom.lengthMeters, y]));
+        context.moveTo(start[0], start[1]);
+        context.lineTo(end[0], end[1]);
+      }
+      context.stroke();
+      let origin = calcCoordinates(toCenterFrame(custom, [0, 0]));
+      context.strokeStyle = "#c0392b";
+      context.lineWidth = 2;
+      context.beginPath();
+      context.moveTo(origin[0] - 10, origin[1]);
+      context.lineTo(origin[0] + 10, origin[1]);
+      context.moveTo(origin[0], origin[1] - 10);
+      context.lineTo(origin[0], origin[1] + 10);
+      context.stroke();
+      context.restore();
+    }
+
     // Draw objects
     const renderingOrder = ["trajectory", "robot", "ghost", "arrow"];
     command.objects
@@ -692,6 +786,23 @@ export default class Field2dRenderer implements TabRenderer {
   }
 }
 
+function customConfig2d(env: CustomEnvironment): Config2d {
+  let pixels = customFieldPixels(env);
+  let inches = customFieldInches(env);
+  return {
+    name: "Custom",
+    path: "",
+    id: "custom",
+    isFTC: false,
+    coordinateSystem: "center-red",
+    useGrid: false,
+    topLeft: [0, 0],
+    bottomRight: [pixels.width, pixels.height],
+    widthInches: inches.widthInches,
+    heightInches: inches.heightInches
+  };
+}
+
 export enum Orientation {
   DEG_0 = 0,
   DEG_90 = 1,
@@ -705,6 +816,8 @@ export type Field2dRendererCommand = {
   orientation: Orientation;
   size: number;
   objects: Field2dRendererCommand_AnyObj[];
+  customEnvironment: CustomEnvironment | null;
+  customAssetUrl: string | null;
 };
 
 export type Field2dRendererCommand_AnyObj =

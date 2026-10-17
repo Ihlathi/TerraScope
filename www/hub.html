@@ -160,8 +160,46 @@
               <select class="field-select" title="Select field image">
                 <optgroup label="FRC Fields"></optgroup>
                 <optgroup label="FTC Fields"></optgroup>
+                <optgroup label="Environment">
+                  <option value="custom">Custom</option>
+                </optgroup>
               </select>
               <a class="field-source" href="#" title="Open field image source URL">Source</a>
+            </div>
+          </div>
+          <div class="custom-environment">
+            <div class="custom-row">
+              <span>Length (m)</span>
+              <input class="custom-length" type="number" step="any" value="10" title="Environment length in meters" />
+            </div>
+            <div class="custom-row">
+              <span>Width (m)</span>
+              <input class="custom-width" type="number" step="any" value="6" title="Environment width in meters" />
+            </div>
+            <div class="custom-row">
+              <span>Origin X (m)</span>
+              <input
+                class="custom-origin-x"
+                type="number"
+                step="any"
+                value="0"
+                title="World X of the minimum corner, in meters"
+              />
+            </div>
+            <div class="custom-row">
+              <span>Origin Y (m)</span>
+              <input
+                class="custom-origin-y"
+                type="number"
+                step="any"
+                value="0"
+                title="World Y of the minimum corner, in meters"
+              />
+            </div>
+            <div class="custom-row">
+              <span>Image</span>
+              <input class="custom-asset" type="file" accept="image/*" title="Optional field image" />
+              <button class="custom-asset-clear" type="button" title="Remove the field image">Clear</button>
             </div>
           </div>
 
@@ -212,7 +250,45 @@
               <select class="field-select" title="Select field model">
                 <optgroup label="FRC Fields"></optgroup>
                 <optgroup label="FTC Fields"></optgroup>
+                <optgroup label="Environment">
+                  <option value="custom">Custom</option>
+                </optgroup>
               </select>
+            </div>
+          </div>
+          <div class="custom-environment">
+            <div class="custom-row">
+              <span>Length (m)</span>
+              <input class="custom-length" type="number" step="any" value="10" title="Environment length in meters" />
+            </div>
+            <div class="custom-row">
+              <span>Width (m)</span>
+              <input class="custom-width" type="number" step="any" value="6" title="Environment width in meters" />
+            </div>
+            <div class="custom-row">
+              <span>Origin X (m)</span>
+              <input
+                class="custom-origin-x"
+                type="number"
+                step="any"
+                value="0"
+                title="World X of the minimum corner, in meters"
+              />
+            </div>
+            <div class="custom-row">
+              <span>Origin Y (m)</span>
+              <input
+                class="custom-origin-y"
+                type="number"
+                step="any"
+                value="0"
+                title="World Y of the minimum corner, in meters"
+              />
+            </div>
+            <div class="custom-row">
+              <span>Model</span>
+              <input class="custom-asset" type="file" accept=".glb,.gltf" title="Optional glTF field model" />
+              <button class="custom-asset-clear" type="button" title="Remove the field model">Clear</button>
             </div>
           </div>
 

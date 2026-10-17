@@ -7,6 +7,7 @@
 
 import * as THREE from "three";
 import { Config3dField } from "../../../AdvantageScopeAssets";
+import { CUSTOM_FIELD_ID, toCenterFrame } from "../../../CustomEnvironment";
 import { annotatedPose3dTo2d, convertFromCoordinateSystem } from "../../../geometry";
 import { Units } from "../../../units";
 import { Field3dRendererCommand_HeatmapObj } from "../../Field3dRenderer";
@@ -67,9 +68,11 @@ export default class HeatmapManager extends ObjectManager<Field3dRendererCommand
       this.HEIGHT_PIXELS
     ];
     let coordinateSystem =
-      (window.preferences?.coordinateSystem === "automatic"
-        ? fieldConfig.coordinateSystem
-        : window.preferences?.coordinateSystem) ?? "center-red";
+      fieldConfig.id === CUSTOM_FIELD_ID
+        ? "center-red"
+        : (window.preferences?.coordinateSystem === "automatic"
+            ? fieldConfig.coordinateSystem
+            : window.preferences?.coordinateSystem) ?? "center-red";
     let translations = object.poses.map(
       (x) =>
         convertFromCoordinateSystem(
@@ -80,6 +83,19 @@ export default class HeatmapManager extends ObjectManager<Field3dRendererCommand
           fieldDimensions[1]
         ).pose.translation
     );
+    if (fieldConfig.id === CUSTOM_FIELD_ID) {
+      translations = translations.map((translation) =>
+        toCenterFrame(
+          {
+            lengthMeters: fieldDimensions[0],
+            widthMeters: fieldDimensions[1],
+            originXMeters: fieldConfig.position[0],
+            originYMeters: fieldConfig.position[1]
+          },
+          translation
+        )
+      );
+    }
     this.heatmap.update(translations, pixelDimensions, fieldDimensions);
 
     // Update texture
@@ -102,6 +118,15 @@ export default class HeatmapManager extends ObjectManager<Field3dRendererCommand
       this.root.add(this.mesh);
     }
     if (this.mesh !== null) {
+      if (fieldConfig.id === CUSTOM_FIELD_ID) {
+        this.mesh.position.set(
+          fieldConfig.position[0] + fieldDimensions[0] / 2,
+          fieldConfig.position[1] + fieldDimensions[1] / 2,
+          0.02
+        );
+      } else {
+        this.mesh.position.set(0, 0, 0.02);
+      }
       (this.mesh.material as THREE.MeshPhongMaterial).map!.needsUpdate = true;
     }
   }

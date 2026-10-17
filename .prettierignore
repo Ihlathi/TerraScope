@@ -6,3 +6,5 @@ docs/build
 xr
 ROADMAP.md
 *.mcap
+*.jsonl
+*.tsv

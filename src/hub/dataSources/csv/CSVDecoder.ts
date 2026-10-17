@@ -92,14 +92,14 @@ export default class CSVDecoder {
     }
   }
 
-  decode(log: Log, data: string, progressCallback?: (progress: number) => void) {
+  decode(log: Log, data: string, progressCallback?: (progress: number) => void, delimiter = ",") {
     const rows = data.split("\n");
 
-    if (rows[0] == ["Timestamp", "Key", "Value"].join(",")) {
+    if (rows[0] == ["Timestamp", "Key", "Value"].join(delimiter)) {
       rows.forEach((row, rowIndex) => {
         if (rowIndex == 0 || row.length == 0) return;
 
-        const columns = row.split(",");
+        const columns = row.split(delimiter);
         if (columns.length != 3) {
           throw `Invalid number of columns (expected 3): ${columns.length}`;
         }
@@ -114,11 +114,11 @@ export default class CSVDecoder {
         }
       });
     } else if (rows[0].startsWith("Timestamp")) {
-      let keys = rows[0].split(",");
+      let keys = rows[0].split(delimiter);
       rows.forEach((row, rowIndex) => {
         if (rowIndex == 0 || row.length == 0) return;
 
-        const columns = row.split(",");
+        const columns = row.split(delimiter);
         if (columns.length != keys.length) {
           throw `Invalid number of columns (expected ${keys.length}): ${columns.length}`;
         }

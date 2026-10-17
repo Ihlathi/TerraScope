@@ -1,0 +1,3 @@
+Timestamp	BatteryVoltage	Enabled	Mode
+1	12.4	true	"auto"
+2	12.8	false	"teleop"

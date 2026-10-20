@@ -7,6 +7,7 @@
 
 import BigNumber from "bignumber.js";
 import Log from "../../../shared/log/Log";
+import { LogTimestamp, timestampSeconds } from "../../../shared/log/LogTimestamp";
 import { getOrDefault } from "../../../shared/log/LogUtil";
 import LoggableType from "../../../shared/log/LoggableType";
 import { parseCanFrame } from "./spark/can-spec-util";
@@ -48,7 +49,7 @@ export default class URCLSchema {
   /**
    * Parses a set of frames recorded by URCL using revision 3.
    */
-  static parseURCLr3(log: Log, key: string, timestamp: number, value: Uint8Array) {
+  static parseURCLr3(log: Log, key: string, timestamp: LogTimestamp, value: Uint8Array) {
     let devices: { [key: string]: { alias?: string; majorFirmware?: number } } = {};
     if (!key.endsWith("Raw/Periodic")) return;
     const rootKey = key.slice(0, key.length - "Raw/Periodic".length);
@@ -63,7 +64,7 @@ export default class URCLSchema {
     };
 
     // Read aliases
-    let aliasesRaw = getOrDefault(log, aliasKey, LoggableType.Raw, timestamp, null);
+    let aliasesRaw = getOrDefault(log, aliasKey, LoggableType.Raw, timestampSeconds(timestamp), null);
     if (aliasesRaw === null) aliasesRaw = DEFAULT_ALIASES;
     let aliases = JSON.parse(TEXT_DECODER.decode(aliasesRaw));
     Object.keys(aliases).forEach((idString) => {
@@ -71,7 +72,13 @@ export default class URCLSchema {
     });
 
     // Read persistent
-    let persistentRaw: Uint8Array | null = getOrDefault(log, persistentKey, LoggableType.Raw, timestamp, null);
+    let persistentRaw: Uint8Array | null = getOrDefault(
+      log,
+      persistentKey,
+      LoggableType.Raw,
+      timestampSeconds(timestamp),
+      null
+    );
     if (persistentRaw === null) return;
     const persistentDataView = new DataView(persistentRaw.buffer, persistentRaw.byteOffset, persistentRaw.byteLength);
     for (let position = 0; position < persistentRaw.length; position += PERSISTENT_SIZE) {

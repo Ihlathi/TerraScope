@@ -62,7 +62,7 @@ div.title-bar-text {
 body.fancy-title-bar-mac div.title-bar-text {
   left: calc(var(--side-bar-width) + 20px + ((1 - var(--show-side-bar)) * 60px));
   right: calc(
-    154px + var(--show-lock-buttons) * 28px + var(--show-update-button) * 38px + var(--show-feedback-button) * 38px
+    284px + var(--show-lock-buttons) * 28px + var(--show-update-button) * 38px + var(--show-feedback-button) * 38px
   );
 }
 
@@ -664,7 +664,7 @@ div.tab-bar {
   position: absolute;
   left: 10px;
   right: calc(
-    154px + var(--show-lock-buttons) * 28px + var(--show-update-button) * 38px + var(--show-feedback-button) * 38px
+    284px + var(--show-lock-buttons) * 28px + var(--show-update-button) * 38px + var(--show-feedback-button) * 38px
   );
   top: 0px;
   height: 50px;
@@ -700,7 +700,7 @@ div.tab-bar-shadow-left {
 
 div.tab-bar-shadow-right {
   right: calc(
-    154px + var(--show-lock-buttons) * 28px + var(--show-update-button) * 38px + var(--show-feedback-button) * 38px
+    284px + var(--show-lock-buttons) * 28px + var(--show-update-button) * 38px + var(--show-feedback-button) * 38px
   );
   background-image: linear-gradient(to left, white, rgba(255, 255, 255, 0.75), transparent);
 }
@@ -737,7 +737,7 @@ div.tab-bar-scroll {
   position: absolute;
   left: 10px;
   right: calc(
-    154px + var(--show-lock-buttons) * 28px + var(--show-update-button) * 38px + var(--show-feedback-button) * 38px
+    284px + var(--show-lock-buttons) * 28px + var(--show-update-button) * 38px + var(--show-feedback-button) * 38px
   );
   top: 0px;
   height: 50px;
@@ -822,6 +822,32 @@ div.tab.tab-selected {
 }
 
 /* Tab control buttons */
+
+div.timeline-clock-domain {
+  position: absolute;
+  right: calc(
+    154px + var(--show-lock-buttons) * 28px + var(--show-update-button) * 38px + var(--show-feedback-button) * 38px
+  );
+  top: 11px;
+  width: 120px;
+  height: 28px;
+  line-height: 28px;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  z-index: 6;
+  -webkit-app-region: no-drag;
+}
+
+body.fancy-title-bar-mac div.timeline-clock-domain,
+body.fancy-title-bar-lite div.timeline-clock-domain {
+  top: 8px;
+}
+
+body.fancy-title-bar-win div.timeline-clock-domain {
+  top: 49px;
+}
 
 button.tab-control {
   position: absolute;

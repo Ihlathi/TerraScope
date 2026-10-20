@@ -6,11 +6,13 @@
 // at the root directory of this project.
 
 import Log from "../../../shared/log/Log";
+import { LogTimestamp } from "../../../shared/log/LogTimestamp";
 import URCLSchema from "./URCLSchema";
 import URCLSchemaLegacy from "./URCLSchemaLegacy";
 
 /** Schemas that require custom handling because they can't be decoded using just the log data. */
-const CustomSchemas: Map<string, (log: Log, key: string, timestamp: number, value: Uint8Array) => void> = new Map();
+const CustomSchemas: Map<string, (log: Log, key: string, timestamp: LogTimestamp, value: Uint8Array) => void> =
+  new Map();
 export default CustomSchemas;
 
 CustomSchemas.set("URCL", URCLSchemaLegacy.parseURCLr1);

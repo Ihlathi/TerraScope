@@ -4,6 +4,7 @@
 // Use of this source code is governed by a BSD
 // license that can be found in the LICENSE file
 // at the root directory of this project.
+import { timestampDomainLabel } from "../shared/log/LogTimestamp";
 import { getRobotStateRanges } from "../shared/log/RobotState";
 import { calcAxisStepSize, clampValue, cleanFloat, scaleValue } from "../shared/util";
 import ScrollSensor from "./ScrollSensor";
@@ -13,6 +14,7 @@ export default class Timeline {
 
   private CONTAINER: HTMLElement;
   private CANVAS: HTMLCanvasElement;
+  private CLOCK_DOMAIN: HTMLElement;
   private SCROLL_OVERLAY: HTMLElement;
 
   private scrollSensor: ScrollSensor;
@@ -26,6 +28,7 @@ export default class Timeline {
 
   constructor(container: HTMLElement) {
     this.CONTAINER = container;
+    this.CLOCK_DOMAIN = document.querySelector(".timeline-clock-domain") as HTMLElement;
     this.CANVAS = container.getElementsByClassName("timeline-canvas")[0] as HTMLCanvasElement;
     this.SCROLL_OVERLAY = container.getElementsByClassName("timeline-scroll")[0] as HTMLCanvasElement;
 
@@ -108,6 +111,9 @@ export default class Timeline {
   }
 
   periodic() {
+    const clockLabel = "Clock: " + timestampDomainLabel(window.log.getDisplayClock());
+    this.CLOCK_DOMAIN.textContent = clockLabel;
+    this.CLOCK_DOMAIN.title = clockLabel;
     if (this.isHidden()) return;
     this.scrollSensor.periodic();
 

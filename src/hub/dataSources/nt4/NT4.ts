@@ -6,6 +6,8 @@
 // at the root directory of this project.
 
 import { Decoder, Encoder } from "@msgpack/msgpack";
+import { ConvertedTimestamp } from "../../../shared/log/LogTimestamp";
+import { convertNT4ReceiveTime } from "./NT4Timestamp";
 
 export const NT4_PORTS_DEFAULT = [5810];
 export const NT4_PORTS_DS = [6767];
@@ -397,6 +399,11 @@ export class NT4_Client {
     } else {
       return (clientTime === undefined ? this.getClientTime_us() : clientTime) + this.serverTimeOffset_us;
     }
+  }
+
+  getLiveTimestamp(): ConvertedTimestamp | null {
+    if (this.serverTimeOffset_us === null) return null;
+    return convertNT4ReceiveTime(this.getClientTime_us(), this.serverTimeOffset_us, this.networkLatency_us);
   }
 
   /** Returns the current network latency in microseconds */

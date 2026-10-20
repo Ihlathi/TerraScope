@@ -18,6 +18,8 @@
     "src/hub/dataSources/json/JSONDecoder.test.ts",
     "src/hub/dataSources/foxglove/FoxgloveSession.test.ts",
     "src/shared/live/LiveFrameTransport.test.ts",
-    "src/hub/dataSources/ros2/ROS2BagDecoder.test.ts"
+    "src/hub/dataSources/ros2/ROS2BagDecoder.test.ts",
+    "src/shared/log/LogTimestamp.test.ts",
+    "src/hub/dataSources/nt4/NT4Timestamp.test.ts"
   ]
 }

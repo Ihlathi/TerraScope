@@ -60,7 +60,7 @@ function bundle(input, isMain, isXRClient, external = []) {
             compact: true,
             targets: "> 0.1%, not dead"
           })
-        : cleanup(),
+        : cleanup({ exclude: "**/node_modules/sql.js/**" }),
       replacePlugin(
         {
           __distribution__: isWpilib ? "WPILib" : isDS ? "LiteDS" : isLite ? "Lite" : "FRC6328",

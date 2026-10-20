@@ -8,6 +8,16 @@ Read these first, in order:
 2. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): the current data pipeline and the seams where new formats, protocols, and views plug in.
 3. [docs/PLAN.md](docs/PLAN.md): the ordered list of PR-sized chunks. Take the lowest-numbered chunk that is not done unless you were given a specific one.
 
+## Poteto mode (required)
+
+Every task runs in poteto mode. The full rules live in this repo, so you do not need Cursor:
+
+1. Read `.agents/PSTACK.md`. It maps the Cursor-specific names in the skills to what you have.
+2. Read `.agents/skills/poteto-mode/SKILL.md` and follow it. Match the task to its playbook in `.agents/skills/poteto-mode/playbooks/` and work through that playbook's steps.
+3. Read the leaf principle skills (`.agents/skills/principle-*/SKILL.md`) that poteto-mode names for your task, and the `unslop` and `technical-writing` skills before writing the PR description.
+
+"Run in poteto mode", `/poteto-mode`, and `$poteto-mode` all mean this. The summary below is a reminder, not a replacement.
+
 ## How to work
 
 - **One chunk, one PR.** Keep each PR to a single focused change from `docs/PLAN.md`. Branch from the latest `main`. Do not stack on unmerged branches.

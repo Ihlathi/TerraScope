@@ -1,0 +1,36 @@
+[
+  {
+    "mode": "rlog",
+    "result": "PASS",
+    "title": "127.0.0.1 — TerraScope",
+    "fields": ["BatteryVoltage"],
+    "voltage": [12.4],
+    "sceneType": null,
+    "range": [1, 3]
+  },
+  {
+    "mode": "rlog",
+    "result": "RECONNECT PASS",
+    "title": "127.0.0.1 — TerraScope",
+    "voltage": [13.1],
+    "range": [1, 1]
+  },
+  {
+    "mode": "foxglove",
+    "result": "PASS",
+    "title": "127.0.0.1:42087 — TerraScope",
+    "fields": ["BatteryVoltage", "pose", "pose/x", "pose/y", "Scene"],
+    "voltage": [12.4],
+    "poseX": [1.5],
+    "poseY": [2.5],
+    "sceneType": "foxglove.SceneUpdate",
+    "range": [1, 3]
+  },
+  {
+    "mode": "foxglove",
+    "result": "RECONNECT PASS",
+    "title": "127.0.0.1:42087 — TerraScope",
+    "voltage": [12.4, 13.1],
+    "range": [1, 100]
+  }
+]

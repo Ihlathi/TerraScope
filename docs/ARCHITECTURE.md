@@ -52,9 +52,12 @@ There is no streaming read from disk. The process holds the file bytes, then the
 | Mode                                                | Class                                                    | Transport                                                |
 | --------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
 | `nt4`, `nt4-akit`, `nt4-systemcore`, Driver Station | `src/hub/dataSources/nt4/NT4Source.ts`, `NT4.ts`         | WebSocket after an HTTP port probe (5810, 6767, or 6810) |
-| `rlog`                                              | `src/hub/dataSources/rlog/RLOGServerSource.ts`           | TCP in the Electron main process                         |
+| `rlog`                                              | `src/hub/dataSources/rlog/RLOGServerSource.ts`           | `RlogTcpTransport` in the Electron main process          |
 | `phoenix`                                           | `src/hub/dataSources/PhoenixDiagnosticsSource.ts`        | HTTP JSON on port 1250                                   |
 | `ftcdashboard`                                      | `src/hub/dataSources/ftcdashboard/FTCDashboardSource.ts` | WebSocket on port 8000                                   |
+| `foxglove`                                          | `src/hub/dataSources/foxglove/FoxgloveSource.ts`         | `WebSocketFrameTransport`, default port 8765             |
+
+`src/shared/live/LiveFrameTransport.ts` defines the socket lifecycle and frame delivery contract. RLOG TCP strips its big-endian length prefix before sending payload bytes over IPC. WebSocket messages keep their text or binary form. The transports do not import `Log` or decode telemetry. `RLOGServerSource` and `FoxgloveSource` retain reconnect policy and pass frames to `RLOGDecoder` and `FoxgloveSession` respectively.
 
 `LiveDataSource.ts` can drop samples older than the live discard window. Writes are separate: `NT4Tuner.ts`, `NT4Publisher.ts`, and the FTC config path that implements `LiveDataTuner.ts`. Lite allows only the NetworkTables and FTC modes (`LITE_ALLOWED_LIVE_MODES` in `src/shared/Preferences.ts`).
 
@@ -117,7 +120,7 @@ Roadmap section 42 asks for independent layers. Today:
 | Layer         | What is independent                                                                  | What is still coupled                                                                                               |
 | ------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
 | Ingestion     | Workers and live sources only have to produce a `Log`.                               | File detection, conversion, and dialogs sit in `main.ts`. One live source at a time.                                |
-| Transport     | RLOG TCP is isolated in the main process. NT4's WebSocket is its own class.          | Each live class decodes its own payload. There is no transport that can carry more than one serialization.          |
+| Transport     | RLOG TCP and Foxglove WebSocket adapters deliver frames without decoding telemetry.  | NetworkTables still combines WebSocket transport and protocol interpretation.                                       |
 | Serialization | Struct, protobuf, and custom schema decoders are callable from more than one source. | WPILOG record layout, RLOG framing, and CSV parsing are private to those readers. MCAP can be written and not read. |
 | Semantics     | Tabs agree on `LoggableType` and WPILib type strings.                                | Pose, mechanism, and swerve meaning is reimplemented per controller. `RobotState.ts` hard-codes FRC keys.           |
 | Rendering     | Renderers do not import data sources.                                                | A new visual meaning still needs a controller change. There is no semantic object a new renderer can subscribe to.  |

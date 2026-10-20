@@ -1,0 +1,216 @@
+TerraScope chunk 7 verification
+Node 24.19.0; Emscripten 4.0.12; Linux x64.
+All commands ran from the repository root.
+Installation used the cloud proxy and writable cache, with YOUTUBE_DL_SKIP_DOWNLOAD=true as in CI.
+Formatting ran with generated docs/build, lite/static/bundles, and build temporarily moved out of the checkout because the existing license scanner follows generated files. All outputs were restored.
+
+$ npm ci
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+npm warn skipping integrity check for git dependency ssh://git@github.com/jwbonner/youtube-dl-exec.git
+npm warn skipping integrity check for git dependency ssh://git@github.com/jwbonner/heatmap.js.git
+npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+> advantagescope@27.0.0-alpha-6 postinstall
+> cd docs && npm install && cd .. && node getLicenses.mjs && node tesseractLangDownload.mjs && node bundleLiteAssets.mjs && npm run download-owlet
+
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+
+up to date in 4s
+Saved 737 licenses
+Lite assets are already up-to-date. Skipping download.
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+
+> advantagescope@27.0.0-alpha-6 download-owlet
+> rolldown -c --configRunOwletDownload && node runOwletDownload.js
+
+
+ WARN  Option configRunOwletDownload is unrecognized. We will ignore this option.
+
+<DIR>/runOwletDownload.js  chunk │ size: 12.02 kB
+
+✔ rolldown v1.0.2 Finished in 9.36 s
+Downloading owlet...
+Finished downloading for win-x64
+Finished downloading for linux-armv7l
+Finished downloading for mac-x64
+Finished downloading for win-arm64
+Finished downloading for linux-arm64
+Finished downloading for mac-arm64
+Finished downloading for linux-x64
+
+added 733 packages in 2m
+
+Exit status: 0
+
+$ npm run wasm:compile
+
+> advantagescope@27.0.0-alpha-6 wasm:compile
+> node wasmCompile.mjs
+
+
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+Exit status: 0
+
+$ npm run compile
+
+> advantagescope@27.0.0-alpha-6 compile
+> rolldown -c
+
+<DIR>/main.js  chunk │ size: 307.99 kB
+<DIR>/preload.js  chunk │ size: 0.64 kB
+<DIR>/chunk/WPILOGShared.js         chunk │ size:     0.48 kB
+<DIR>/chunk/buildConstants.js       chunk │ size:     0.77 kB
+<DIR>/rlogWorker.js                 chunk │ size:     0.89 kB
+<DIR>/chunk/LoggableType.js         chunk │ size:     0.91 kB
+<DIR>/chunk/Preferences.js          chunk │ size:     0.92 kB
+<DIR>/chunk/prepareTransfer.js      chunk │ size:     0.95 kB
+<DIR>/csvWorker.js                  chunk │ size:     1.01 kB
+<DIR>/tsvWorker.js                  chunk │ size:     1.01 kB
+<DIR>/jsonWorker.js                 chunk │ size:     1.02 kB
+<DIR>/jsonlWorker.js                chunk │ size:     1.02 kB
+<DIR>/renameTab.js                  chunk │ size:     1.30 kB
+<DIR>/editFov.js                    chunk │ size:     1.37 kB
+<DIR>/betaWelcome.js                chunk │ size:     1.50 kB
+<DIR>/editRange.js                  chunk │ size:     1.61 kB
+<DIR>/loadRobot.js                  chunk │ size:     1.92 kB
+<DIR>/chunk/chunk.js                chunk │ size:     2.14 kB
+<DIR>/chunk/JSONDecoder.js          chunk │ size:     2.40 kB
+<DIR>/export.js                     chunk │ size:     2.82 kB
+<DIR>/chunk/CSVDecoder.js           chunk │ size:     3.21 kB
+<DIR>/loadField.js                  chunk │ size:     4.14 kB
+<DIR>/chunk/util.js                 chunk │ size:     5.46 kB
+<DIR>/preferences.js                chunk │ size:     5.65 kB
+<DIR>/sourceListHelp.js             chunk │ size:     5.97 kB
+<DIR>/mcapWorker.js                 chunk │ size:     6.98 kB
+<DIR>/dsLogWorker.js                chunk │ size:     7.79 kB
+<DIR>/roadRunnerWorker.js           chunk │ size:     8.09 kB
+<DIR>/satellite.js                  chunk │ size:     8.44 kB
+<DIR>/download.js                   chunk │ size:    10.25 kB
+<DIR>/chunk/RLOGDecoder.js          chunk │ size:    10.78 kB
+<DIR>/wpilogWorker.js               chunk │ size:    15.48 kB
+<DIR>/exportWorker.js               chunk │ size:    19.29 kB
+<DIR>/chunk/units.js                chunk │ size:    25.24 kB
+<DIR>/chunk/Colors.js               chunk │ size:    28.11 kB
+<DIR>/xrControls.js                 chunk │ size:    80.68 kB
+<DIR>/chunk/Log.js                  chunk │ size:    87.90 kB
+<DIR>/chunk/src.js                  chunk │ size:    88.85 kB
+<DIR>/chunk/RobotState.js           chunk │ size:   288.30 kB
+<DIR>/hub.js                        chunk │ size:   377.90 kB
+<DIR>/chunk/VideoRenderer.js        chunk │ size:   532.06 kB
+<DIR>/unitConversion.js             chunk │ size: 1,040.25 kB
+<DIR>/chunk/CustomSchemas.js        chunk │ size: 1,063.27 kB
+<DIR>/licenses.js                   chunk │ size: 1,393.57 kB
+<DIR>/chunk/Field3dRendererImpl.js  chunk │ size: 1,415.91 kB
+<DIR>/xrClient.js  chunk │ size: 1,078.92 kB
+
+✔ rolldown v1.0.2 Finished in 69.50 s
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+Exit status: 0
+
+$ npm test
+
+> advantagescope@27.0.0-alpha-6 test
+> tsc -p tsconfig.test.json && node --test build/unit-test/hub/dataSources/mcap/MCAPDecoder.test.js build/unit-test/hub/dataSources/csv/CSVDecoder.test.js build/unit-test/hub/dataSources/json/JSONDecoder.test.js build/unit-test/hub/dataSources/foxglove/FoxgloveSession.test.js build/unit-test/shared/live/LiveFrameTransport.test.js && node --experimental-strip-types --experimental-detect-module --test src/shared/log/SemanticType.test.ts src/shared/CustomEnvironment.test.ts
+
+✔ comma-separated table and list imports are unchanged (6.890833ms)
+✔ tab-separated fixture uses the same timestamp and columns (3.478821ms)
+✔ address uses the typed host and default port (1.297812ms)
+✔ subscribe is sent after serverInfo for each advertised channel (5.282019ms)
+✔ JSON samples become log fields and other encodings stay raw (2.340065ms)
+✔ existing live modes keep their names (0.188112ms)
+✔ fixture server delivers a JSON sample (61.136763ms)
+✔ JSON array of timestamped objects becomes log fields (7.610895ms)
+✔ JSONL records use the same timestamp and fields (1.867228ms)
+✔ reads declared MCAP channels and schemas into log fields (13.328695ms)
+✔ rejects a buffer that is not an MCAP file (0.74417ms)
+✔ TCP delivers opaque frames across split headers, bodies, heartbeats and coalesced packets (102.009814ms)
+✔ TCP payloads decode with the unchanged RLOG decoder and writes reach the peer (38.97104ms)
+✔ TCP stop and restart discard partial frames and suppress the old connection's close (55.320143ms)
+✔ TCP frame rejection stops delivery of the rest of a packet (29.088571ms)
+✔ TCP data timeout disconnects even while outbound heartbeats keep the socket busy (139.930388ms)
+✔ TCP rejects a negative length without hanging or delivering bytes (22.107226ms)
+✔ TCP connection errors notify once despite the following close event (32.221114ms)
+✔ WebSocket preserves text, binary, subprotocol and outbound writes (79.76859ms)
+✔ WebSocket restart suppresses old callbacks and a rejected frame closes once (39.503243ms)
+✔ Foxglove session decodes negotiated telemetry through the frame transport (13.662919ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1190.02719
+(node:6427) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/TerraScope/src/shared/CustomEnvironment.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspace/TerraScope/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ size and origin define the rectangle from the minimum corner (6.734968ms)
+✔ center frame puts the rectangle center at the origin the 2D view uses (0.276226ms)
+✔ an origin at the center leaves world (0, 0) in the middle (0.426962ms)
+✔ rejects a non-positive or non-finite size (0.616945ms)
+✔ pixel and inch size follow length and width, not a bundled field (0.900995ms)
+(node:6428) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/TerraScope/src/shared/log/SemanticType.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspace/TerraScope/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ maps WPILib geometry structs onto semantic kinds (1.087951ms)
+✔ maps AdvantageKit mechanism and Choreo trajectory structs (0.170939ms)
+✔ returns null for unmapped types (0.116247ms)
+✔ pose source lists stay the field-tab sets (1.464193ms)
+✔ trajectory, rotation, mechanism, and numeric lists (0.550648ms)
+✔ pose reader accepts mapped spatial types and rejects mechanism joints (0.15544ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 253.160368
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+Exit status: 0
+
+$ npm run check-format
+
+> advantagescope@27.0.0-alpha-6 check-format
+> license-check-and-add check -f file-header-config.json && prettier --check .
+
+No default format specified. Using {"prepend":"/*","append":"*/"} as backup
+✔ All files have licenses.
+Command succeeded
+Checking formatting...
+All matched files use Prettier code style!
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+Exit status: 0
+
+$ node docs/verification/chunk-7/live-smoke.cjs /workspace/chunk7-final
+{"mode":"rlog","result":"PASS","title":"127.0.0.1 — TerraScope","fields":["BatteryVoltage"],"voltage":[12.4],"sceneType":null,"range":[1,3]}
+{"mode":"rlog","result":"RECONNECT PASS","title":"127.0.0.1 — TerraScope","voltage":[13.1],"range":[1,1]}
+{"mode":"foxglove","result":"PASS","title":"127.0.0.1:42087 — TerraScope","fields":["BatteryVoltage","pose","pose/x","pose/y","Scene"],"voltage":[12.4],"poseX":[1.5],"poseY":[2.5],"sceneType":"foxglove.SceneUpdate","range":[1,3]}
+{"mode":"foxglove","result":"RECONNECT PASS","title":"127.0.0.1:42087 — TerraScope","voltage":[12.4,13.1],"range":[1,100]}
+
+Exit status: 0
+

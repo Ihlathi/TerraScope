@@ -6,6 +6,7 @@
 // at the root directory of this project.
 
 import Log from "../../../shared/log/Log";
+import { LogTimestamp, timestampSeconds } from "../../../shared/log/LogTimestamp";
 import { getOrDefault } from "../../../shared/log/LogUtil";
 import LoggableType from "../../../shared/log/LoggableType";
 
@@ -59,7 +60,7 @@ export default class URCLSchemaLegacy {
   /**
    * Parses a set of frames recorded by URCL using revision 2.
    */
-  static parseURCLr2(log: Log, key: string, timestamp: number, value: Uint8Array) {
+  static parseURCLr2(log: Log, key: string, timestamp: LogTimestamp, value: Uint8Array) {
     let devices: { [key: string]: { alias?: string; model?: DeviceModel; firmware?: FirmwareVersion } } = {};
     if (!key.endsWith("Raw/Periodic")) return;
     const rootKey = key.slice(0, key.length - "Raw/Periodic".length);
@@ -74,7 +75,7 @@ export default class URCLSchemaLegacy {
     };
 
     // Read aliases
-    let aliasesRaw = getOrDefault(log, aliasKey, LoggableType.Raw, timestamp, null);
+    let aliasesRaw = getOrDefault(log, aliasKey, LoggableType.Raw, timestampSeconds(timestamp), null);
     if (aliasesRaw === null) aliasesRaw = DEFAULT_ALIASES;
     let aliases = JSON.parse(TEXT_DECODER.decode(aliasesRaw));
     Object.keys(aliases).forEach((idString) => {
@@ -82,7 +83,7 @@ export default class URCLSchemaLegacy {
     });
 
     // Read persistent
-    let persistentRaw = getOrDefault(log, persistentKey, LoggableType.Raw, timestamp, null);
+    let persistentRaw = getOrDefault(log, persistentKey, LoggableType.Raw, timestampSeconds(timestamp), null);
     if (persistentRaw === null) return;
     const persistentDataView = new DataView(persistentRaw.buffer, persistentRaw.byteOffset, persistentRaw.byteLength);
     for (let position = 0; position < persistentRaw.length; position += PERSISTENT_SIZE) {
@@ -152,7 +153,7 @@ export default class URCLSchemaLegacy {
   /**
    * Parses a set of frames recorded by URCL using revision 1.
    */
-  static parseURCLr1(log: Log, key: string, timestamp: number, value: Uint8Array) {
+  static parseURCLr1(log: Log, key: string, timestamp: LogTimestamp, value: Uint8Array) {
     const dataView = new DataView(value.buffer, value.byteOffset, value.byteLength);
     const persistentCount = dataView.getUint32(0, true);
     const periodicCount = dataView.getUint32(4, true);
@@ -270,7 +271,7 @@ export default class URCLSchemaLegacy {
   private static parsePeriodic0(
     log: Log,
     key: string,
-    timestamp: number,
+    timestamp: LogTimestamp,
     value: Uint8Array,
     model: DeviceModel,
     firmware: FirmwareVersion
@@ -287,7 +288,7 @@ export default class URCLSchemaLegacy {
     const isFollower = (bits & 0x20) !== 0;
 
     log.putNumber(key + "/AppliedOutput", timestamp, appliedOutput);
-    const busVoltage = getOrDefault(log, key + "/BusVoltage", LoggableType.Number, timestamp, 0);
+    const busVoltage = getOrDefault(log, key + "/BusVoltage", LoggableType.Number, timestampSeconds(timestamp), 0);
     if (busVoltage > 0) {
       log.putNumber(key + "/AppliedOutputVoltage", timestamp, appliedOutput * busVoltage);
     }
@@ -311,7 +312,7 @@ export default class URCLSchemaLegacy {
   private static parsePeriodic1(
     log: Log,
     key: string,
-    timestamp: number,
+    timestamp: LogTimestamp,
     value: Uint8Array,
     model: DeviceModel,
     firmware: FirmwareVersion
@@ -341,7 +342,7 @@ export default class URCLSchemaLegacy {
   private static parsePeriodic2(
     log: Log,
     key: string,
-    timestamp: number,
+    timestamp: LogTimestamp,
     value: Uint8Array,
     model: DeviceModel,
     firmware: FirmwareVersion
@@ -369,7 +370,7 @@ export default class URCLSchemaLegacy {
   private static parsePeriodic3(
     log: Log,
     key: string,
-    timestamp: number,
+    timestamp: LogTimestamp,
     value: Uint8Array,
     model: DeviceModel,
     firmware: FirmwareVersion
@@ -399,7 +400,7 @@ export default class URCLSchemaLegacy {
   private static parsePeriodic4(
     log: Log,
     key: string,
-    timestamp: number,
+    timestamp: LogTimestamp,
     value: Uint8Array,
     model: DeviceModel,
     firmware: FirmwareVersion
@@ -422,7 +423,7 @@ export default class URCLSchemaLegacy {
   private static parsePeriodic5(
     log: Log,
     key: string,
-    timestamp: number,
+    timestamp: LogTimestamp,
     value: Uint8Array,
     model: DeviceModel,
     firmware: FirmwareVersion
@@ -444,7 +445,7 @@ export default class URCLSchemaLegacy {
   private static parsePeriodic6(
     log: Log,
     key: string,
-    timestamp: number,
+    timestamp: LogTimestamp,
     value: Uint8Array,
     model: DeviceModel,
     firmware: FirmwareVersion
@@ -465,7 +466,7 @@ export default class URCLSchemaLegacy {
   private static parsePeriodic7(
     log: Log,
     key: string,
-    timestamp: number,
+    timestamp: LogTimestamp,
     value: Uint8Array,
     model: DeviceModel,
     firmware: FirmwareVersion

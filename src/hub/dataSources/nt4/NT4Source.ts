@@ -8,6 +8,7 @@
 import { IS_LITE } from "../../../shared/buildConstants";
 import Log from "../../../shared/log/Log";
 import { PHOTON_PREFIX, PROTO_PREFIX, STRUCT_PREFIX, getStructuredTypeFromRaw } from "../../../shared/log/LogKeyUtils";
+import { ConvertedTimestamp } from "../../../shared/log/LogTimestamp";
 import { getURCLKeys } from "../../../shared/log/LogUtil";
 import LoggableType from "../../../shared/log/LoggableType";
 import { AUTONOMOUS_KEYS, ENABLED_KEYS, UTILITY_KEYS } from "../../../shared/log/RobotState";
@@ -15,6 +16,7 @@ import { checkArrayType } from "../../../shared/util";
 import { LiveDataSource, LiveDataSourceStatus } from "../LiveDataSource";
 import CustomSchemas from "../schema/CustomSchemas";
 import { NT4_Client, NT4_PORTS_DEFAULT, NT4_PORTS_DS, NT4_PORTS_SYSTEMCORE, NT4_Topic } from "./NT4";
+import { NT4_SERVER_CLOCK } from "./NT4Timestamp";
 import NT4Tuner from "./NT4Tuner";
 
 export const WPILOG_PREFIX = "NT:";
@@ -191,11 +193,11 @@ export default class NT4Source extends LiveDataSource {
     this.shouldRunOutputCallback = false;
     this.outputCallback(this.log, () => {
       if (this.client) {
-        let serverTime = this.client.getServerTime_us();
-        if (serverTime === null) {
+        let liveTimestamp = this.client.getLiveTimestamp();
+        if (liveTimestamp === null) {
           return 10;
         } else {
-          return (serverTime - this.client.getNetworkLatency_us()) / 1000000;
+          return liveTimestamp.display.seconds;
         }
       } else {
         return 10;
@@ -214,7 +216,7 @@ export default class NT4Source extends LiveDataSource {
     if (window.preferences === null) {
       this.setStatus(LiveDataSourceStatus.Error);
     } else {
-      this.log = new Log();
+      this.log = new Log(true, NT4_SERVER_CLOCK);
       let ports: number[];
       switch (this.mode) {
         case NT4Mode.Systemcore:
@@ -266,7 +268,13 @@ export default class NT4Source extends LiveDataSource {
           if (!this.log || !this.client || topic.name === "") return;
 
           let key = this.getKeyFromTopic(topic);
-          let timestamp = Math.max(timestamp_us, this.log.getTimestampRange()[0]) / 1000000;
+          const timestamp: ConvertedTimestamp = {
+            source: { seconds: timestamp_us / 1e6, domain: NT4_SERVER_CLOCK },
+            display: {
+              seconds: Math.max(timestamp_us, this.log.getTimestampRange()[0]) / 1000000,
+              domain: NT4_SERVER_CLOCK
+            }
+          };
 
           let updated = false;
           switch (topic.type) {
@@ -377,7 +385,7 @@ export default class NT4Source extends LiveDataSource {
         () => {
           // Connected
           this.setStatus(LiveDataSourceStatus.Active);
-          this.log = new Log();
+          this.log = new Log(true, NT4_SERVER_CLOCK);
           this.shouldRunOutputCallback = true;
           if (!this.connectTime && this.client !== null) {
             this.connectTime = this.client.getClientTime_us();

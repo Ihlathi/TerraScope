@@ -7,6 +7,7 @@
 
 import LoggableType from "./LoggableType";
 import { isChildLog } from "./LogKeyUtils";
+import { DomainTimestamp, LogTimestamp, TimestampDomain, timestampSeconds, timestampSource } from "./LogTimestamp";
 import { logValuesEqual } from "./LogUtil";
 import {
   LogValueSetAny,
@@ -23,6 +24,7 @@ import {
 export default class LogField {
   private type: LoggableType;
   private data: LogValueSetAny = { timestamps: [], values: [] };
+  private sourceTimestamps: (DomainTimestamp | null)[] | undefined;
   public structuredType: string | null = null;
   public wpilibType: string | null = null; // Original type from WPILOG & NT4
   public metadataString = "";
@@ -52,6 +54,16 @@ export default class LogField {
     return this.data.timestamps;
   }
 
+  getTimestampSources(start: number, end: number, displayClock: TimestampDomain): DomainTimestamp[] {
+    const [first, last] = this.getRangeIndices(start, end);
+    return this.data.timestamps.slice(first, last).map((seconds, index) => {
+      const source = this.sourceTimestamps?.[first + index];
+      return source === undefined || source === null
+        ? { seconds, domain: { ...displayClock } }
+        : { seconds: source.seconds, domain: { ...source.domain } };
+    });
+  }
+
   /** Clears all data before the provided timestamp. */
   clearBeforeTime(clearTimestamp: number) {
     for (let i = 0; i < this.data.timestamps.length; i++) {
@@ -63,6 +75,7 @@ export default class LogField {
 
       this.data.timestamps.splice(0, i);
       this.data.values.splice(0, i);
+      this.sourceTimestamps?.splice(0, i);
       break;
     }
 
@@ -72,15 +85,7 @@ export default class LogField {
     }
   }
 
-  /** Returns the values in the specified timestamp range.
-   *
-   * If a UUID is provided, requests for single timestamps will cache
-   * the timestamp index to make searches of chronological data faster.
-   */
-  getRange(start: number, end: number, uuid?: string, startOffset?: number): LogValueSetAny {
-    let timestamps: number[];
-    let values: any[];
-
+  private getRangeIndices(start: number, end: number, uuid?: string, startOffset?: number): [number, number] {
     let cacheIndex: number | null = null;
     if (start === end && uuid !== undefined && uuid in this.getRangeCache) {
       cacheIndex = this.getRangeCache[uuid];
@@ -119,20 +124,26 @@ export default class LogField {
       // Search from start
       endValueIndex = this.data.timestamps.findIndex((x) => x >= end);
     }
-    if (endValueIndex === -1 || endValueIndex === this.data.timestamps.length - 1) {
-      // Extend to end of timestamps
-      timestamps = this.data.timestamps.slice(startValueIndex);
-      values = this.data.values.slice(startValueIndex);
-    } else {
-      timestamps = this.data.timestamps.slice(startValueIndex, endValueIndex + 1);
-      values = this.data.values.slice(startValueIndex, endValueIndex + 1);
-    }
+    const endIndex =
+      endValueIndex === -1 || endValueIndex === this.data.timestamps.length - 1
+        ? this.data.timestamps.length
+        : endValueIndex + 1;
 
     if (start === end && uuid !== undefined) {
       this.getRangeCache[uuid] = startValueIndex;
     }
 
-    return { timestamps: timestamps, values: values };
+    return [startValueIndex, endIndex];
+  }
+
+  /** Returns the values in the specified timestamp range.
+   *
+   * If a UUID is provided, requests for single timestamps will cache
+   * the timestamp index to make searches of chronological data faster.
+   */
+  getRange(start: number, end: number, uuid?: string, startOffset?: number): LogValueSetAny {
+    const [first, last] = this.getRangeIndices(start, end, uuid, startOffset);
+    return { timestamps: this.data.timestamps.slice(first, last), values: this.data.values.slice(first, last) };
   }
 
   /** Reads a set of Raw values from the field. */
@@ -176,8 +187,13 @@ export default class LogField {
   }
 
   /** Inserts a new value at the correct index. */
-  private putData(timestamp: number, value: any) {
+  private putData(time: LogTimestamp, value: any) {
+    const timestamp = timestampSeconds(time);
+    const source = timestampSource(time);
     if (value === null) return;
+    if (source !== null && this.sourceTimestamps === undefined) {
+      this.sourceTimestamps = this.data.timestamps.map(() => null);
+    }
 
     // Find position to insert based on timestamp
     let insertIndex: number;
@@ -194,7 +210,9 @@ export default class LogField {
           return x < timestamp;
         }) + 1;
       if (alreadyExists) {
-        this.data.values[this.data.timestamps.indexOf(timestamp)] = value;
+        const index = this.data.timestamps.indexOf(timestamp);
+        this.data.values[index] = value;
+        if (this.sourceTimestamps !== undefined) this.sourceTimestamps[index] = source;
         return;
       }
     }
@@ -210,57 +228,59 @@ export default class LogField {
     ) {
       // Same as the next value
       this.data.timestamps[insertIndex] = timestamp;
+      if (this.sourceTimestamps !== undefined) this.sourceTimestamps[insertIndex] = source;
     } else {
       // New value
       this.data.timestamps.splice(insertIndex, 0, timestamp);
       this.data.values.splice(insertIndex, 0, value);
+      this.sourceTimestamps?.splice(insertIndex, 0, source);
     }
   }
 
   /** Writes a new Raw value to the field. */
-  putRaw(timestamp: number, value: Uint8Array) {
+  putRaw(timestamp: LogTimestamp, value: Uint8Array) {
     if (this.type === LoggableType.Raw) {
       this.putData(timestamp, value);
     } else this.typeWarning = true;
   }
 
   /** Writes a new Boolean value to the field. */
-  putBoolean(timestamp: number, value: boolean) {
+  putBoolean(timestamp: LogTimestamp, value: boolean) {
     if (this.type === LoggableType.Boolean) {
       this.putData(timestamp, value);
     } else this.typeWarning = true;
   }
 
   /** Writes a new Number value to the field. */
-  putNumber(timestamp: number, value: number) {
+  putNumber(timestamp: LogTimestamp, value: number) {
     if (this.type === LoggableType.Number) {
       this.putData(timestamp, value);
     } else this.typeWarning = true;
   }
 
   /** Writes a new String value to the field. */
-  putString(timestamp: number, value: string) {
+  putString(timestamp: LogTimestamp, value: string) {
     if (this.type === LoggableType.String) {
       this.putData(timestamp, value);
     } else this.typeWarning = true;
   }
 
   /** Writes a new BooleanArray value to the field. */
-  putBooleanArray(timestamp: number, value: boolean[]) {
+  putBooleanArray(timestamp: LogTimestamp, value: boolean[]) {
     if (this.type === LoggableType.BooleanArray) {
       this.putData(timestamp, value);
     } else this.typeWarning = true;
   }
 
   /** Writes a new NumberArray value to the field. */
-  putNumberArray(timestamp: number, value: number[]) {
+  putNumberArray(timestamp: LogTimestamp, value: number[]) {
     if (this.type === LoggableType.NumberArray) {
       this.putData(timestamp, value);
     } else this.typeWarning = true;
   }
 
   /** Writes a new StringArray value to the field. */
-  putStringArray(timestamp: number, value: string[]) {
+  putStringArray(timestamp: LogTimestamp, value: string[]) {
     if (this.type === LoggableType.StringArray) {
       this.putData(timestamp, value);
     } else this.typeWarning = true;
@@ -272,6 +292,7 @@ export default class LogField {
       type: this.type,
       timestamps: this.data.timestamps,
       values: this.data.values,
+      ...(this.sourceTimestamps === undefined ? {} : { sourceTimestamps: this.sourceTimestamps }),
       structuredType: this.structuredType,
       wpilibType: this.wpilibType,
       metadataString: this.metadataString,
@@ -287,6 +308,9 @@ export default class LogField {
       timestamps: serializedData.timestamps,
       values: serializedData.values
     };
+    field.sourceTimestamps = serializedData.sourceTimestamps?.map((source: DomainTimestamp | null) =>
+      source === null ? null : { seconds: source.seconds, domain: { ...source.domain } }
+    );
     field.structuredType = serializedData.structuredType;
     field.wpilibType = serializedData.wpilibType;
     field.metadataString = serializedData.metadataString;

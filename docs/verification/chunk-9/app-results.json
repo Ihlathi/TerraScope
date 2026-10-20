@@ -1,0 +1,277 @@
+[
+  {
+    "format": "wpilog",
+    "result": "PASS",
+    "battery": {
+      "timestamps": [1, 2],
+      "values": [12.4, 12.8]
+    },
+    "domain": "Clock: Log time",
+    "samples": {
+      "BatteryVoltage": {
+        "type": 2,
+        "data": {
+          "timestamps": [1, 2],
+          "values": [12.4, 12.8]
+        }
+      }
+    }
+  },
+  {
+    "format": "rlog",
+    "result": "PASS",
+    "battery": {
+      "timestamps": [1, 2],
+      "values": [12.4, 12.8]
+    },
+    "domain": "Clock: Log time",
+    "samples": {
+      "BatteryVoltage": {
+        "type": 2,
+        "data": {
+          "timestamps": [1, 2],
+          "values": [12.4, 12.8]
+        }
+      }
+    }
+  },
+  {
+    "format": "mcap",
+    "result": "PASS",
+    "battery": {
+      "timestamps": [1, 2],
+      "values": [12.4, 12.8]
+    },
+    "domain": "Clock: Log time",
+    "samples": {
+      "BatteryVoltage": {
+        "type": 2,
+        "data": {
+          "timestamps": [1, 2],
+          "values": [12.4, 12.8]
+        }
+      },
+      "Enabled": {
+        "type": 1,
+        "data": {
+          "timestamps": [1],
+          "values": [true]
+        }
+      },
+      "ExamplePose": {
+        "type": 3,
+        "data": {
+          "timestamps": [1],
+          "values": ["{\"x\":1.5,\"y\":2.5}"]
+        }
+      },
+      "ExamplePose/x": {
+        "type": 2,
+        "data": {
+          "timestamps": [1],
+          "values": [1.5]
+        }
+      },
+      "ExamplePose/y": {
+        "type": 2,
+        "data": {
+          "timestamps": [1],
+          "values": [2.5]
+        }
+      },
+      "Latched": {
+        "type": 7,
+        "data": {
+          "timestamps": [],
+          "values": []
+        }
+      },
+      "MCAP/schemas/ExamplePose": {
+        "type": 3,
+        "data": {
+          "timestamps": [0],
+          "values": ["{\"type\":\"object\",\"properties\":{\"x\":{\"type\":\"number\"},\"y\":{\"type\":\"number\"}}}"]
+        }
+      },
+      "MCAP/schemas/boolean": {
+        "type": 3,
+        "data": {
+          "timestamps": [0],
+          "values": ["{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"boolean\"}}}"]
+        }
+      },
+      "MCAP/schemas/foxglove.SceneUpdate": {
+        "type": 0,
+        "data": {
+          "timestamps": [0],
+          "values": [[255, 0, 1]]
+        }
+      },
+      "MCAP/schemas/number": {
+        "type": 3,
+        "data": {
+          "timestamps": [0],
+          "values": ["{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"number\"}}}"]
+        }
+      },
+      "MCAP/schemas/number[]": {
+        "type": 3,
+        "data": {
+          "timestamps": [0],
+          "values": [
+            "{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"array\",\"items\":{\"type\":\"number\"}}}}"
+          ]
+        }
+      },
+      "MCAP/schemas/string": {
+        "type": 3,
+        "data": {
+          "timestamps": [0],
+          "values": ["{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"string\"}}}"]
+        }
+      },
+      "MCAP/schemas/unused.Marker": {
+        "type": 3,
+        "data": {
+          "timestamps": [0],
+          "values": ["{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"number\"}}}"]
+        }
+      },
+      "Mode": {
+        "type": 3,
+        "data": {
+          "timestamps": [1],
+          "values": ["auto"]
+        }
+      },
+      "Samples": {
+        "type": 5,
+        "data": {
+          "timestamps": [1],
+          "values": [[1, 2, 3]]
+        }
+      },
+      "Samples/0": {
+        "type": 2,
+        "data": {
+          "timestamps": [1],
+          "values": [1]
+        }
+      },
+      "Samples/1": {
+        "type": 2,
+        "data": {
+          "timestamps": [1],
+          "values": [2]
+        }
+      },
+      "Samples/2": {
+        "type": 2,
+        "data": {
+          "timestamps": [1],
+          "values": [3]
+        }
+      },
+      "Samples/length": {
+        "type": 2,
+        "data": {
+          "timestamps": [1],
+          "values": [3]
+        }
+      },
+      "Scene": {
+        "type": 0,
+        "data": {
+          "timestamps": [1],
+          "values": [[9, 8, 7, 6]]
+        }
+      }
+    }
+  },
+  {
+    "format": "csv",
+    "result": "PASS",
+    "battery": {
+      "timestamps": [1, 2],
+      "values": [12.4, 12.8]
+    },
+    "domain": "Clock: Log time",
+    "samples": {
+      "BatteryVoltage": {
+        "type": 2,
+        "data": {
+          "timestamps": [1, 2],
+          "values": [12.4, 12.8]
+        }
+      },
+      "Mode": {
+        "type": 3,
+        "data": {
+          "timestamps": [1, 2],
+          "values": ["auto", "teleop"]
+        }
+      }
+    }
+  },
+  {
+    "format": "json",
+    "result": "PASS",
+    "battery": {
+      "timestamps": [1, 2],
+      "values": [12.4, 12.8]
+    },
+    "domain": "Clock: Log time",
+    "samples": {
+      "BatteryVoltage": {
+        "type": 2,
+        "data": {
+          "timestamps": [1, 2],
+          "values": [12.4, 12.8]
+        }
+      },
+      "Enabled": {
+        "type": 1,
+        "data": {
+          "timestamps": [1, 2],
+          "values": [true, false]
+        }
+      },
+      "Mode": {
+        "type": 3,
+        "data": {
+          "timestamps": [1, 2],
+          "values": ["auto", "teleop"]
+        }
+      },
+      "pose": {
+        "type": 3,
+        "data": {
+          "timestamps": [1, 2],
+          "values": ["{\"x\":1.5,\"y\":2.5}", "{\"x\":2,\"y\":3}"]
+        }
+      },
+      "pose/x": {
+        "type": 2,
+        "data": {
+          "timestamps": [1, 2],
+          "values": [1.5, 2]
+        }
+      },
+      "pose/y": {
+        "type": 2,
+        "data": {
+          "timestamps": [1, 2],
+          "values": [2.5, 3]
+        }
+      }
+    }
+  },
+  {
+    "format": "ros2",
+    "result": "PASS",
+    "battery": {
+      "timestamps": [1, 1.5, 2, 2.5, 3],
+      "values": [12.4, 12.1, 11.8, 12.2, 12.6]
+    }
+  }
+]

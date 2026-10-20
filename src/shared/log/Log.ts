@@ -12,6 +12,15 @@ import { arraysEqual, checkArrayType } from "../util";
 import LogField from "./LogField";
 import LogFieldTree from "./LogFieldTree";
 import { PHOTON_PREFIX, STRUCT_PREFIX, applyKeyPrefix, getSchemaType, splitLogKey } from "./LogKeyUtils";
+import {
+  DomainTimestamp,
+  LOG_CLOCK,
+  LogTimestamp,
+  TimestampDomain,
+  copyTimestamp,
+  resolveTimestamp,
+  sameTimestampDomain
+} from "./LogTimestamp";
 import { TYPE_KEY } from "./LogUtil";
 import {
   LogValueSetAny,
@@ -50,8 +59,20 @@ export default class Log {
   private queuedStructArrays: QueuedStructure[] = [];
   private queuedProtos: QueuedStructure[] = [];
 
-  constructor(enableTimestampSetCache = true) {
+  constructor(
+    enableTimestampSetCache = true,
+    private displayClock: TimestampDomain = LOG_CLOCK
+  ) {
     this.enableTimestampSetCache = enableTimestampSetCache;
+    this.displayClock = { ...displayClock };
+  }
+
+  getDisplayClock(): TimestampDomain {
+    return { ...this.displayClock };
+  }
+
+  getTimestampSources(key: string, start: number, end: number): DomainTimestamp[] | undefined {
+    return this.fields[key]?.getTimestampSources(start, end, this.displayClock);
   }
 
   /** Checks if the field exists and registers it if necessary. */
@@ -152,7 +173,8 @@ export default class Log {
   }
 
   /** Updates the timestamp range and set caches if necessary. */
-  private processTimestamp(key: string, timestamp: number) {
+  private processTimestamp(key: string, time: LogTimestamp) {
+    const timestamp = resolveTimestamp(time, this.displayClock);
     // Update timestamp range
     this.updateRangeWithTimestamp(timestamp);
 
@@ -562,7 +584,8 @@ export default class Log {
   }
 
   /** Writes a new Raw value to the field. */
-  putRaw(key: string, timestamp: number, value: Uint8Array) {
+  putRaw(key: string, timestamp: LogTimestamp, value: Uint8Array) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.createBlankField(key, LoggableType.Raw);
     this.fields[key].putRaw(timestamp, value);
     this.changedFields.add(key);
@@ -586,7 +609,8 @@ export default class Log {
   }
 
   /** Writes a new Boolean value to the field. */
-  putBoolean(key: string, timestamp: number, value: boolean) {
+  putBoolean(key: string, timestamp: LogTimestamp, value: boolean) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.createBlankField(key, LoggableType.Boolean);
     this.fields[key].putBoolean(timestamp, value);
     this.changedFields.add(key);
@@ -596,7 +620,8 @@ export default class Log {
   }
 
   /** Writes a new Number value to the field. */
-  putNumber(key: string, timestamp: number, value: number) {
+  putNumber(key: string, timestamp: LogTimestamp, value: number) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.createBlankField(key, LoggableType.Number);
     this.fields[key].putNumber(timestamp, value);
     this.changedFields.add(key);
@@ -606,7 +631,8 @@ export default class Log {
   }
 
   /** Writes a new String value to the field. */
-  putString(key: string, timestamp: number, value: string) {
+  putString(key: string, timestamp: LogTimestamp, value: string) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.createBlankField(key, LoggableType.String);
     this.fields[key].putString(timestamp, value);
     this.changedFields.add(key);
@@ -625,7 +651,8 @@ export default class Log {
   }
 
   /** Writes a new BooleanArray value to the field. */
-  putBooleanArray(key: string, timestamp: number, value: boolean[]) {
+  putBooleanArray(key: string, timestamp: LogTimestamp, value: boolean[]) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.createBlankField(key, LoggableType.BooleanArray);
     this.fields[key].putBooleanArray(timestamp, value);
     this.changedFields.add(key);
@@ -653,7 +680,8 @@ export default class Log {
   }
 
   /** Writes a new NumberArray value to the field. */
-  putNumberArray(key: string, timestamp: number, value: number[]) {
+  putNumberArray(key: string, timestamp: LogTimestamp, value: number[]) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.createBlankField(key, LoggableType.NumberArray);
     this.fields[key].putNumberArray(timestamp, value);
     this.changedFields.add(key);
@@ -681,7 +709,8 @@ export default class Log {
   }
 
   /** Writes a new StringArray value to the field. */
-  putStringArray(key: string, timestamp: number, value: string[]) {
+  putStringArray(key: string, timestamp: LogTimestamp, value: string[]) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.createBlankField(key, LoggableType.StringArray);
     this.fields[key].putStringArray(timestamp, value);
     this.changedFields.add(key);
@@ -709,7 +738,8 @@ export default class Log {
   }
 
   /** Writes an unknown array or object to the children of the field. */
-  putUnknownStruct(key: string, timestamp: number, value: unknown, allowRootWrite = false) {
+  putUnknownStruct(key: string, timestamp: LogTimestamp, value: unknown, allowRootWrite = false) {
+    resolveTimestamp(timestamp, this.displayClock);
     if (value === null) return;
 
     // Check for primitive types first (if first call, writing to the root is not allowed)
@@ -778,7 +808,8 @@ export default class Log {
   }
 
   /** Writes a JSON-encoded string value to the field. */
-  putJSON(key: string, timestamp: number, value: string) {
+  putJSON(key: string, timestamp: LogTimestamp, value: string) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.putString(key, timestamp, value);
     if (this.fields[key].getType() === LoggableType.String) {
       this.setGeneratedParent(key);
@@ -794,7 +825,8 @@ export default class Log {
   }
 
   /** Writes a msgpack-encoded raw value to the field. */
-  putMsgpack(key: string, timestamp: number, value: Uint8Array) {
+  putMsgpack(key: string, timestamp: LogTimestamp, value: Uint8Array) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.putRaw(key, timestamp, value);
     if (this.fields[key].getType() === LoggableType.Raw) {
       this.setGeneratedParent(key);
@@ -813,7 +845,8 @@ export default class Log {
    *
    * The schema type should not include "photonstruct:"
    */
-  putPhotonStruct(key: string, timestamp: number, value: Uint8Array, schemaType: string) {
+  putPhotonStruct(key: string, timestamp: LogTimestamp, value: Uint8Array, schemaType: string) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.putRaw(key, timestamp, value);
     if (this.fields[key].getType() === LoggableType.Raw) {
       this.setGeneratedParent(key);
@@ -834,7 +867,7 @@ export default class Log {
       } else {
         this.queuedStructs.push({
           key: key,
-          timestamp: timestamp,
+          timestamp: copyTimestamp(timestamp),
           value: value,
           schemaType: schemaType
         });
@@ -846,7 +879,8 @@ export default class Log {
    *
    * The schema type should not include "struct:" or "[]"
    */
-  putStruct(key: string, timestamp: number, value: Uint8Array, schemaType: string, isArray: boolean) {
+  putStruct(key: string, timestamp: LogTimestamp, value: Uint8Array, schemaType: string, isArray: boolean) {
+    resolveTimestamp(timestamp, this.displayClock);
     this.putRaw(key, timestamp, value);
     if (this.fields[key].getType() === LoggableType.Raw) {
       this.setGeneratedParent(key);
@@ -879,7 +913,7 @@ export default class Log {
       } else {
         (isArray ? this.queuedStructArrays : this.queuedStructs).push({
           key: key,
-          timestamp: timestamp,
+          timestamp: copyTimestamp(timestamp),
           value: value,
           schemaType: schemaType
         });
@@ -892,7 +926,8 @@ export default class Log {
    * The schema type should not include "proto:" but should include
    * the full package (e.g. "wpi.proto.ProtobufPose2d")
    */
-  putProto(key: string, timestamp: number, value: Uint8Array, schemaType: string) {
+  putProto(key: string, timestamp: LogTimestamp, value: Uint8Array, schemaType: string) {
+    resolveTimestamp(timestamp, this.displayClock);
     // Check for schema
     if (schemaType === "FileDescriptorProto") {
       this.protoDecoder.addDescriptor(value);
@@ -922,7 +957,7 @@ export default class Log {
       } else {
         this.queuedProtos.push({
           key: key,
-          timestamp: timestamp,
+          timestamp: copyTimestamp(timestamp),
           value: value,
           schemaType: schemaType
         });
@@ -931,7 +966,8 @@ export default class Log {
   }
 
   /** Writes a pose with the "Pose2d" structured type. */
-  putPose(key: string, timestamp: number, pose: Pose2d) {
+  putPose(key: string, timestamp: LogTimestamp, pose: Pose2d) {
+    resolveTimestamp(timestamp, this.displayClock);
     const translationKey = key + "/translation";
     const rotationKey = key + "/rotation";
     this.putNumber(translationKey + "/x", timestamp, pose.translation[0]);
@@ -956,7 +992,8 @@ export default class Log {
   }
 
   /** Writes a translation array with the "Translation2d[]" structured type. */
-  putTranslationArray(key: string, timestamp: number, translations: Translation2d[]) {
+  putTranslationArray(key: string, timestamp: LogTimestamp, translations: Translation2d[]) {
+    resolveTimestamp(timestamp, this.displayClock);
     if (!(key in this.fields)) {
       this.createBlankField(key, LoggableType.Empty);
       this.setStructuredType(key, "Translation2d[]");
@@ -978,6 +1015,14 @@ export default class Log {
 
   /** Merges a new log into this log. Returns the timestamp offset. */
   mergeWith(source: Log, prefix = ""): number {
+    if (this.timestampRange === null && this.getFieldKeys().length === 0) {
+      this.displayClock = source.getDisplayClock();
+    } else if (
+      (source.timestampRange !== null || source.getFieldKeys().length > 0) &&
+      !sameTimestampDomain(this.displayClock, source.displayClock)
+    ) {
+      throw new Error("Cannot merge logs with different display clocks without an explicit conversion");
+    }
     // Serialize source and adjust timestamps
     let offset = 0;
     let targetEnabledData = getEnabledData(this);
@@ -1063,6 +1108,7 @@ export default class Log {
   toSerialized(): any {
     let result: any = {
       fields: {},
+      displayClock: this.getDisplayClock(),
       generatedParents: Array.from(this.generatedParents),
       timestampRange: this.timestampRange,
       timestampZero: this.timestampZero,
@@ -1080,7 +1126,7 @@ export default class Log {
 
   /** Creates a new log based on the data from `toSerialized()` */
   static fromSerialized(serializedData: any): Log {
-    let log = new Log();
+    let log = new Log(true, serializedData.displayClock ?? LOG_CLOCK);
     Object.entries(serializedData.fields).forEach(([key, value]) => {
       log.fields[key] = LogField.fromSerialized(value);
     });
@@ -1098,7 +1144,7 @@ export default class Log {
 
 type QueuedStructure = {
   key: string;
-  timestamp: number;
+  timestamp: LogTimestamp;
   value: Uint8Array;
   schemaType: string;
 };

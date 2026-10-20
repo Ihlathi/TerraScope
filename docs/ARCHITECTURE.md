@@ -69,6 +69,10 @@ There is no streaming read from disk. The process holds the file bytes, then the
 
 Keys are hierarchical strings. Timestamps are seconds. Each field can carry a WPILib type string, a structured type, and a metadata string. Units are parsed from that metadata in `Log.ts`. `Log.toSerialized` / `fromSerialized` move a log across the worker boundary, including queued struct and protobuf schemas.
 
+`LogTimestamp` accepts numeric seconds or a timestamp tagged as log time, receive time, or a named clock. Each `Log` declares one display clock. A timestamp from another domain requires an explicit source-to-display conversion. Fields retain the original tagged timestamp alongside the numeric display index, including through worker serialization, trimming, and merge alignment. `getTimestampSources` reads those originals. Legacy numeric writes retain their existing coordinates and use the display domain as a fallback.
+
+The shared playback controls show the active display clock. NetworkTables samples use its server clock. Its live cursor uses an explicit receive-to-server conversion that applies the measured offset and latency. This conversion preserves the existing cursor calculation and does not subtract latency from stored samples.
+
 Several files can be opened together. `hub.ts` merges them with `Log.mergeWith`, prefixing keys `/LogN` (`LogKeyUtils.ts`) and aligning on the first enabled timestamp.
 
 This model is the common representation the roadmap asks for, with a narrow type system and a single timeline.

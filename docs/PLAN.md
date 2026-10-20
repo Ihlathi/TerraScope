@@ -45,7 +45,9 @@ Add one `LiveDataSource` for the Foxglove WebSocket protocol: connect, advertise
 
 ## 8. ROS 2 bag reader
 
-Read a ROS 2 bag (sqlite3 storage first) by reusing the MCAP/ROS message path where the bag stores CDR or protobuf. One storage backend only. ROS 1 bags are a later PR.
+**Status: done.**
+
+Open a single ROS 2 sqlite3 `.db3` file into the existing log. The bag reader and MCAP reader share ROS 2 CDR decoding. Embedded `ros2msg` definitions take precedence over bundled common ROS 2 Humble definitions. Unknown types and encodings remain raw. Split bags, compressed bags, directory metadata, protobuf decoding, and ROS 1 bags are outside this chunk.
 
 ## 9. More than one clock
 

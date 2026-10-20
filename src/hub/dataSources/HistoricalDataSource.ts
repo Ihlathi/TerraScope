@@ -42,6 +42,7 @@ export class HistoricalDataSource {
     ".log": "roadRunnerWorker.js",
     ".csv": "csvWorker.js",
     ".mcap": "mcapWorker.js",
+    ".db3": "ros2BagWorker.js",
     ".tsv": "tsvWorker.js",
     ".json": "jsonWorker.js",
     ".jsonl": "jsonlWorker.js",
@@ -89,7 +90,7 @@ export class HistoricalDataSource {
     this.refreshCallback = refreshCallback;
 
     this.setStatus(HistoricalDataSourceStatus.Reading);
-    if (["wpilog", "rlog", "csv", "log", "mcap", "tsv", "json", "jsonl"].includes(extension)) {
+    if (["wpilog", "rlog", "csv", "log", "mcap", "db3", "tsv", "json", "jsonl"].includes(extension)) {
       setTimeout(() => {
         this.handleMainMessage({
           uuid: this.UUID,

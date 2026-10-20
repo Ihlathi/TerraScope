@@ -5,13 +5,15 @@
 // license that can be found in the LICENSE file
 // at the root directory of this project.
 
+import { LiveFrameTransport } from "../../../shared/live/LiveFrameTransport";
+import { WebSocketFrameTransport } from "../../../shared/live/WebSocketFrameTransport";
 import Log from "../../../shared/log/Log";
 import { LiveDataSource, LiveDataSourceStatus } from "../LiveDataSource";
 import { FOXGLOVE_SUBPROTOCOL, FoxgloveSession, foxgloveWebSocketUrl } from "./FoxgloveSession";
 
 /** Live source for the Foxglove WebSocket protocol. One connection, manual address. */
 export default class FoxgloveSource extends LiveDataSource {
-  private socket: WebSocket | null = null;
+  private transport: LiveFrameTransport<string | Uint8Array> | null = null;
   private retry: ReturnType<typeof setTimeout> | null = null;
   private generation = 0;
 
@@ -33,8 +35,8 @@ export default class FoxgloveSource extends LiveDataSource {
     this.generation++;
     if (this.retry !== null) clearTimeout(this.retry);
     this.retry = null;
-    this.socket?.close();
-    this.socket = null;
+    this.transport?.stop();
+    this.transport = null;
     super.stop();
   }
 
@@ -47,21 +49,11 @@ export default class FoxgloveSource extends LiveDataSource {
       this.setStatus(LiveDataSourceStatus.Error);
       return;
     }
-    let socket: WebSocket;
-    try {
-      socket = new WebSocket(url, FOXGLOVE_SUBPROTOCOL);
-    } catch (error) {
-      console.error(error);
-      this.setStatus(LiveDataSourceStatus.Error);
-      return;
-    }
-    socket.binaryType = "arraybuffer";
-    this.socket = socket;
+    const transport = new WebSocketFrameTransport(url, FOXGLOVE_SUBPROTOCOL);
+    this.transport = transport;
     if (this.log === null) return;
     const session = new FoxgloveSession(
-      (text) => {
-        if (socket.readyState === WebSocket.OPEN) socket.send(text);
-      },
+      (text) => transport.write(text),
       this.log,
       (timeSupplier) => {
         if (generation !== this.generation || this.log === null || this.outputCallback === null) return;
@@ -73,22 +65,27 @@ export default class FoxgloveSource extends LiveDataSource {
         this.setStatus(LiveDataSourceStatus.Active);
       }
     );
-    socket.onmessage = (event) => {
-      if (generation !== this.generation) return;
-      try {
-        if (typeof event.data === "string") {
-          session.handleText(event.data);
-        } else if (event.data instanceof ArrayBuffer) {
-          session.handleBinary(new Uint8Array(event.data));
+    try {
+      transport.start(
+        (frame) => {
+          if (generation !== this.generation) return false;
+          try {
+            if (typeof frame === "string") session.handleText(frame);
+            else session.handleBinary(frame);
+          } catch (error) {
+            console.error(error);
+          }
+          return true;
+        },
+        () => {
+          if (generation !== this.generation || this.status === LiveDataSourceStatus.Stopped) return;
+          this.setStatus(LiveDataSourceStatus.Connecting);
+          this.retry = setTimeout(() => this.open(address, generation), 500);
         }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    socket.onclose = () => {
-      if (generation !== this.generation || this.status === LiveDataSourceStatus.Stopped) return;
-      this.setStatus(LiveDataSourceStatus.Connecting);
-      this.retry = setTimeout(() => this.open(address, generation), 500);
-    };
+      );
+    } catch (error) {
+      console.error(error);
+      this.setStatus(LiveDataSourceStatus.Error);
+    }
   }
 }

@@ -53,7 +53,8 @@ largely irrelevant to the debugging and visualization experience.
 - [x] WPILOG support.
 - [ ] MCAP support. (Export of scalar fields only. Hoot files are converted to WPILOG rather than opened as generic MCAP.)
 - [ ] ROS 1 bag support.
-- [ ] ROS 2 bag support, including common storage backends.
+- [x] ROS 2 sqlite3 bag support. (Single `.db3` files, CDR with embedded ROS message definitions or bundled common ROS 2 Humble definitions.)
+- [ ] Additional ROS 2 bag storage and packaging. (Split bags, compressed bags, and directory metadata are not supported.)
 - [ ] CSV and TSV support. (Comma-separated import and CSV export. Tab-separated files are not parsed.)
 - [ ] JSON and JSONL support. (JSON values inside WPILOG, NetworkTables, and FTC Dashboard messages. JSON and JSONL files are not a log format.)
 - [ ] Protobuf-based recordings. (Protobuf fields inside WPILOG and NetworkTables via ProtoDecoder. Generic protobuf files are not a log format.)
@@ -153,7 +154,7 @@ largely irrelevant to the debugging and visualization experience.
 ## Schema Handling
 
 - [x] Protobuf schema support.
-- [ ] ROS message schema support.
+- [x] ROS 2 message schema support. (CDR with `ros2msg` definitions in MCAP and sqlite3 bags. ROS 1 and IDL schemas are not supported.)
 - [ ] JSON schema support where applicable. (JSON values are decoded. JSON Schema documents are not.)
 - [x] Automatic nested field discovery.
 - [x] Automatic extraction of graphable numeric fields.

@@ -20,7 +20,7 @@
     "download-owlet": "rolldown -c --configRunOwletDownload && node runOwletDownload.js",
     "format": "license-check-and-add add -f file-header-config.json && prettier --write .",
     "check-format": "license-check-and-add check -f file-header-config.json && prettier --check .",
-    "test": "tsc -p tsconfig.test.json && node --test build/unit-test/hub/dataSources/mcap/MCAPDecoder.test.js build/unit-test/hub/dataSources/csv/CSVDecoder.test.js build/unit-test/hub/dataSources/json/JSONDecoder.test.js build/unit-test/hub/dataSources/foxglove/FoxgloveSession.test.js build/unit-test/shared/live/LiveFrameTransport.test.js && node --experimental-strip-types --experimental-detect-module --test src/shared/log/SemanticType.test.ts src/shared/CustomEnvironment.test.ts",
+    "test": "tsc -p tsconfig.test.json && node --test build/unit-test/hub/dataSources/ros2/ROS2BagDecoder.test.js build/unit-test/hub/dataSources/mcap/MCAPDecoder.test.js build/unit-test/hub/dataSources/csv/CSVDecoder.test.js build/unit-test/hub/dataSources/json/JSONDecoder.test.js build/unit-test/hub/dataSources/foxglove/FoxgloveSession.test.js build/unit-test/shared/live/LiveFrameTransport.test.js && node --experimental-strip-types --experimental-detect-module --test src/shared/log/SemanticType.test.ts src/shared/CustomEnvironment.test.ts",
     "wasm:compile": "node wasmCompile.mjs",
     "docs:start": "cd docs && npm run start && cd ..",
     "docs:build": "cd docs && npm run build && cd ..",
@@ -32,6 +32,9 @@
   "devDependencies": {
     "@babel/preset-env": "^7.26.0",
     "@electron/notarize": "^2.1.0",
+    "@foxglove/rosmsg": "^5.0.5",
+    "@foxglove/rosmsg-msgs-common": "^3.3.0",
+    "@foxglove/rosmsg2-serialization": "^3.1.2",
     "@mcap/core": "^1.3.0",
     "@msgpack/msgpack": "^3.0.0-beta2",
     "@rollup/plugin-babel": "^6.0.4",
@@ -44,6 +47,7 @@
     "@types/jsonfile": "^6.1.2",
     "@types/lzma-native": "^4.0.4",
     "@types/pngjs": "^6.0.5",
+    "@types/sql.js": "^1.4.11",
     "@types/ssh2": "^1.11.13",
     "@types/three": "^0.168.0",
     "ansi_up": "^6.0.6",
@@ -67,6 +71,7 @@
     "rolldown": "1.0.2",
     "rollup-plugin-cleanup": "^3.2.1",
     "simple-statistics": "^7.8.7",
+    "sql.js": "^1.15.1",
     "three": "^0.168.0",
     "tiny-popup-menu": "^1.0.10",
     "tslib": "^2.6.2",
@@ -198,6 +203,12 @@
         "mimeType": "application/x-dsevents",
         "role": "Viewer",
         "icon": "icons/app/dsevents-icon"
+      },
+      {
+        "ext": "db3",
+        "name": "ROS 2 sqlite3 bag",
+        "description": "ROS 2 sqlite3 bag",
+        "role": "Viewer"
       }
     ],
     "mac": {

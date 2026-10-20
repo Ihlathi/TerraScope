@@ -2146,6 +2146,7 @@ function setupMenu() {
                       "log",
                       "csv",
                       "mcap",
+                      "db3",
                       "tsv",
                       "json",
                       "jsonl",
@@ -2184,6 +2185,7 @@ function setupMenu() {
                       "log",
                       "csv",
                       "mcap",
+                      "db3",
                       "tsv",
                       "json",
                       "jsonl",
@@ -3865,6 +3867,7 @@ app.whenReady().then(async () => {
       x.endsWith(".log") ||
       x.endsWith(".csv") ||
       x.endsWith(".mcap") ||
+      x.endsWith(".db3") ||
       x.endsWith(".tsv") ||
       x.endsWith(".json") ||
       x.endsWith(".jsonl") ||

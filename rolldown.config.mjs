@@ -83,6 +83,10 @@ function bundle(input, isMain, isXRClient, external = []) {
 }
 
 export default (cliArgs) => {
+  const sqlOutput = (isLite ? "lite/static/" : "") + "bundles/";
+  fs.mkdirSync(sqlOutput, { recursive: true });
+  fs.copyFileSync("node_modules/sql.js/dist/sql-wasm-browser.wasm", sqlOutput + "sql-wasm-browser.wasm");
+
   // Owlet download
   if (cliArgs.configRunOwletDownload === true) {
     return [
@@ -148,6 +152,7 @@ export default (cliArgs) => {
           ? [
               "hub/dataSources/csv/csvWorker.ts",
               "hub/dataSources/mcap/mcapWorker.ts",
+              "hub/dataSources/ros2/ros2BagWorker.ts",
               "hub/dataSources/csv/tsvWorker.ts",
               "hub/dataSources/json/jsonWorker.ts",
               "hub/dataSources/json/jsonlWorker.ts",

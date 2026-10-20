@@ -17,6 +17,7 @@
     "src/hub/dataSources/csv/CSVDecoder.test.ts",
     "src/hub/dataSources/json/JSONDecoder.test.ts",
     "src/hub/dataSources/foxglove/FoxgloveSession.test.ts",
-    "src/shared/live/LiveFrameTransport.test.ts"
+    "src/shared/live/LiveFrameTransport.test.ts",
+    "src/hub/dataSources/ros2/ROS2BagDecoder.test.ts"
   ]
 }

@@ -8,6 +8,7 @@
 import { McapStreamReader } from "@mcap/core";
 import Log from "../../../shared/log/Log";
 import LoggableType from "../../../shared/log/LoggableType";
+import ROS2Decoder from "../../../shared/log/ROS2Decoder";
 
 type McapSchemaRecord = {
   id: number;
@@ -36,6 +37,7 @@ export default class MCAPDecoder {
     const topicOwners = new Map<string, number>();
     const touched = new Set<number>();
     const totalBytes = data.byteLength || 1;
+    const rosDecoders = new Map<number, ROS2Decoder>();
 
     for (let record = reader.nextRecord(); record !== undefined; record = reader.nextRecord()) {
       if (record.type === "Schema") {
@@ -60,7 +62,16 @@ export default class MCAPDecoder {
         if (channel !== undefined) {
           const key = fieldKeyFor(channel, fieldKeys, topicOwners);
           const schema = schemas.get(channel.schemaId);
-          writeMessage(log, key, nanosToSeconds(record.logTime), channel.messageEncoding, schema, record.data);
+          if (channel.messageEncoding === "cdr" && schema?.encoding === "ros2msg") {
+            let decoder = rosDecoders.get(schema.id);
+            if (decoder === undefined) {
+              decoder = new ROS2Decoder(schema.name, new TextDecoder().decode(schema.data));
+              rosDecoders.set(schema.id, decoder);
+            }
+            decoder.write(log, key, nanosToSeconds(record.logTime), record.data);
+          } else {
+            writeMessage(log, key, nanosToSeconds(record.logTime), channel.messageEncoding, schema, record.data);
+          }
           touched.add(channel.id);
         }
       }

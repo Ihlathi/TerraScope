@@ -213,4 +213,3 @@ $ node docs/verification/chunk-7/live-smoke.cjs /workspace/chunk7-final
 {"mode":"foxglove","result":"RECONNECT PASS","title":"127.0.0.1:42087 — TerraScope","voltage":[12.4,13.1],"range":[1,100]}
 
 Exit status: 0
-

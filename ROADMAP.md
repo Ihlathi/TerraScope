@@ -130,7 +130,7 @@ largely irrelevant to the debugging and visualization experience.
 - [x] Schema and type metadata.
 - [x] Units and measurement metadata.
 - [ ] Coordinate frame metadata. (A global coordinate-system preference converts poses. Frames are not stored per sample.)
-- [ ] Support for multiple timestamp domains. (NetworkTables uses server time adjusted by measured latency. Independent device clocks are not modeled.)
+- [x] Support for multiple timestamp domains. (Samples retain log, receive, or named-clock timestamps with explicit display conversions.)
 - [ ] Preservation of original message data where practical. (Raw samples are retained for raw and some structured inputs. MCAP export drops raw samples.)
 - [x] Support for both structured and unstructured data.
 
@@ -258,14 +258,14 @@ largely irrelevant to the debugging and visualization experience.
 - [ ] Support simulation timestamps. (Simulator data uses the same timeline as a robot. There is no separate simulation clock.)
 - [ ] Support device and sensor timestamps.
 - [ ] Distinguish capture, publish, receive, and processing times.
-- [ ] Support multiple clock domains.
+- [x] Support multiple clock domains. (One display clock per log, with original per-sample domains retained.)
 - [ ] Estimate or apply clock offsets.
 - [ ] Correct known clock drift.
 - [ ] Detect timestamp discontinuities.
 - [ ] Handle out-of-order messages.
 - [ ] Display synchronization quality.
 - [ ] Support synchronization across multiple computers.
-- [ ] Avoid silently assuming unrelated clocks are synchronized.
+- [x] Avoid silently assuming unrelated clocks are synchronized. (Tagged timestamps require an explicit conversion when their domain differs from the display clock. Merges reject unrelated display clocks.)
 
 ---
 
@@ -1260,7 +1260,7 @@ implementation methods.
 - [ ] Avoid assumptions about robot type or hardware. (Robot-state keys, swerve, joysticks, and field assets assume FRC or FTC robots.)
 - [ ] Avoid assumptions about field dimensions or coordinate conventions. (Field assets carry fixed dimensions. Coordinate choices are the built-in FRC and FTC conventions.)
 - [ ] Avoid assuming a single robot or single processing computer. (One live connection at a time. Multiple poses can still be drawn.)
-- [ ] Avoid assuming all timestamps share one clock. (Samples use one timeline. NetworkTables adjusts for server time and latency.)
+- [x] Avoid assuming all timestamps share one clock. (Samples retain their original domain. The timeline names its display clock, and NetworkTables applies an explicit cursor conversion.)
 - [ ] Avoid assuming a particular telemetry update frequency. (Graphs accept irregular timestamps. Paused stepping falls back to 0.02 s without AdvantageKit timestamps.)
 - [x] Allow additional recording formats without redesigning visualizations.
 - [x] Allow additional protocols without redesigning telemetry processing.

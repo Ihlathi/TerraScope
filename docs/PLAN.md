@@ -51,7 +51,11 @@ Open a single ROS 2 sqlite3 `.db3` file into the existing log. The bag reader an
 
 ## 9. More than one clock
 
-Let a sample carry a timestamp domain (receive time, log time, or an explicit clock id) without collapsing everything onto one number before it hits the log. The timeline keeps a single display clock and shows which domain it is using. NetworkTables latency adjustment should become an explicit conversion, not a hidden rewrite.
+**Status: done.**
+
+Samples can carry log time, receive time, or a named clock, with an explicit conversion into the log's single display clock. Original tagged timestamps survive serialization, generated fields, queued decodes, trimming, and merge alignment. The playback controls show the active clock beside the timeline and line graph. NetworkTables latency adjustment is an explicit receive-to-server cursor conversion, with stored server timestamps unchanged.
+
+The [verification evidence](verification/chunk-9/README.md) includes the done-check output, screenshots, and exact comparisons of WPILOG, RLOG, MCAP, CSV, and JSON imports against main.
 
 ## 10. More than one live source
 

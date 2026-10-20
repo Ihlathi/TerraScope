@@ -1249,7 +1249,8 @@ These are architectural outcomes rather than prescribed
 implementation methods.
 
 - [x] Keep data ingestion independent of visualization.
-- [ ] Keep communication protocols independent of serialization. (NetworkTables, RLOG, and WPILOG each combine transport and decoding.)
+- [ ] Keep communication protocols independent of serialization. (RLOG and Foxglove use separate frame transports. NetworkTables still combines transport and decoding.)
+  - [x] Deliver RLOG TCP frames and Foxglove WebSocket messages through transports that do not decode telemetry.
 - [ ] Keep serialization independent of semantic interpretation. (Decoders produce a Log. WPILib type strings then select field, mechanism, and swerve views.)
 - [ ] Keep semantic interpretation independent of rendering. (Controllers interpret log types and renderers draw the result. The split is per tab, not a shared semantic layer.)
 - [ ] Allow multiple formats to represent equivalent telemetry. (Supported logs and live sources feed one Log, so the same tabs apply.)

@@ -39,7 +39,9 @@ Add one `LiveDataSource` for the Foxglove WebSocket protocol: connect, advertise
 
 ## 7. One live transport that does not decode
 
-Split a tiny transport interface out of `NT4.ts` or the RLOG TCP path so a socket can deliver framed bytes to a decoder. Use it for the Foxglove source if that stayed coupled, or for a raw WebSocket source if Foxglove already proved the split. Do not rewrite NetworkTables behavior.
+**Status: done.**
+
+`LiveFrameTransport` separates socket lifecycle and framed messages from telemetry decoding. `RlogTcpTransport` strips RLOG TCP length prefixes in the main process, and `WebSocketFrameTransport` delivers Foxglove text and binary messages in the renderer. `RLOGDecoder` and `FoxgloveSession` still interpret the payloads. NetworkTables behavior is unchanged.
 
 ## 8. ROS 2 bag reader
 

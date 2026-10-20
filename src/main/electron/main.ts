@@ -28,7 +28,6 @@ import {
 } from "electron";
 import fs from "fs";
 import jsonfile from "jsonfile";
-import net from "net";
 import os from "os";
 import path from "path";
 import { Client, FileEntry, Stats } from "ssh2";
@@ -73,6 +72,7 @@ import {
   TYPE_MEMORY_FILENAME,
   WINDOW_ICON
 } from "./ElectronConstants";
+import { RlogTcpTransport } from "./RlogTcpTransport";
 import StateTracker, { ApplicationState, SatelliteWindowState, WindowState } from "./StateTracker";
 import UpdateChecker from "./UpdateChecker";
 import { VideoProcessor } from "./VideoProcessor";
@@ -125,9 +125,7 @@ let advantageScopeAssets: AdvantageScopeAssets = {
 XRServer.assetsSupplier = () => advantageScopeAssets;
 
 // Live RLOG variables
-let rlogSockets: { [id: number]: net.Socket } = {};
-let rlogSocketTimeouts: { [id: number]: NodeJS.Timeout } = {};
-let rlogDataArrays: { [id: number]: Uint8Array } = {};
+let rlogTransports: { [id: number]: RlogTcpTransport } = {};
 
 // Download variables
 let downloadClient: Client | null = null;
@@ -602,70 +600,29 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
       }
       break;
 
-    case "live-rlog-start":
-      rlogSockets[windowId]?.destroy();
-      rlogSockets[windowId] = net.createConnection({
-        host: message.data.address,
-        port: message.data.port
-      });
-
-      rlogSockets[windowId].setTimeout(RLOG_CONNECT_TIMEOUT_MS, () => {
-        sendMessage(window, "live-data", { uuid: message.data.uuid, status: false });
-      });
-
-      let appendArray = (newArray: Uint8Array) => {
-        let fullArray = new Uint8Array(rlogDataArrays[windowId].length + newArray.length);
-        fullArray.set(rlogDataArrays[windowId]);
-        fullArray.set(newArray, rlogDataArrays[windowId].length);
-        rlogDataArrays[windowId] = fullArray;
-      };
-
-      rlogDataArrays[windowId] = new Uint8Array();
-      rlogSockets[windowId].on("data", (data) => {
-        appendArray(data);
-        if (rlogSocketTimeouts[windowId] !== null) clearTimeout(rlogSocketTimeouts[windowId]);
-        rlogSocketTimeouts[windowId] = setTimeout(() => {
-          rlogSockets[windowId]?.destroy();
-        }, RLOG_DATA_TIMEOUT_MS);
-
-        while (true) {
-          let expectedLength;
-          if (rlogDataArrays[windowId].length < 4) {
-            break;
-          } else {
-            expectedLength = new DataView(rlogDataArrays[windowId].buffer).getInt32(0) + 4;
-            if (rlogDataArrays[windowId].length < expectedLength) {
-              break;
-            }
-          }
-
-          let singleArray = rlogDataArrays[windowId].slice(4, expectedLength);
-          rlogDataArrays[windowId] = rlogDataArrays[windowId].slice(expectedLength);
-
-          if (singleArray.length > 0) {
-            let success = sendMessage(window, "live-data", {
-              uuid: message.data.uuid,
-              success: true,
-              raw: new Uint8Array(singleArray)
-            });
-            if (!success) {
-              rlogSockets[windowId]?.destroy();
-            }
-          }
-        }
-      });
-
-      rlogSockets[windowId].on("error", () => {
-        sendMessage(window, "live-data", { uuid: message.data.uuid, success: false });
-      });
-
-      rlogSockets[windowId].on("close", () => {
-        sendMessage(window, "live-data", { uuid: message.data.uuid, success: false });
-      });
+    case "live-rlog-start": {
+      rlogTransports[windowId]?.stop();
+      const transport = new RlogTcpTransport(
+        message.data.address,
+        message.data.port,
+        RLOG_CONNECT_TIMEOUT_MS,
+        RLOG_DATA_TIMEOUT_MS
+      );
+      rlogTransports[windowId] = transport;
+      transport.start(
+        (frame) =>
+          sendMessage(window, "live-data", {
+            uuid: message.data.uuid,
+            success: true,
+            raw: frame
+          }),
+        () => sendMessage(window, "live-data", { uuid: message.data.uuid, success: false })
+      );
       break;
+    }
 
     case "live-rlog-stop":
-      rlogSockets[windowId]?.destroy();
+      rlogTransports[windowId]?.stop();
       break;
 
     case "open-link":
@@ -1441,8 +1398,8 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
 
 // Send live RLOG heartbeats
 setInterval(() => {
-  Object.values(rlogSockets).forEach((socket) => {
-    socket.write(RLOG_HEARTBEAT_DATA);
+  Object.values(rlogTransports).forEach((transport) => {
+    transport.write(RLOG_HEARTBEAT_DATA);
   });
 }, RLOG_HEARTBEAT_DELAY_MS);
 
@@ -2922,7 +2879,7 @@ function createHubWindow(state?: WindowState, layoutOverride?: any) {
   window.webContents.on("dom-ready", () => {
     if (!firstLoad) {
       createPorts(); // Create ports on reload
-      rlogSockets[window.id]?.destroy(); // Destroy any existing RLOG sockets
+      rlogTransports[window.id]?.stop();
     }
 
     // Launch dev tools

@@ -8,3 +8,4 @@ ROADMAP.md
 *.mcap
 *.jsonl
 *.tsv
+.agents

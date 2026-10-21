@@ -72,6 +72,7 @@ import {
   TYPE_MEMORY_FILENAME,
   WINDOW_ICON
 } from "./ElectronConstants";
+import LiveRecordingManager from "./LiveRecordingManager";
 import { RlogTcpTransport } from "./RlogTcpTransport";
 import StateTracker, { ApplicationState, SatelliteWindowState, WindowState } from "./StateTracker";
 import UpdateChecker from "./UpdateChecker";
@@ -108,6 +109,8 @@ let satelliteWindows: { [id: string]: BrowserWindow[] } = {};
 let windowPorts: { [id: number]: MessagePortMain } = {};
 let hubTouchBarSliders: { [id: number]: TouchBarSlider } = {};
 let hubExportingIds: Set<number> = new Set();
+const hubRecordings = new Map<number, { manager: LiveRecordingManager; afterStop?: () => void }>();
+let quitAfterRecordings = false;
 let ctreLicensePrompt: Promise<void> | null = null;
 let menuTemplate: (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] | null = null;
 
@@ -240,6 +243,56 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
   if (window.isDestroyed()) return;
   let windowId = window.id;
   switch (message.name) {
+    case "recording-start": {
+      const id = message.data?.id;
+      if (!Number.isSafeInteger(id) || id < 1) break;
+      if (hubRecordings.has(window.id)) {
+        sendMessage(window, "recording-status", {
+          id,
+          status: {
+            kind: "error",
+            path: "",
+            bytesWritten: 0,
+            message: "The previous recording is still finishing. Try again when it stops."
+          }
+        });
+        break;
+      }
+      const manager = new LiveRecordingManager(
+        id,
+        async () => {
+          const result = await dialog.showSaveDialog(window, {
+            title: "Record live telemetry",
+            defaultPath: "TerraScope-" + new Date().toISOString().replaceAll(":", "-") + ".wpilog",
+            filters: [{ name: "WPILib robot log", extensions: ["wpilog"] }],
+            properties: ["showOverwriteConfirmation", "createDirectory"]
+          });
+          return result.canceled ? null : result.filePath ?? null;
+        },
+        (name, data) => sendMessage(window, name, data),
+        () => {
+          const entry = hubRecordings.get(window.id);
+          if (entry?.manager !== manager) return;
+          hubRecordings.delete(window.id);
+          entry.afterStop?.();
+          if (quitAfterRecordings && hubRecordings.size === 0) app.quit();
+        }
+      );
+      hubRecordings.set(window.id, { manager });
+      await manager.start();
+      break;
+    }
+    case "recording-batch": {
+      const manager = hubRecordings.get(window.id)?.manager;
+      if (manager !== undefined && manager.id === message.data?.id)
+        await manager.write(message.data.batch, message.data.samples);
+      break;
+    }
+    case "recording-stop": {
+      const manager = hubRecordings.get(window.id)?.manager;
+      if (manager !== undefined && manager.id === message.data?.id) await manager.stop();
+      break;
+    }
     case "show":
       window.show();
       break;
@@ -2994,6 +3047,13 @@ function createHubWindow(state?: WindowState, layoutOverride?: any) {
     }
   });
   window.on("close", (event) => {
+    const recording = hubRecordings.get(window.id);
+    if (recording !== undefined) {
+      event.preventDefault();
+      recording.afterStop = () => window.close();
+      recording.manager.requestStop();
+      return;
+    }
     if (hubExportingIds.has(window.id)) {
       const choice = dialog.showMessageBoxSync(window, {
         type: "info",
@@ -3007,8 +3067,17 @@ function createHubWindow(state?: WindowState, layoutOverride?: any) {
     }
   });
   window.once("closed", () => {
+    void hubRecordings.get(window.id)?.manager.abort("The recording window closed.");
     const index = hubWindows.indexOf(window);
     if (index !== -1) hubWindows.splice(index, 1);
+  });
+  window.webContents.on("render-process-gone", () => {
+    void hubRecordings.get(window.id)?.manager.abort("Recording stopped because the live view closed unexpectedly.");
+  });
+  window.webContents.on("did-start-navigation", (_event, _url, isInPlace, isMainFrame) => {
+    if (isMainFrame && !isInPlace) {
+      void hubRecordings.get(window.id)?.manager.abort("Recording stopped because the live view reloaded.");
+    }
   });
   window.on("enter-full-screen", () => sendMessage(window, "set-fullscreen", true));
   window.on("leave-full-screen", () => sendMessage(window, "set-fullscreen", false));
@@ -3923,6 +3992,13 @@ app.whenReady().then(async () => {
   if (DISTRIBUTION === Distribution.FRC6328) {
     checkForUpdate(false);
   }
+});
+
+app.on("before-quit", (event) => {
+  if (hubRecordings.size === 0) return;
+  event.preventDefault();
+  quitAfterRecordings = true;
+  hubRecordings.forEach((entry) => entry.manager.requestStop());
 });
 
 app.on("window-all-closed", () => {

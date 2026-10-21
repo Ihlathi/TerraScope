@@ -95,7 +95,13 @@ Load a URDF (visual meshes and revolute/prismatic joints) and drive it from join
 
 ## 16. Continuous recording
 
-Record the live log to disk (WPILOG first, MCAP as a follow-up PR) with start/stop and a disk-space check. The in-memory discard window remains the default so today's live view does not change until the user records.
+**Status: done.**
+
+Start and stop a continuous WPILOG recording from the live view. All attached sources record under stable `/LiveN` paths, including sources added or reconnected during recording. Each sample keeps its original numeric source timestamp at WPILOG microsecond resolution. Capture happens before in-memory compression and discard, and the live discard window stays unchanged. NetworkTables and Phoenix request all available fields while recording.
+
+The Node writer implements a format-independent `RecordingWriter` interface for chunk 17 and a later MCAP writer. It writes individual records with bounded queues, checks disk space before opening the destination and while recording, and closes with a visible message on low space or write failure. Stop drains accepted batches before closing. [Verification evidence](evidence/chunk-16/README.md) includes command output, the local NetworkTables fixture check, and screenshots of recording and reopened graphs.
+
+MCAP recording, headless operation, file rotation, automatic triggers, and restoration of tagged clock domains remain outside this chunk.
 
 ## 17. Headless record
 

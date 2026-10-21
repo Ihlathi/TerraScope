@@ -16,6 +16,7 @@ import Log from "../shared/log/Log";
 import { MERGE_PREFIX } from "../shared/log/LogKeyUtils";
 import { AKIT_TIMESTAMP_KEYS, getEnabledData } from "../shared/log/RobotState";
 import { calcMockProgress, clampValue, htmlEncode, scaleValue } from "../shared/util";
+import LiveRecording, { RecordingControlState } from "./LiveRecording";
 import SelectionImpl from "./SelectionImpl";
 import Sidebar from "./Sidebar";
 import SourceList from "./SourceList";
@@ -144,6 +145,30 @@ let logFriendlyName: string | null = null;
 let liveActive = false;
 let liveConnected = false;
 let liveAutoStartComplete = false;
+
+const RECORDING_CONTROLS = document.getElementById("recording-controls") as HTMLElement;
+const RECORDING_START = document.getElementById("recording-start") as HTMLButtonElement;
+const RECORDING_STOP = document.getElementById("recording-stop") as HTMLButtonElement;
+const RECORDING_STATUS = document.getElementById("recording-status") as HTMLElement;
+const recording = new LiveRecording(liveSession, (name, data) => window.sendMainMessage(name, data), updateRecording);
+
+function updateRecording(state: RecordingControlState = recording.getState()) {
+  RECORDING_CONTROLS.hidden = IS_LITE;
+  const active = state.kind === "starting" || state.kind === "recording" || state.kind === "stopping";
+  RECORDING_START.hidden = active;
+  RECORDING_START.disabled = active || liveSession.getSources().length === 0;
+  RECORDING_STOP.hidden = !active;
+  RECORDING_STOP.disabled = !active || state.kind === "stopping";
+  const progress = state.kind === "recording" ? ` (${(state.bytesWritten / 1024).toFixed(1)} KiB)` : "";
+  RECORDING_STATUS.textContent = state.message + progress + (state.path ? "\n" + state.path : "");
+  RECORDING_STATUS.title = RECORDING_STATUS.textContent;
+  RECORDING_CONTROLS.dataset.state = state.kind;
+}
+RECORDING_START.addEventListener("click", () => {
+  if (liveSession.getSources().length > 0) recording.start();
+});
+RECORDING_STOP.addEventListener("click", () => void recording.stop());
+updateRecording();
 
 let dragActive = false;
 let dragOffsetX = 0;
@@ -348,7 +373,8 @@ window.getLoadingFields = () => {
 };
 
 /** Connects to a historical data source. */
-function startHistorical(path: string, clear = true, merge = false) {
+async function startHistorical(path: string, clear = true, merge = false) {
+  await recording.stop();
   clear = clear || !merge;
   let originalTimelineRange: null | [number, number] = null;
   let originalTimelineIsMaxZoom: null | boolean = null;
@@ -363,6 +389,7 @@ function startHistorical(path: string, clear = true, merge = false) {
   }
 
   liveSession.stopAll();
+  updateRecording();
   window.tuner = null;
   liveActive = false;
   liveConnected = false;
@@ -472,7 +499,7 @@ type LiveRequest =
     };
 
 /** Connects to a live data source. */
-function startLive(request: LiveRequest, additional = false) {
+async function startLive(request: LiveRequest, additional = false) {
   if (!window.preferences) return;
   const sourceType = typeof request === "string" ? request : request.sourceType;
   const mode = typeof request === "string" ? window.preferences.liveMode : request.mode;
@@ -494,6 +521,7 @@ function startLive(request: LiveRequest, additional = false) {
     });
     return;
   }
+  if (!additional) await recording.stop();
   historicalSources.forEach((entry) => entry.source.stop());
   historicalSources = [];
   if (!additional) liveSession.stopAll();
@@ -540,6 +568,7 @@ function startLive(request: LiveRequest, additional = false) {
   }
   liveSession.attach(source, address, additional);
   window.tuner = liveSession;
+  updateRecording();
 }
 
 // File dropped on window
@@ -606,6 +635,7 @@ setInterval(() => {
 }, 1000 / 60);
 
 async function handleMainMessage(message: NamedMessage) {
+  if (recording.handleMessage(message.name, message.data)) return;
   switch (message.name) {
     case "show-when-ready":
       // Wait for DOM updates to finish
@@ -800,13 +830,13 @@ async function handleMainMessage(message: NamedMessage) {
           content: 'No log files are currently loaded. Choose "Open Log(s)" to load new files.'
         });
       } else {
-        files.forEach((file, index) => {
+        for (const [index, file] of files.entries()) {
           if (merge) {
-            startHistorical(file, false, true);
+            await startHistorical(file, false, true);
           } else {
-            startHistorical(file, index === 0, files.length > 1);
+            await startHistorical(file, index === 0, files.length > 1);
           }
-        });
+        }
       }
       break;
 
@@ -818,13 +848,15 @@ async function handleMainMessage(message: NamedMessage) {
           content: "Please wait for the export to finish, then try again."
         });
       } else {
-        startLive(message.data, message.name === "add-live");
+        await startLive(message.data, message.name === "add-live");
       }
       break;
 
     case "stop-live":
+      if (liveSession.getSources().length === 1) await recording.stop();
       liveSession.stop(message.data);
       liveActive = liveSession.getSources().length > 0;
+      updateRecording();
       break;
 
     case "start-publish":

@@ -93,7 +93,15 @@ Shared decoders:
 
 Schema topics match `/.schema/` (`LogKeyUtils.ts`). WPILOG and NetworkTables recognize `struct:`, `photonstruct:`, `proto:`, `msgpack`, `json`, and names registered in `CustomSchemas`.
 
-Export is the write side, and it is separate from ingestion: `src/export.ts` collects options, `src/hub/exportWorker.ts` emits CSV (table or list), WPILOG (`WPILOGEncoder.ts`), or MCAP (`@mcap/core`). MCAP export covers scalar types and skips raw samples. Nothing in the open path reads MCAP.
+Export is the write side, and it is separate from ingestion. `src/export.ts` collects options, and `src/hub/exportWorker.ts` emits CSV, WPILOG, or MCAP. MCAP export covers scalar types and skips raw samples.
+
+### Continuous recording
+
+`src/shared/recording/RecordingWriter.ts` defines typed samples and the asynchronous writer lifecycle without Electron or a browser dependency. `WPILOGRecordingWriter` writes the header and individual records through a Node file handle. It retains field definitions and a bounded write queue. It checks free disk space before opening the destination, before each batch, and periodically while idle. Storage exhaustion and write failures close the file and publish a terminal status.
+
+`Log.addSampleListener` observes accepted field insertions before value compression or memory discard. `LiveDataSource` rebinds the observer whenever a source replaces its log. `LiveSession` adds stable `/LiveN` prefixes to recording keys, including a single source. Samples retain their original numeric source timestamps, rounded to WPILOG microseconds. They do not use the display log's receive-estimated offsets. Tagged clock domains and a separate receive timestamp are not stored by this writer.
+
+The Electron adapter owns file selection and disk access. `src/hub/LiveRecording.ts` sends bounded batches with one acknowledgment outstanding. Stop detaches source observation, drains accepted batches, and closes the writer. NetworkTables uses its full logging subscription while recording. Phoenix requests all announced signals. Both return to their normal subscription policy after Stop. Recording does not change the live discard window. The same writer interface is available for the headless entry in chunk 17 and a later MCAP writer.
 
 ## Semantics
 

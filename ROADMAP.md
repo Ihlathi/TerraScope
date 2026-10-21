@@ -180,25 +180,25 @@ largely irrelevant to the debugging and visualization experience.
 
 # 5. Recording and Data Export
 
-- [ ] Record live telemetry. (Live samples stay in memory, with an optional discard window, and can be exported. Nothing is written continuously to disk.)
-- [ ] Record multiple sources simultaneously.
-- [ ] Record raw messages where appropriate. (WPILOG export can include raw fields. MCAP export skips raw samples.)
-- [ ] Record decoded telemetry. (Export writes the in-memory log, including generated child fields when that option is selected.)
-- [ ] Preserve schemas and metadata. (WPILOG export uses WPILOGEncoder. MCAP export uses a simplified per-type JSON schema.)
-- [ ] Record source and receive timestamps where available.
+- [x] Record live telemetry. (Continuous WPILOG recording writes samples before in-memory compression and discard.)
+- [x] Record multiple sources simultaneously. (All attached live sources record under stable /LiveN namespaces.)
+- [x] Record raw messages where appropriate. (WPILOG recording retains raw log fields, including schema payloads.)
+- [x] Record decoded telemetry. (Continuous WPILOG recording includes generated child fields.)
+- [x] Preserve schemas and metadata. (WPILOG recording seeds existing schema fields and retains field types and sample metadata.)
+- [ ] Record source and receive timestamps where available. (WPILOG recording preserves original numeric source timestamps. Separate receive timestamps and tagged clock domains are not recorded.)
 - [ ] Support MCAP recording and export. (MCAP export of scalar fields. No MCAP import or live MCAP recording.)
 - [x] Support other export formats where useful.
 - [ ] Select specific topics for recording. (Export can filter by field prefix. There is no recorder topic selector.)
-- [ ] Record complete sessions. (A connected session can be exported from memory until the discard window or a disconnect drops samples.)
+- [x] Record complete sessions. (While recording is active, samples persist through live discard and source reconnects.)
 - [ ] Record selected time ranges. (Export samples the loaded log. A timeline selection cannot be exported by itself.)
-- [ ] Start and stop recordings manually.
+- [x] Start and stop recordings manually.
 - [ ] Support automatic recording.
 - [ ] Support event-triggered recording.
 - [ ] Support scheduled recording.
 - [ ] Support configurable recording policies.
 - [ ] Support continuous recording with file rotation.
 - [ ] Support recording compression. (Compressed .wpilogxz files can be opened. Export does not compress.)
-- [ ] Detect recording failures and storage exhaustion.
+- [x] Detect recording failures and storage exhaustion. (Disk-space checks, bounded queues, and write failures stop recording with a visible message.)
 - [ ] Provide recording integrity checks.
 - [ ] Recover usable data from interrupted recordings when possible.
 

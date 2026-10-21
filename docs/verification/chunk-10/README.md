@@ -22,7 +22,7 @@ The script starts local fixture servers, connects through the hub's main-message
 
 Set `CDP_PORT` if the app uses a debugging port other than 9222. The default fixture ports are 5810 on `127.0.0.1` and `127.0.0.2` for NetworkTables, and 8765 on `127.0.0.1` for Foxglove.
 
-The [command output](commands.txt) records the done-check and fixture runs. Receive-estimated alignment places both traces on one display timeline. It does not measure synchronization quality or correct clock drift.
+The [command output](commands.txt) records the done-check and fixture runs. The [post-rebase output](rebase-commands.txt) records compilation, formatting, and the combined chunk 10 and chunk 11 test suites after rebasing onto main. Receive-estimated alignment places both traces on one display timeline. It does not measure synchronization quality or correct clock drift.
 
 ![Two NetworkTables sources in the sidebar and line graph](multiple-live-sources.png)
 

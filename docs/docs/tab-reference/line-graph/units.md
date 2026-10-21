@@ -48,6 +48,12 @@ Naming is _not_ case-sensitive when using snake-case or space separators.
 If units are parsed incorrectly, click `Manual Units` > `Disable Automatic Units` to ignore unit information. Manual conversion can then be used to switch to alternative units.
 :::
 
+## Declare a source unit
+
+If TerraScope cannot detect a numeric field's unit, open the field's colored icon menu and choose **Source Unit (when missing)**. Select the unit in which the log stores the values. For example, select **meters** for a distance field that records meters without unit metadata.
+
+The declaration applies to that field in the graph and is saved with the layout. Compatible fields on the same axis then convert automatically. Use the axis menu to choose a display unit, such as feet. Metadata, structured units, and units detected from field names take precedence over the declaration. Select **Automatic** to remove the declaration.
+
 ## Manual Conversion
 
 When unit metadata is unavailable or inaccurate, axes can also be manually configured to convert between units (or ignore unit metadata entirely).

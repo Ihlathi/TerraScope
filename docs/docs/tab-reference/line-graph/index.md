@@ -30,6 +30,12 @@ To overlay the robot mode (autonomous, teleoperated, or utility), click the thre
 ![Robot mode overlay](./img/line-graph-3.png)
 :::
 
+### Enum lanes
+
+To show a string or integer field as named states, drag it to **Discrete Fields**, open its colored icon menu, and select **Enum**. Each state keeps the same color when you zoom or when the state appears again. The lane supports up to ten distinct states across the available recording. Fractional numbers and fields with more states use ordinary stripes instead, so their values remain visible.
+
+Enum lanes are optional. Existing stripes, graphs, and saved layouts keep their current appearance.
+
 ### Adjusting Axes
 
 By default, each axis adjusts its range based on the visible data. To disable auto-ranging and lock the range to its current min and max, click the three dots near the axis title and then `Lock Axis`. To manually adjust the range, choose `Edit Range...` and enter the desired values.

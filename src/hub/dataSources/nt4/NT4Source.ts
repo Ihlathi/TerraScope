@@ -73,7 +73,7 @@ export default class NT4Source extends LiveDataSource {
 
     // Update subscriptions
     if (this.client !== null) {
-      if (window.preferences?.liveSubscribeMode === "logging") {
+      if (this.isRecording() || window.preferences?.liveSubscribeMode === "logging") {
         // Switch to logging subscribe mode
         Object.values(this.lowBandwidthDataSubscriptions).forEach((subscriptionId) => {
           this.client?.unsubscribe(subscriptionId);

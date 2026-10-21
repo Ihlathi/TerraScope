@@ -6,8 +6,10 @@
 // at the root directory of this project.
 
 import Log from "../../shared/log/Log";
+import { applyKeyPrefix } from "../../shared/log/LogKeyUtils";
 import { ClockConversion, RECEIVE_CLOCK } from "../../shared/log/LogTimestamp";
 import { sourceClock } from "../../shared/log/ProjectedLogField";
+import { RecordingSample } from "../../shared/recording/RecordingWriter";
 import { LiveDataSource, LiveDataSourceStatus } from "./LiveDataSource";
 import LiveDataTuner from "./LiveDataTuner";
 
@@ -26,6 +28,7 @@ export default class LiveSession implements LiveDataTuner {
   private connections = new Map<string, LiveConnection>();
   private namespaced = false;
   private displayLog = new Log(true, RECEIVE_CLOCK);
+  private recordingListener: ((sample: RecordingSample) => void) | null = null;
 
   constructor(
     private onChange: () => void,
@@ -48,6 +51,7 @@ export default class LiveSession implements LiveDataTuner {
       tuner: null
     };
     this.connections.set(namespace, entry);
+    this.observeRecording(entry);
     source.setDisplayKeyResolver((key) => this.getSourceKey(namespace, key));
     source.connect(
       address,
@@ -79,6 +83,36 @@ export default class LiveSession implements LiveDataTuner {
     return namespace;
   }
 
+  startRecording(listener: (sample: RecordingSample) => void) {
+    if (this.recordingListener !== null) throw new Error("A recording is already active.");
+    if (this.connections.size === 0) throw new Error("Connect a live source before recording.");
+    this.recordingListener = listener;
+    try {
+      this.connections.forEach((entry) => this.observeRecording(entry));
+    } catch (error) {
+      this.stopRecording();
+      throw error;
+    }
+  }
+
+  stopRecording() {
+    this.recordingListener = null;
+    this.connections.forEach((entry) => entry.source.setRecordingListener(null));
+  }
+
+  isRecording(): boolean {
+    return this.recordingListener !== null;
+  }
+
+  private observeRecording(entry: LiveConnection) {
+    const listener = this.recordingListener;
+    if (listener === null) return;
+    entry.source.setRecordingListener((sample) => {
+      if (this.recordingListener !== listener || this.connections.get(entry.namespace) !== entry) return;
+      listener({ ...sample, key: applyKeyPrefix(entry.namespace, sample.key) });
+    });
+  }
+
   stop(namespace: string) {
     const entry = this.connections.get(namespace);
     if (entry === undefined) return;
@@ -88,6 +122,7 @@ export default class LiveSession implements LiveDataTuner {
   }
 
   stopAll() {
+    this.stopRecording();
     const entries = [...this.connections.values()];
     this.connections.clear();
     entries.forEach((entry) => entry.source.stop());

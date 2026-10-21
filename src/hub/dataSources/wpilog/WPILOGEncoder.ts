@@ -70,7 +70,8 @@ export class WPILOGEncoderRecord {
     let dataView = new DataView(data.buffer);
     data[0] = CONTROL_SET_METADATA;
     dataView.setUint32(1, metadataRecordData.entry, true);
-    data.set(encodedMetadata, 1 + 4);
+    dataView.setUint32(1 + 4, encodedMetadata.length, true);
+    data.set(encodedMetadata, 1 + 4 + 4);
     return new WPILOGEncoderRecord(CONTROL_ENTRY, timestamp, data);
   }
 

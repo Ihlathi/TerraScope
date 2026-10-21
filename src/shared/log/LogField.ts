@@ -35,8 +35,15 @@ export default class LogField {
 
   private getRangeCache: { [id: string]: number } = {};
 
-  constructor(type: LoggableType) {
+  constructor(
+    type: LoggableType,
+    private onSample?: (timestamp: LogTimestamp, value: unknown) => void
+  ) {
     this.type = type;
+  }
+
+  setSampleListener(listener: (timestamp: LogTimestamp, value: unknown) => void) {
+    this.onSample = listener;
   }
 
   /** Returns the constant field type. */
@@ -191,6 +198,7 @@ export default class LogField {
     const timestamp = timestampSeconds(time);
     const source = timestampSource(time);
     if (value === null) return;
+    this.onSample?.(time, value);
     if (source !== null && this.sourceTimestamps === undefined) {
       this.sourceTimestamps = this.data.timestamps.map(() => null);
     }

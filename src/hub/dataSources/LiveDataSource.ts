@@ -6,6 +6,9 @@
 // at the root directory of this project.
 
 import Log from "../../shared/log/Log";
+import { isSchema } from "../../shared/log/LogKeyUtils";
+import LoggableType from "../../shared/log/LoggableType";
+import { RecordingSample } from "../../shared/recording/RecordingWriter";
 import { createUUID } from "../../shared/util";
 import LiveDataTuner from "./LiveDataTuner";
 
@@ -13,7 +16,53 @@ import LiveDataTuner from "./LiveDataTuner";
 export abstract class LiveDataSource {
   protected UUID: string = createUUID();
   protected status: LiveDataSourceStatus = LiveDataSourceStatus.Waiting;
-  protected log: Log | null = null;
+  private sourceLog: Log | null = null;
+  private recordingListener: ((sample: RecordingSample) => void) | null = null;
+  private removeRecordingListener: (() => void) | null = null;
+
+  protected get log(): Log | null {
+    return this.sourceLog;
+  }
+
+  protected set log(log: Log | null) {
+    if (this.sourceLog === log) return;
+    this.removeRecordingListener?.();
+    this.removeRecordingListener = null;
+    this.sourceLog = log;
+    this.observeRecording();
+  }
+
+  setRecordingListener(listener: ((sample: RecordingSample) => void) | null) {
+    this.removeRecordingListener?.();
+    this.removeRecordingListener = null;
+    this.recordingListener = listener;
+    this.observeRecording();
+  }
+
+  isRecording(): boolean {
+    return this.recordingListener !== null;
+  }
+
+  private observeRecording() {
+    const log = this.sourceLog;
+    const listener = this.recordingListener;
+    if (log === null || listener === null) return;
+    this.removeRecordingListener = log.addSampleListener(listener);
+    for (const key of log.getFieldKeys().filter(isSchema)) {
+      if (this.recordingListener !== listener) break;
+      const range = log.getRaw(key, -Infinity, Infinity);
+      if (range === undefined || range.values.length === 0) continue;
+      const index = range.values.length - 1;
+      listener({
+        key,
+        type: LoggableType.Raw,
+        timestamp: log.getTimestampSources(key, -Infinity, Infinity)?.[index]?.seconds ?? range.timestamps[index],
+        value: range.values[index].slice(),
+        wpilibType: log.getWpilibType(key),
+        metadata: log.getMetadataString(key)
+      });
+    }
+  }
 
   protected address: string | null = null;
   protected statusCallback: ((status: LiveDataSourceStatus) => void) | null = null;
@@ -72,6 +121,7 @@ export abstract class LiveDataSource {
 
   /** Cancels the connection. */
   stop() {
+    this.setRecordingListener(null);
     this.setStatus(LiveDataSourceStatus.Stopped);
     if (this.clearDataCallback) clearInterval(this.clearDataCallback);
   }

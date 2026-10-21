@@ -93,7 +93,8 @@ export default class PhoenixDiagnosticsSource extends LiveDataSource {
     this.plotInterval = setInterval(() => {
       // Get set of signals to request
       let activeSignals: { [key: string]: Response_Signal[] } = {};
-      window.tabs.getActiveFields().forEach((activeField) => {
+      const activeFields = this.isRecording() ? this.log?.getFieldKeys() ?? [] : window.tabs.getActiveFields();
+      activeFields.forEach((activeField) => {
         if (!activeField.startsWith(PHOENIX_PREFIX)) return;
         let splitKey = activeField.split("/");
         let deviceName: string, signalName: string;

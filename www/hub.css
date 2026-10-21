@@ -339,6 +339,44 @@ body.fancy-title-bar-lite div.viewer {
 
 /* Field selector */
 
+#recording-controls {
+  margin: 5px 16px 10px;
+}
+
+#recording-controls button {
+  width: 100%;
+  min-height: 29px;
+  border: 1px solid #8886;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 12px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+#recording-controls button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+#recording-controls[data-state="recording"] button {
+  border-color: #d44;
+  color: #c33;
+}
+
+#recording-status {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 15px;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+#recording-controls[data-state="error"] #recording-status {
+  color: #d44;
+}
+
 div.side-bar-title {
   position: relative;
   margin-top: 5px;

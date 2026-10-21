@@ -6,7 +6,18 @@
 // at the root directory of this project.
 
 import { GraphColors } from "../../shared/Colors";
-import { SourceListConfig } from "../../shared/SourceListConfig";
+import { SourceListConfig, SourceListOptionConfig } from "../../shared/SourceListConfig";
+import { Units } from "../../shared/units";
+
+const sourceUnitOption: SourceListOptionConfig = {
+  key: "sourceUnit",
+  display: "Source Unit (when missing)",
+  showInTypeName: false,
+  values: [
+    { key: "automatic", display: "Automatic" },
+    ...Object.keys(Units.ALL_UNITS).map((unit) => ({ key: unit, display: unit }))
+  ]
+};
 
 export const LineGraphController_NumericConfig: SourceListConfig = {
   title: "Numeric Axis",
@@ -22,6 +33,7 @@ export const LineGraphController_NumericConfig: SourceListConfig = {
       sourceTypes: ["Number"],
       showDocs: true,
       options: [
+        sourceUnitOption,
         {
           key: "color",
           display: "Color",
@@ -49,6 +61,7 @@ export const LineGraphController_NumericConfig: SourceListConfig = {
       sourceTypes: ["Number"],
       showDocs: true,
       options: [
+        sourceUnitOption,
         {
           key: "color",
           display: "Color",
@@ -76,6 +89,7 @@ export const LineGraphController_NumericConfig: SourceListConfig = {
       sourceTypes: ["Number"],
       showDocs: true,
       options: [
+        sourceUnitOption,
         {
           key: "color",
           display: "Color",
@@ -135,6 +149,23 @@ export const LineGraphController_DiscreteConfig: SourceListConfig = {
       sourceTypes: ["Alerts"],
       showDocs: true,
       options: []
+    },
+    {
+      key: "enum",
+      display: "Enum",
+      symbol: "barcode",
+      showInTypeName: true,
+      color: "color",
+      sourceTypes: ["Number", "String"],
+      showDocs: true,
+      options: [
+        {
+          key: "color",
+          display: "Color",
+          showInTypeName: false,
+          values: GraphColors
+        }
+      ]
     }
   ]
 };

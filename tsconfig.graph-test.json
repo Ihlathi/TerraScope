@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/hub/controllers/LineGraphController.test.ts", "src/hub/hub.ts"],
+  "exclude": []
+}

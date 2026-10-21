@@ -5,7 +5,7 @@
 // license that can be found in the LICENSE file
 // at the root directory of this project.
 
-import { ensureThemeContrast } from "../../shared/Colors";
+import { GraphColors, ensureThemeContrast } from "../../shared/Colors";
 import LineGraphFilter from "../../shared/LineGraphFilter";
 import { SelectionMode } from "../../shared/Selection";
 import { SourceListState } from "../../shared/SourceListConfig";
@@ -23,6 +23,7 @@ import { Units } from "../../shared/units";
 import { clampValue, createUUID, scaleValueClamped } from "../../shared/util";
 import SourceList from "../SourceList";
 import { LineGraphController_DiscreteConfig, LineGraphController_NumericConfig } from "./LineGraphController_Config";
+import { detectEnum, getNumericSourceUnit } from "./LineGraphFieldSemantics";
 import TabController from "./TabController";
 
 type NumericCommandCacheValue = LineGraphRendererCommand_NumericField & { hasUnit: boolean };
@@ -87,7 +88,7 @@ export default class LineGraphController implements TabController {
           lockedRange: this.leftLockedRange,
           autoUnitGroup: autoUnitGroup,
           autoUnitSelected: autoUnitSelected,
-          autoUnitDefault: sourceVisible.length === 1 ? window.log.getUnit(sourceVisible[0].logKey) : null,
+          autoUnitDefault: sourceVisible.length === 1 ? getNumericSourceUnit(window.log, sourceVisible[0]) : null,
           unitConversion: this.leftUnitConversion,
           filter: this.leftFilter,
           config: LineGraphController_NumericConfig
@@ -128,7 +129,7 @@ export default class LineGraphController implements TabController {
           unitConversion: this.rightUnitConversion,
           autoUnitGroup: autoUnitGroup,
           autoUnitSelected: autoUnitSelected,
-          autoUnitDefault: sourceVisible.length === 1 ? window.log.getUnit(sourceVisible[0].logKey) : null,
+          autoUnitDefault: sourceVisible.length === 1 ? getNumericSourceUnit(window.log, sourceVisible[0]) : null,
           filter: this.rightFilter,
           config: LineGraphController_NumericConfig
         });
@@ -388,7 +389,7 @@ export default class LineGraphController implements TabController {
       let autoTargetGroup = Units.GROUP_BY_UNIT[options.autoTarget];
       if (
         sourceVisible.every((item) => {
-          let itemUnit = window.log.getUnit(item.logKey);
+          let itemUnit = getNumericSourceUnit(window.log, item);
           return (
             itemUnit !== null && itemUnit in Units.GROUP_BY_UNIT && Units.GROUP_BY_UNIT[itemUnit] === autoTargetGroup
           );
@@ -403,7 +404,7 @@ export default class LineGraphController implements TabController {
     let firstUnitGroup: string | null = null;
     let unitsConsistent = true;
     for (let i = 0; i < sourceVisible.length; i++) {
-      let unit = window.log.getUnit(sourceVisible[i].logKey);
+      let unit = getNumericSourceUnit(window.log, sourceVisible[i]);
       if (unit !== null && unit in Units.GROUP_BY_UNIT) {
         if (firstUnit === null) {
           firstUnit = unit;
@@ -541,7 +542,7 @@ export default class LineGraphController implements TabController {
         // Convert units
         let hasUnit = false;
         if (autoTargetResult.status === "success") {
-          let sourceUnit = window.log.getUnit(fieldItem.logKey);
+          let sourceUnit = getNumericSourceUnit(window.log, fieldItem);
           if (
             sourceUnit !== null &&
             sourceUnit in Units.GROUP_BY_UNIT &&
@@ -718,6 +719,11 @@ export default class LineGraphController implements TabController {
       let data = window.log.getRange(fieldItem.logKey, timeRange[0], timeRange[1]);
       if (data === undefined) return;
 
+      let enumDomain =
+        fieldItem.type === "enum"
+          ? detectEnum(window.log.getRange(fieldItem.logKey, -Infinity, Infinity)?.values ?? [])
+          : null;
+
       // Get toggle reference
       let toggleReference = window.log.getTimestamps([fieldItem.logKey]).indexOf(data.timestamps[0]) % 2 === 0;
       toggleReference = toggleReference !== window.log.getStripingReference(fieldItem.logKey);
@@ -737,14 +743,31 @@ export default class LineGraphController implements TabController {
       // Convert to text
       let logType = window.log.getType(fieldItem.logKey);
       if (logType === null) return;
-      data.values = data.values.map((value) => getLogValueText(value, logType!));
+      data.values = data.values.map((value) =>
+        enumDomain === null ? getLogValueText(value, logType!) : String(value)
+      );
+
+      const firstColor = Math.max(
+        0,
+        GraphColors.findIndex((color) => color.key === fieldItem.options.color)
+      );
 
       // Add field command
       discreteFieldsCommand.push({
         timestamps: data.timestamps,
         values: data.values,
         color: ensureThemeContrast(fieldItem.options.color),
-        type: fieldItem.type as "stripes" | "graph",
+        type: fieldItem.type === "enum" ? "stripes" : (fieldItem.type as "stripes" | "graph"),
+        ...(enumDomain === null
+          ? {}
+          : {
+              colorMap: Object.fromEntries(
+                enumDomain.values.map((value, index) => [
+                  String(value),
+                  ensureThemeContrast(GraphColors[(firstColor + index) % GraphColors.length].key)
+                ])
+              )
+            }),
         toggleReference: toggleReference
       });
     });

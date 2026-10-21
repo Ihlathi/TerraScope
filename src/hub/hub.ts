@@ -8,7 +8,7 @@
 import { AdvantageScopeAssets } from "../shared/AdvantageScopeAssets";
 import { HubState } from "../shared/HubState";
 import NamedMessage from "../shared/NamedMessage";
-import Preferences, { getRobotAddress } from "../shared/Preferences";
+import Preferences, { getRobotAddress, LiveMode } from "../shared/Preferences";
 import Selection from "../shared/Selection";
 import { SourceListItemState, SourceListTypeMemory } from "../shared/SourceListConfig";
 import { Distribution, DISTRIBUTION, IS_LITE } from "../shared/buildConstants";
@@ -24,6 +24,7 @@ import WorkerManager from "./WorkerManager";
 import { HistoricalDataSource, HistoricalDataSourceStatus } from "./dataSources/HistoricalDataSource";
 import { LiveDataSource, LiveDataSourceStatus } from "./dataSources/LiveDataSource";
 import LiveDataTuner from "./dataSources/LiveDataTuner";
+import LiveSession from "./dataSources/LiveSession";
 import PhoenixDiagnosticsSource from "./dataSources/PhoenixDiagnosticsSource";
 import FoxgloveSource from "./dataSources/foxglove/FoxgloveSource";
 import FTCDashboardSource from "./dataSources/ftcdashboard/FTCDashboardSource";
@@ -99,7 +100,44 @@ let historicalSources: {
   progress: number | null;
   progressIncluded: boolean;
 }[] = [];
-let liveSource: LiveDataSource | null = null;
+const liveSession = new LiveSession(
+  () => {
+    const log = liveSession.getLog();
+    if (log !== null) {
+      window.log = log;
+      liveConnected = true;
+    }
+    const addresses = liveSession.getAddresses();
+    const name =
+      addresses.length > 1 ? addresses.join(" + ") + " (receive-estimated offsets)" : addresses[0] ?? "Live data";
+    const status = liveSession.getStatus();
+    setWindowTitle(
+      name,
+      status === LiveDataSourceStatus.Connecting
+        ? "Searching"
+        : status === LiveDataSourceStatus.Error
+        ? "Error"
+        : undefined
+    );
+    const timeSupplier = liveSession.getTimeSupplier();
+    if (timeSupplier === null) window.selection.setLiveDisconnected();
+    else window.selection.setLiveConnected(timeSupplier);
+    window.sidebar.refresh();
+    window.tabs.refresh();
+    window.tuner = liveSession;
+  },
+  (address, status) => {
+    if (status === LiveDataSourceStatus.Error) {
+      window.sendMainMessage("error", {
+        title: "Problem with live source",
+        content:
+          "There was a problem while connecting to " +
+          address +
+          ". Please check your connection settings and try again."
+      });
+    }
+  }
+);
 let publisher: NT4Publisher | null = null;
 let isExporting = false;
 let logFriendlyName: string | null = null;
@@ -324,7 +362,7 @@ function startHistorical(path: string, clear = true, merge = false) {
     window.tabs.refresh();
   }
 
-  liveSource?.stop();
+  liveSession.stopAll();
   window.tuner = null;
   liveActive = false;
   liveConnected = false;
@@ -423,91 +461,85 @@ function startHistorical(path: string, clear = true, merge = false) {
   );
 }
 
+type LiveRequest =
+  | "robot"
+  | "sim"
+  | "ds"
+  | {
+      sourceType: "robot" | "sim" | "ds";
+      mode: LiveMode;
+      address: string;
+    };
+
 /** Connects to a live data source. */
-function startLive(sourceType: "robot" | "sim" | "ds") {
+function startLive(request: LiveRequest, additional = false) {
+  if (!window.preferences) return;
+  const sourceType = typeof request === "string" ? request : request.sourceType;
+  const mode = typeof request === "string" ? window.preferences.liveMode : request.mode;
+  if (additional && liveSession.getSources().length >= 2) {
+    window.sendMainMessage("error", {
+      title: "Cannot add live source",
+      content: "Disconnect a live source before adding another. Two simultaneous sources are supported."
+    });
+    return;
+  }
+  if (
+    additional &&
+    (!["nt4", "nt4-akit", "nt4-systemcore", "foxglove"].includes(mode) ||
+      liveSession.getSources().some((source) => !(source instanceof NT4Source) && !(source instanceof FoxgloveSource)))
+  ) {
+    window.sendMainMessage("error", {
+      title: "Cannot add live source",
+      content: "Additional connections support NetworkTables and Foxglove."
+    });
+    return;
+  }
   historicalSources.forEach((entry) => entry.source.stop());
   historicalSources = [];
-  liveSource?.stop();
+  if (!additional) liveSession.stopAll();
   publisher?.stop();
   liveActive = true;
   setLoading(null);
 
-  if (!window.preferences) return;
+  let source: LiveDataSource;
   if (sourceType === "ds") {
-    liveSource = new NT4Source(NT4Mode.DriverStation);
+    source = new NT4Source(NT4Mode.DriverStation);
   } else {
-    switch (window.preferences.liveMode) {
+    switch (mode) {
       case "nt4":
-        liveSource = new NT4Source(NT4Mode.Default);
+        source = new NT4Source(NT4Mode.Default);
         break;
       case "nt4-akit":
-        liveSource = new NT4Source(NT4Mode.AdvantageKit);
+        source = new NT4Source(NT4Mode.AdvantageKit);
         break;
       case "nt4-systemcore":
-        liveSource = new NT4Source(NT4Mode.Systemcore);
+        source = new NT4Source(NT4Mode.Systemcore);
         break;
       case "phoenix":
-        liveSource = new PhoenixDiagnosticsSource();
+        source = new PhoenixDiagnosticsSource();
         break;
       case "rlog":
-        liveSource = new RLOGServerSource();
+        source = new RLOGServerSource();
         break;
       case "ftcdashboard":
-        liveSource = new FTCDashboardSource();
+        source = new FTCDashboardSource();
         break;
       case "foxglove":
-        liveSource = new FoxgloveSource();
+        source = new FoxgloveSource();
         break;
     }
   }
 
-  let address = "";
-  if (IS_LITE) {
-    address = window.location.hostname;
-  } else if (sourceType === "sim" || sourceType === "ds") {
-    address = "127.0.0.1";
-  } else {
-    if (window.preferences) {
-      address = getRobotAddress(window.preferences, window.platform);
-    }
-  }
-  if (!IS_LITE && sourceType !== "ds" && window.preferences && window.preferences.liveMode === "foxglove") {
+  let address: string;
+  if (typeof request !== "string") address = request.address;
+  else if (IS_LITE) address = window.location.hostname;
+  else if (sourceType === "sim" || sourceType === "ds") address = "127.0.0.1";
+  else address = getRobotAddress(window.preferences, window.platform);
+  if (typeof request === "string" && !IS_LITE && sourceType !== "ds" && mode === "foxglove") {
     address = window.preferences.robotAddress;
   }
-
-  liveSource.connect(
-    address,
-    (status: LiveDataSourceStatus) => {
-      switch (status) {
-        case LiveDataSourceStatus.Connecting:
-          setWindowTitle(address, "Searching");
-          break;
-        case LiveDataSourceStatus.Active:
-          setWindowTitle(address);
-          break;
-        case LiveDataSourceStatus.Error:
-          setWindowTitle(address, "Error");
-          window.sendMainMessage("error", {
-            title: "Problem with live source",
-            content:
-              "There was a problem while connecting to the live source. Please check your connection settings and try again."
-          });
-          break;
-      }
-
-      if (status !== LiveDataSourceStatus.Active) {
-        window.selection.setLiveDisconnected();
-      }
-    },
-    (log: Log, timeSupplier: () => number) => {
-      liveConnected = true;
-      window.log = log;
-      window.selection.setLiveConnected(timeSupplier);
-      window.sidebar.refresh();
-      window.tabs.refresh();
-    }
-  );
-  window.tuner = liveSource.getTuner();
+  liveSession.attach(source, address, additional);
+  window.tuner = liveSession;
 }
 
 // File dropped on window
@@ -750,9 +782,7 @@ async function handleMainMessage(message: NamedMessage) {
       break;
 
     case "live-data":
-      if (liveSource !== null) {
-        liveSource.handleMainMessage(message.data);
-      }
+      liveSession.getSources().forEach((source) => source.handleMainMessage(message.data));
       break;
 
     case "open-files":
@@ -781,14 +811,20 @@ async function handleMainMessage(message: NamedMessage) {
       break;
 
     case "start-live":
+    case "add-live":
       if (isExporting) {
         window.sendMainMessage("error", {
           title: "Cannot connect",
           content: "Please wait for the export to finish, then try again."
         });
       } else {
-        startLive(message.data);
+        startLive(message.data, message.name === "add-live");
       }
+      break;
+
+    case "stop-live":
+      liveSession.stop(message.data);
+      liveActive = liveSession.getSources().length > 0;
       break;
 
     case "start-publish":

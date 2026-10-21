@@ -13,6 +13,7 @@ import LogField from "./LogField";
 import LogFieldTree from "./LogFieldTree";
 import { PHOTON_PREFIX, STRUCT_PREFIX, applyKeyPrefix, getSchemaType, splitLogKey } from "./LogKeyUtils";
 import {
+  ClockConversion,
   DomainTimestamp,
   LOG_CLOCK,
   LogTimestamp,
@@ -34,6 +35,7 @@ import {
 } from "./LogValueSets";
 import LoggableType from "./LoggableType";
 import PhotonStructDecoder from "./PhotonStructDecoder";
+import ProjectedLogField, { sourceClock } from "./ProjectedLogField";
 import ProtoDecoder from "./ProtoDecoder";
 import { getEnabledData } from "./RobotState";
 import StructDecoder from "./StructDecoder";
@@ -223,6 +225,42 @@ export default class Log {
     this.fields[key] = field;
     this.changedFields.add(key);
     this.checkDSConsoleField(key);
+  }
+
+  setProjectedSources(sources: { log: Log; namespace: string; conversion: ClockConversion }[]) {
+    for (const { log, namespace, conversion } of sources) {
+      if (
+        !sameTimestampDomain(conversion.to, this.displayClock) ||
+        !sameTimestampDomain(conversion.from, sourceClock(namespace, log.getDisplayClock()))
+      ) {
+        throw new Error("Live projection requires an explicit source-to-display clock conversion");
+      }
+    }
+    const oldKeys = Object.keys(this.fields);
+    this.fields = {};
+    this.generatedParents.clear();
+    this.timestampRange = null;
+    this.timestampZero = null;
+    this.timestampSetCache = {};
+    this.fieldUnitCache = {};
+    for (const { log, namespace, conversion } of sources) {
+      for (const key of log.getFieldKeys()) {
+        const targetKey = applyKeyPrefix(namespace, key);
+        this.fields[targetKey] = new ProjectedLogField(
+          log.getField(key)!,
+          log.getDisplayClock(),
+          namespace,
+          conversion
+        );
+        if (log.generatedParents.has(key)) this.generatedParents.add(targetKey);
+        this.changedFields.add(targetKey);
+      }
+      if (log.timestampRange !== null) {
+        this.updateRangeWithTimestamp(log.timestampRange[0] + conversion.offsetSeconds);
+        this.updateRangeWithTimestamp(log.timestampRange[1] + conversion.offsetSeconds);
+      }
+    }
+    oldKeys.forEach((key) => this.changedFields.add(key));
   }
 
   /** Returns the constant field type. */

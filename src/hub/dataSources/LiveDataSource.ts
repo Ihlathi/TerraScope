@@ -19,6 +19,16 @@ export abstract class LiveDataSource {
   protected statusCallback: ((status: LiveDataSourceStatus) => void) | null = null;
   protected outputCallback: ((log: Log, timeSupplier: () => number) => void) | null = null;
 
+  private displayKeyToSource: (key: string) => string | null = (key) => key;
+
+  setDisplayKeyResolver(resolver: (key: string) => string | null) {
+    this.displayKeyToSource = resolver;
+  }
+
+  protected getSourceKeys(keys: string[]): string[] {
+    return keys.map(this.displayKeyToSource).filter((key): key is string => key !== null);
+  }
+
   private clearDataCallback: NodeJS.Timeout | null = null;
   private timeSupplier: (() => number) | null = null;
 
@@ -54,6 +64,10 @@ export abstract class LiveDataSource {
         }
       }, 1000 / 60);
     }
+  }
+
+  getTime(): number | null {
+    return this.timeSupplier?.() ?? null;
   }
 
   /** Cancels the connection. */

@@ -23,6 +23,10 @@
     "src/hub/dataSources/nt4/NT4Timestamp.test.ts",
     "src/hub/dataSources/LiveSession.test.ts",
     "src/shared/log/SpatialSensor.test.ts",
-    "src/hub/dataSources/ros2/SpatialSensorReaders.test.ts"
+    "src/hub/dataSources/ros2/SpatialSensorReaders.test.ts",
+    "src/hub/dataSources/LiveRecording.test.ts",
+    "src/shared/recording/WPILOGRecordingWriter.test.ts",
+    "src/shared/recording/RecordingCapture.test.ts",
+    "src/hub/LiveRecording.test.ts"
   ]
 }

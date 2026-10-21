@@ -7,6 +7,7 @@
 
 import { Decoder } from "@msgpack/msgpack";
 import { Pose2d, Translation2d } from "../geometry";
+import { RecordingSample } from "../recording/RecordingWriter";
 import { Units } from "../units";
 import { arraysEqual, checkArrayType } from "../util";
 import LogField from "./LogField";
@@ -20,7 +21,9 @@ import {
   TimestampDomain,
   copyTimestamp,
   resolveTimestamp,
-  sameTimestampDomain
+  sameTimestampDomain,
+  timestampSeconds,
+  timestampSource
 } from "./LogTimestamp";
 import { TYPE_KEY } from "./LogUtil";
 import {
@@ -49,6 +52,7 @@ export default class Log {
   private photonDecoder = new PhotonStructDecoder();
 
   private fields: { [id: string]: LogField } = {};
+  private sampleListeners = new Set<(sample: RecordingSample) => void>();
   private generatedParents: Set<string> = new Set(); // Children of these fields are generated
   private timestampRange: [number, number] | null = null;
   private timestampZero: number | null = null;
@@ -77,10 +81,34 @@ export default class Log {
     return this.fields[key]?.getTimestampSources(start, end, this.displayClock);
   }
 
+  addSampleListener(listener: (sample: RecordingSample) => void): () => void {
+    if (this.sampleListeners.size === 0) {
+      Object.entries(this.fields).forEach(([key, field]) => {
+        field.setSampleListener((timestamp, value) => this.emitSample(key, timestamp, value));
+      });
+    }
+    this.sampleListeners.add(listener);
+    return () => this.sampleListeners.delete(listener);
+  }
+
+  private emitSample(key: string, timestamp: LogTimestamp, value: unknown) {
+    if (this.sampleListeners.size === 0) return;
+    const field = this.fields[key];
+    const sample = {
+      key,
+      type: field.getType(),
+      timestamp: timestampSource(timestamp)?.seconds ?? timestampSeconds(timestamp),
+      wpilibType: field.wpilibType,
+      metadata: field.metadataString,
+      value: value instanceof Uint8Array ? value.slice() : Array.isArray(value) ? [...value] : value
+    } as RecordingSample;
+    this.sampleListeners.forEach((listener) => listener(sample));
+  }
+
   /** Checks if the field exists and registers it if necessary. */
   createBlankField(key: string, type: LoggableType) {
     if (key in this.fields) return;
-    this.fields[key] = new LogField(type);
+    this.fields[key] = new LogField(type, (timestamp, value) => this.emitSample(key, timestamp, value));
     this.changedFields.add(key);
     this.checkDSConsoleField(key);
   }

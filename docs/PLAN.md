@@ -75,7 +75,11 @@ Enum lanes recognize up to ten string or integer states and keep each state's co
 
 ## 12. Point cloud and laser scan views
 
-Add semantic types for a 2D laser scan and a 3D point cloud, fed by the MCAP/ROS reader, and one renderer that draws them in the existing 3D scene. Downsampling can be crude. No accumulation or LOD yet.
+**Status: done.**
+
+The semantic registry recognizes ROS 2 LaserScan and PointCloud2 messages decoded by the shared ROS2Decoder from MCAP and sqlite3 bags. One point renderer draws the latest sample at or before the timeline cursor in the existing 3D scene. Fixed-stride downsampling caps each source at 20,000 points. Frame transforms, accumulation, and LOD remain outside this chunk.
+
+The [verification evidence](evidence/chunk-12/README.md) includes command output, the generated fixture, both sensors in the app, and an unchanged existing-scene comparison against main.
 
 ## 13. Image frames
 

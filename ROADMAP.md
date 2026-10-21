@@ -148,7 +148,7 @@ largely irrelevant to the debugging and visualization experience.
 - [ ] Matrices. (Numeric arrays can be graphed element by element. Matrices are not a type.)
 - [x] Binary data.
 - [ ] Images. (No image sample type. Match video is a separate file, YouTube download, or The Blue Alliance clip.)
-- [ ] Point clouds. (Not represented or rendered.)
+- [x] Point clouds. (ROS 2 PointCloud2 messages in MCAP and sqlite3 bags, displayed in the 3D scene.)
 - [ ] User-defined data types. (WPILib structs, Photon structs, protobuf, MessagePack, JSON, and built-in schemas such as URCL. Users cannot register a type.)
 
 ## Schema Handling
@@ -171,7 +171,7 @@ largely irrelevant to the debugging and visualization experience.
 - [x] Interpret poses, transforms, vectors, and rotations.
 - [ ] Interpret joint states. (WPILib Mechanism2d ligament angles and lengths. Not general joint-state messages.)
 - [ ] Interpret trajectories and paths. (WPILib Trajectory plus swerve and differential samples on the 3D field.)
-- [ ] Interpret images and spatial sensor measurements. (AprilTag poses and vision targets. No image, laser-scan, or point-cloud interpretation.)
+- [ ] Interpret images and spatial sensor measurements. (AprilTag poses, vision targets, ROS 2 laser scans, and point clouds. Images are not interpreted.)
 - [ ] Support custom semantic type mappings. (Object type is chosen per field in the 2D and 3D tabs. Mappings are not reusable semantic adapters.)
 - [x] Allow users to override incorrect automatic interpretations.
 - [x] Allow equivalent data from different formats to use the same visualizations.
@@ -409,7 +409,7 @@ largely irrelevant to the debugging and visualization experience.
 - [x] Multiple robot models.
 - [x] Robot pose overlays.
 - [x] Trajectory overlays.
-- [ ] Sensor overlays. (Vision targets and AprilTags. No laser or point-cloud overlay.)
+- [x] Sensor overlays. (Vision targets, AprilTags, ROS 2 laser scans, and point clouds in the 3D scene.)
 - [ ] Obstacle visualization.
 - [ ] Collision geometry visualization.
 - [ ] Planned and actual movement. (Trajectories, the robot pose, and ghost poses can be shown together.)
@@ -460,18 +460,18 @@ largely irrelevant to the debugging and visualization experience.
 
 ## LiDAR and Spatial Sensors
 
-- [ ] 2D laser scans.
-- [ ] 3D LiDAR point clouds.
+- [x] 2D laser scans.
+- [x] 3D LiDAR point clouds.
 - [ ] Depth camera data.
 - [ ] Radar detections.
 - [ ] Sonar and ultrasonic measurements.
 - [ ] Range measurements.
-- [ ] Multi-sensor spatial overlays.
+- [x] Multi-sensor spatial overlays. (Direct coordinates in the selected scene. No sensor-frame transforms.)
 - [ ] Point cloud coloring.
 - [ ] Point cloud filtering.
 - [ ] Point cloud accumulation.
-- [ ] Point cloud downsampling.
-- [ ] Historical point cloud playback.
+- [x] Point cloud downsampling.
+- [x] Historical point cloud playback.
 - [ ] Sensor frame visualization.
 - [ ] Sensor field-of-view visualization.
 - [ ] Spatial measurement tools.

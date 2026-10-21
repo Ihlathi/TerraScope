@@ -134,3 +134,22 @@ test("pose reader accepts mapped spatial types and rejects mechanism joints", ()
   assert.equal(canReadAsPose("Mechanism2d"), false);
   assert.equal(canReadAsPose("ChassisSpeeds"), false);
 });
+
+test("maps ROS laser scans and point clouds without admitting them to pose readers", () => {
+  for (const name of ["sensor_msgs/msg/LaserScan", "sensor_msgs/LaserScan"]) {
+    assert.equal(classifyStructuredType(name), SemanticType.LaserScan);
+    assert.equal(canReadAsPose(name), false);
+  }
+  for (const name of ["sensor_msgs/msg/PointCloud2", "sensor_msgs/PointCloud2"]) {
+    assert.equal(classifyStructuredType(name), SemanticType.PointCloud);
+    assert.equal(canReadAsPose(name), false);
+  }
+  assert.deepEqual(structuredTypesFor([SemanticType.LaserScan]), [
+    "sensor_msgs/msg/LaserScan",
+    "sensor_msgs/LaserScan"
+  ]);
+  assert.deepEqual(structuredTypesFor([SemanticType.PointCloud]), [
+    "sensor_msgs/msg/PointCloud2",
+    "sensor_msgs/PointCloud2"
+  ]);
+});

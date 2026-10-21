@@ -29,6 +29,7 @@ import { getOrDefault } from "../../shared/log/LogUtil";
 import LoggableType from "../../shared/log/LoggableType";
 import { ALLIANCE_KEYS, DRIVER_STATION_KEYS, getDriverStation, getIsRedAlliance } from "../../shared/log/RobotState";
 import { SemanticType, canReadAsPose, classifyStructuredType } from "../../shared/log/SemanticType";
+import { readSensorPoints } from "../../shared/log/SpatialSensor";
 import { Field3dRendererCommand, Field3dRendererCommand_AnyObj } from "../../shared/renderers/Field3dRenderer";
 import { clampValue, createUUID } from "../../shared/util";
 import SourceList from "../SourceList";
@@ -336,6 +337,15 @@ export default class Field3dController implements TabController {
       ) {
         i++;
         children.push(sources[i]);
+      }
+
+      if (source.type === "laserScan" || source.type === "pointCloud") {
+        objects.push({
+          type: "points",
+          color: source.options.color,
+          positions: time === null ? [] : readSensorPoints(window.log, source.logKey, time, this.UUID)
+        });
+        continue;
       }
 
       // Get pose data

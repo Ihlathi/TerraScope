@@ -17,6 +17,28 @@ const Field3dController_Config: SourceListConfig = {
   typeMemoryId: "field3d",
   types: [
     {
+      key: "laserScan",
+      display: "Laser Scan",
+      symbol: "sensors",
+      showInTypeName: true,
+      color: "color",
+      sourceTypes: structuredTypesFor([SemanticType.LaserScan]),
+      showDocs: false,
+      options: [{ key: "color", display: "Color", showInTypeName: false, values: NeonColors }],
+      previewType: null
+    },
+    {
+      key: "pointCloud",
+      display: "Point Cloud",
+      symbol: "scatterplot",
+      showInTypeName: true,
+      color: "color",
+      sourceTypes: structuredTypesFor([SemanticType.PointCloud]),
+      showDocs: false,
+      options: [{ key: "color", display: "Color", showInTypeName: false, values: NeonColors }],
+      previewType: null
+    },
+    {
       key: "robot",
       display: "Robot",
       symbol: "nearme",

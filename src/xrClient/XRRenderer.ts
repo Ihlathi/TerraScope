@@ -28,6 +28,7 @@ import AxesManager from "../shared/renderers/field3d/objectManagers/AxesManager"
 import ConeManager from "../shared/renderers/field3d/objectManagers/ConeManager";
 import GamePieceManager from "../shared/renderers/field3d/objectManagers/GamePieceManager";
 import HeatmapManager from "../shared/renderers/field3d/objectManagers/HeatmapManager";
+import PointsManager from "../shared/renderers/field3d/objectManagers/PointsManager";
 import RobotManager from "../shared/renderers/field3d/objectManagers/RobotManager";
 import TrajectoryManager from "../shared/renderers/field3d/objectManagers/TrajectoryManager";
 import { Units } from "../shared/units";
@@ -261,6 +262,9 @@ export default class XRRenderer {
         break;
       case "gamePiece":
         manager = new GamePieceManager(...args, this.fieldPieces);
+        break;
+      case "points":
+        manager = new PointsManager(...args);
         break;
       case "trajectory":
         manager = new TrajectoryManager(...args);

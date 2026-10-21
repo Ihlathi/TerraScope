@@ -140,7 +140,7 @@ largely irrelevant to the debugging and visualization experience.
 - [x] Integers.
 - [x] Floating-point values.
 - [x] Strings.
-- [ ] Enumerations. (Enum-like values appear as strings or numbers. There is no enumeration type.)
+- [ ] Enumerations. (The line graph interprets small sets of string or integer states as enum lanes. There is no enumeration log type.)
 - [x] Arrays and lists.
 - [ ] Maps and dictionaries. (JSON objects expand into nested fields. Maps are not a log type.)
 - [x] Nested structures.
@@ -288,7 +288,7 @@ largely irrelevant to the debugging and visualization experience.
 - [x] Tables.
 - [x] Raw value displays.
 - [x] Boolean state timelines.
-- [ ] Enum state timelines. (String and boolean values use discrete lanes. Enums are not a type.)
+- [x] Enum state timelines. (Opt-in enum lanes color up to ten string or integer states consistently across the available history.)
 - [x] Text displays.
 - [ ] Structured object inspectors. (Struct, protobuf, and JSON values expand into a sidebar tree.)
 - [ ] Binary message inspectors. (Raw samples exist. There is no hex or binary viewer.)

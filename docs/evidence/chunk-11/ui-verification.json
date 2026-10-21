@@ -1,0 +1,72 @@
+{
+  "fixture": "generic-telemetry.csv",
+  "metadataUnit": null,
+  "declaredUnit": "meters",
+  "displayUnit": "ft",
+  "convertedValues": [0, 1.640419947506562, 3.280839895013124, 5.905511811023623, 8.530183727034123, 9.842519685039372],
+  "enumValues": [
+    ["idle", "moving", "fault", "idle", "moving", "idle"],
+    ["0", "1", "2", "0", "1", "0"]
+  ],
+  "layout": {
+    "selected": 0,
+    "tabs": [
+      {
+        "type": 1,
+        "title": "Generic telemetry CSV",
+        "controller": {
+          "leftSources": [
+            {
+              "logKey": "distance",
+              "logType": "Number",
+              "type": "stepped",
+              "visible": true,
+              "options": {
+                "color": "#2b66a2",
+                "size": "bold",
+                "sourceUnit": "meters"
+              }
+            }
+          ],
+          "rightSources": [],
+          "discreteSources": [
+            {
+              "logKey": "state",
+              "logType": "String",
+              "type": "enum",
+              "visible": true,
+              "options": {
+                "color": "#2b66a2"
+              }
+            },
+            {
+              "logKey": "mode",
+              "logType": "Number",
+              "type": "enum",
+              "visible": true,
+              "options": {
+                "color": "#a22b2b"
+              }
+            }
+          ],
+          "leftLockedRange": null,
+          "rightLockedRange": null,
+          "leftUnitConversion": {
+            "autoTarget": "feet",
+            "preset": null
+          },
+          "rightUnitConversion": {
+            "autoTarget": null,
+            "preset": null
+          },
+          "leftFilter": 0,
+          "rightFilter": 0,
+          "showRobotMode": false
+        },
+        "controllerUUID": "0lnpsw91hdj7o62zgczzmlquwzpfnkzl",
+        "renderer": null,
+        "controlsHeight": 220
+      }
+    ]
+  }
+}

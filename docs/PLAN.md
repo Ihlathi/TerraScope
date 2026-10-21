@@ -63,7 +63,11 @@ Remove the single-`liveSource` assumption in `hub.ts` enough to attach two sourc
 
 ## 11. Generic numeric and enum lanes
 
+**Status: done.**
+
 Teach the line graph to treat enumerated values as a first-class discrete lane, and accept a user-declared unit when metadata has none. This is the rest of "graph it immediately" for non-WPILib logs. No expression language in this PR.
+
+Enum lanes recognize up to ten string or integer states and keep each state's color across the timeline. Per-field source-unit declarations are saved with layouts and use the existing automatic unit conversion. Existing lane defaults and saved layouts keep their behavior. Controller tests cover detection, time ranges, and conversion after layout reload. [CSV verification and screenshot](evidence/chunk-11/README.md) cover the running app.
 
 ## 12. Point cloud and laser scan views
 

@@ -1,6 +1,9 @@
 node_modules
 dist
 bundles
+build
+lite/static/bundles
+lite/ipk/overlay/usr/local/bin/advantagescope-lite/static/bundles
 src/licenses.json
 docs/build
 xr

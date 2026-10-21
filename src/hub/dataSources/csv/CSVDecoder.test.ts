@@ -15,7 +15,7 @@ import CSVDecoder from "./CSVDecoder";
 
 declare global {
   interface Window {
-    preferences?: { timestamps: string };
+    preferences?: { timestamps: string; liveDiscard?: number };
     selection: {
       getTimelineRange(): [number, number];
       getTimelineIsMaxZoom(): boolean;

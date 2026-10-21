@@ -2278,6 +2278,35 @@ function setupMenu() {
           }
         },
         {
+          label: "Add Live Source",
+          submenu: [
+            {
+              label: "Robot (current settings)",
+              click(_, baseWindow) {
+                const window = baseWindow as BrowserWindow | undefined;
+                if (window !== undefined && hubWindows.includes(window)) sendMessage(window, "add-live", "robot");
+              }
+            },
+            {
+              label: "Simulator (current settings)",
+              click(_, baseWindow) {
+                const window = baseWindow as BrowserWindow | undefined;
+                if (window !== undefined && hubWindows.includes(window)) sendMessage(window, "add-live", "sim");
+              }
+            }
+          ]
+        },
+        {
+          label: "Disconnect Live Source",
+          submenu: [1, 2].map((id) => ({
+            label: "Live" + id,
+            click(_, baseWindow) {
+              const window = baseWindow as BrowserWindow | undefined;
+              if (window !== undefined && hubWindows.includes(window)) sendMessage(window, "stop-live", "/Live" + id);
+            }
+          }))
+        },
+        {
           label: "Download Logs...",
           accelerator: "CmdOrCtrl+D",
           click(_, baseWindow) {

@@ -17,7 +17,9 @@ export const SemanticType = {
   Rotation: "rotation",
   Trajectory: "trajectory",
   MechanismJoint: "mechanismJoint",
-  NumericSeries: "numericSeries"
+  NumericSeries: "numericSeries",
+  LaserScan: "laserScan",
+  PointCloud: "pointCloud"
 } as const;
 
 export type SemanticType = (typeof SemanticType)[keyof typeof SemanticType];
@@ -50,7 +52,11 @@ const STRUCTURED_TYPES: readonly StructuredTypeEntry[] = [
   { logType: "DifferentialSample[]", semantic: SemanticType.Trajectory, array: true },
   { logType: "SwerveSample[]", semantic: SemanticType.Trajectory, array: true },
   { logType: "Mechanism2d", semantic: SemanticType.MechanismJoint, array: false },
-  { logType: "Number", semantic: SemanticType.NumericSeries, array: false }
+  { logType: "Number", semantic: SemanticType.NumericSeries, array: false },
+  { logType: "sensor_msgs/msg/LaserScan", semantic: SemanticType.LaserScan, array: false },
+  { logType: "sensor_msgs/LaserScan", semantic: SemanticType.LaserScan, array: false },
+  { logType: "sensor_msgs/msg/PointCloud2", semantic: SemanticType.PointCloud, array: false },
+  { logType: "sensor_msgs/PointCloud2", semantic: SemanticType.PointCloud, array: false }
 ];
 
 const BY_LOG_TYPE = new Map(STRUCTURED_TYPES.map((entry) => [entry.logType, entry.semantic]));
@@ -66,7 +72,7 @@ export type StructuredTypeFilter = {
   trajectorySamples?: boolean;
 };
 
-/** Maps a WPILib or AdvantageKit structured type string onto a semantic kind. */
+/** Maps a structured type string onto a semantic kind. */
 export function classifyStructuredType(logType: string): SemanticType | null {
   return BY_LOG_TYPE.get(logType) ?? null;
 }
@@ -93,5 +99,12 @@ export function structuredTypesFor(semantics: readonly SemanticType[], filter: S
 export function canReadAsPose(logType: string): boolean {
   if (LEGACY_SPATIAL_LOG_TYPES.has(logType)) return true;
   const semantic = classifyStructuredType(logType);
-  return semantic !== null && semantic !== SemanticType.MechanismJoint;
+  return (
+    semantic === SemanticType.Pose2d ||
+    semantic === SemanticType.Pose3d ||
+    semantic === SemanticType.Translation ||
+    semantic === SemanticType.Rotation ||
+    semantic === SemanticType.Trajectory ||
+    semantic === SemanticType.NumericSeries
+  );
 }

@@ -29,6 +29,7 @@ import AxesManager from "./field3d/objectManagers/AxesManager";
 import ConeManager from "./field3d/objectManagers/ConeManager";
 import GamePieceManager from "./field3d/objectManagers/GamePieceManager";
 import HeatmapManager from "./field3d/objectManagers/HeatmapManager";
+import PointsManager from "./field3d/objectManagers/PointsManager";
 import RobotManager from "./field3d/objectManagers/RobotManager";
 import TrajectoryManager from "./field3d/objectManagers/TrajectoryManager";
 
@@ -497,6 +498,9 @@ export default class Field3dRendererImpl implements TabRenderer {
         break;
       case "gamePiece":
         manager = new GamePieceManager(...args, this.fieldPieces);
+        break;
+      case "points":
+        manager = new PointsManager(...args);
         break;
       case "trajectory":
         manager = new TrajectoryManager(...args);

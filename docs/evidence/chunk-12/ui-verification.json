@@ -1,0 +1,109 @@
+{
+  "observations": [
+    {
+      "time": 1.5,
+      "objects": [
+        {
+          "visible": true,
+          "count": 181,
+          "first": [3, 0, 0]
+        },
+        {
+          "visible": true,
+          "count": 441,
+          "first": [1.7999999523162842, -2, 0.25]
+        }
+      ]
+    },
+    {
+      "time": 2.5,
+      "objects": [
+        {
+          "visible": true,
+          "count": 181,
+          "first": [3.299999952316284, 0, 0]
+        },
+        {
+          "visible": true,
+          "count": 441,
+          "first": [2.299999952316284, -2, 0.25]
+        }
+      ]
+    },
+    {
+      "time": 3,
+      "objects": [
+        {
+          "visible": false,
+          "count": 0,
+          "first": []
+        },
+        {
+          "visible": false,
+          "count": 0,
+          "first": []
+        }
+      ]
+    },
+    {
+      "time": 1.5,
+      "objects": [
+        {
+          "visible": true,
+          "count": 181,
+          "first": [3, 0, 0]
+        },
+        {
+          "visible": true,
+          "count": 441,
+          "first": [1.7999999523162842, -2, 0.25]
+        }
+      ]
+    }
+  ],
+  "layout": {
+    "selected": 0,
+    "tabs": [
+      {
+        "type": 3,
+        "title": "Laser scan and point cloud",
+        "controller": {
+          "sources": [
+            {
+              "logKey": "/scan",
+              "logType": "sensor_msgs/msg/LaserScan",
+              "type": "laserScan",
+              "visible": true,
+              "options": {
+                "color": "#2166d1"
+              }
+            },
+            {
+              "logKey": "/cloud",
+              "logType": "sensor_msgs/msg/PointCloud2",
+              "type": "pointCloud",
+              "visible": true,
+              "options": {
+                "color": "#ef6500"
+              }
+            }
+          ],
+          "game": "custom",
+          "customEnvironment": {
+            "lengthMeters": 10,
+            "widthMeters": 8,
+            "originXMeters": -5,
+            "originYMeters": -4
+          }
+        },
+        "renderer": {
+          "cameraIndex": -1,
+          "orbitFov": 50,
+          "cameraPosition": [9, 7.999999999999997, 10],
+          "cameraTarget": [0.1, 0.1, 0.1]
+        },
+        "controlsHeight": 220
+      }
+    ]
+  }
+}

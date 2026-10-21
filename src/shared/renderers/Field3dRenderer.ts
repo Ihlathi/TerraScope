@@ -139,7 +139,8 @@ export type Field3dRendererCommand_AnyObj =
   | Field3dRendererCommand_AprilTagObj
   | Field3dRendererCommand_AprilTagBuiltInObj
   | Field3dRendererCommand_AxesObj
-  | Field3dRendererCommand_ConeObj;
+  | Field3dRendererCommand_ConeObj
+  | Field3dRendererCommand_PointsObj;
 
 export type Field3dRendererCommand_GenericRobotObj = {
   model: string;
@@ -208,4 +209,10 @@ export type Field3dRendererCommand_ConeObj = {
   color: string;
   position: "center" | "back" | "front";
   poses: AnnotatedPose3d[];
+};
+
+export type Field3dRendererCommand_PointsObj = {
+  type: "points";
+  color: string;
+  positions: number[];
 };

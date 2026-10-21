@@ -1,0 +1,176 @@
+Post-rebase verification against Ihlathi/TerraScope main 720328ff692e42d5679a061cf32411dab35ba844.
+Both PLAN chunks 10 and 11 are done. All checked ROADMAP items from both branches and every test file are retained.
+
+$ npm run compile
+> advantagescope@27.0.0-alpha-6 compile
+> rolldown -c
+
+<DIR>/main.js  chunk │ size: 308.86 kB
+<DIR>/preload.js  chunk │ size: 0.64 kB
+<DIR>/chunk/WPILOGShared.js         chunk │ size:     0.48 kB
+<DIR>/chunk/buildConstants.js       chunk │ size:     0.77 kB
+<DIR>/rlogWorker.js                 chunk │ size:     0.89 kB
+<DIR>/chunk/LoggableType.js         chunk │ size:     0.91 kB
+<DIR>/chunk/Preferences.js          chunk │ size:     0.92 kB
+<DIR>/chunk/prepareTransfer.js      chunk │ size:     0.95 kB
+<DIR>/csvWorker.js                  chunk │ size:     1.01 kB
+<DIR>/tsvWorker.js                  chunk │ size:     1.01 kB
+<DIR>/jsonWorker.js                 chunk │ size:     1.02 kB
+<DIR>/jsonlWorker.js                chunk │ size:     1.02 kB
+<DIR>/renameTab.js                  chunk │ size:     1.30 kB
+<DIR>/editFov.js                    chunk │ size:     1.37 kB
+<DIR>/betaWelcome.js                chunk │ size:     1.50 kB
+<DIR>/editRange.js                  chunk │ size:     1.61 kB
+<DIR>/loadRobot.js                  chunk │ size:     1.92 kB
+<DIR>/chunk/chunk.js                chunk │ size:     2.14 kB
+<DIR>/chunk/JSONDecoder.js          chunk │ size:     2.40 kB
+<DIR>/export.js                     chunk │ size:     2.82 kB
+<DIR>/chunk/CSVDecoder.js           chunk │ size:     3.21 kB
+<DIR>/loadField.js                  chunk │ size:     4.14 kB
+<DIR>/chunk/util.js                 chunk │ size:     5.46 kB
+<DIR>/preferences.js                chunk │ size:     5.65 kB
+<DIR>/sourceListHelp.js             chunk │ size:     5.97 kB
+<DIR>/mcapWorker.js                 chunk │ size:     7.47 kB
+<DIR>/dsLogWorker.js                chunk │ size:     7.79 kB
+<DIR>/roadRunnerWorker.js           chunk │ size:     8.09 kB
+<DIR>/satellite.js                  chunk │ size:     8.44 kB
+<DIR>/download.js                   chunk │ size:    10.25 kB
+<DIR>/chunk/RLOGDecoder.js          chunk │ size:    10.78 kB
+<DIR>/wpilogWorker.js               chunk │ size:    15.48 kB
+<DIR>/exportWorker.js               chunk │ size:    19.29 kB
+<DIR>/chunk/units.js                chunk │ size:    25.24 kB
+<DIR>/chunk/Colors.js               chunk │ size:    28.11 kB
+<DIR>/ros2BagWorker.js              chunk │ size:    65.94 kB
+<DIR>/xrControls.js                 chunk │ size:    80.68 kB
+<DIR>/chunk/src.js                  chunk │ size:    88.85 kB
+<DIR>/chunk/Log.js                  chunk │ size:    95.25 kB
+<DIR>/chunk/ROS2Decoder.js          chunk │ size:   220.91 kB
+<DIR>/chunk/RobotState.js           chunk │ size:   288.30 kB
+<DIR>/hub.js                        chunk │ size:   388.03 kB
+<DIR>/chunk/VideoRenderer.js        chunk │ size:   532.06 kB
+<DIR>/unitConversion.js             chunk │ size: 1,040.25 kB
+<DIR>/chunk/CustomSchemas.js        chunk │ size: 1,063.41 kB
+<DIR>/licenses.js                   chunk │ size: 1,403.02 kB
+<DIR>/chunk/Field3dRendererImpl.js  chunk │ size: 1,415.91 kB
+<DIR>/xrClient.js  chunk │ size: 1,078.92 kB
+
+✔ rolldown v1.0.2 Finished in 86.28 s
+Exit status: 0
+
+$ npm test
+> advantagescope@27.0.0-alpha-6 test
+> tsc -p tsconfig.test.json && node --test build/unit-test/hub/dataSources/LiveSession.test.js build/unit-test/hub/dataSources/ros2/ROS2BagDecoder.test.js build/unit-test/hub/dataSources/mcap/MCAPDecoder.test.js build/unit-test/hub/dataSources/csv/CSVDecoder.test.js build/unit-test/hub/dataSources/json/JSONDecoder.test.js build/unit-test/hub/dataSources/foxglove/FoxgloveSession.test.js build/unit-test/shared/live/LiveFrameTransport.test.js build/unit-test/shared/log/LogTimestamp.test.js build/unit-test/hub/dataSources/nt4/NT4Timestamp.test.js && node --experimental-strip-types --experimental-detect-module --test src/shared/log/SemanticType.test.ts src/shared/CustomEnvironment.test.ts && tsc -p tsconfig.graph-test.json && rolldown src/hub/controllers/LineGraphController.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/LineGraphController.test.cjs && node build/unit-test/LineGraphController.test.cjs
+
+✔ two sources with the same topic have independent namespaces and explicit clock provenance (8.50926ms)
+✔ one disconnect cannot stop the other source's timeline or discard its history (1.673253ms)
+✔ retained timeline suppliers survive disconnects, reconnects and stopping the session (1.203973ms)
+✔ reconnect replaces only its namespace and invalidates equal-count timestamp caches (2.037989ms)
+✔ removal ignores late callbacks and reuses only the freed namespace (4.069506ms)
+✔ legacy replacement keeps original keys, clock and source log across reconnect (0.282833ms)
+✔ adding a connection preserves existing history and maps subscriptions only to their owner (0.677905ms)
+✔ grouped subscriptions preserve source key syntax without requiring a parent field (0.292263ms)
+✔ initial announcements and unavailable clock sync cannot freeze the display conversion (2.23619ms)
+✔ Foxglove numeric timestamps and generated children retain their source identity (3.448487ms)
+✔ live projection rejects a mislabeled source or display conversion before changing data (0.341417ms)
+✔ comma-separated table and list imports are unchanged (19.776653ms)
+✔ tab-separated fixture uses the same timestamp and columns (1.94916ms)
+✔ address uses the typed host and default port (1.46837ms)
+✔ subscribe is sent after serverInfo for each advertised channel (3.127868ms)
+✔ JSON samples become log fields and other encodings stay raw (7.817339ms)
+✔ existing live modes keep their names (0.285183ms)
+✔ fixture server delivers a JSON sample (137.794934ms)
+✔ JSON array of timestamped objects becomes log fields (49.149429ms)
+✔ JSONL records use the same timestamp and fields (0.845902ms)
+✔ reads declared MCAP channels and schemas into log fields (13.660609ms)
+✔ rejects a buffer that is not an MCAP file (0.826226ms)
+✔ NetworkTables explicitly converts receive time to its latency-adjusted server cursor (46.292218ms)
+✔ NetworkTables server samples retain server time without cursor latency subtraction (1.22555ms)
+✔ reads sqlite3 ROS 2 topics, CDR fields, types, and recording timestamps (151.130185ms)
+✔ opens older sqlite3 bags without embedded definitions using common ROS 2 types (153.475317ms)
+✔ prefers embedded definitions to the common type catalog (18.050805ms)
+✔ converts sqlite integer nanoseconds without first rounding them to a number (14.774501ms)
+✔ rejects invalid databases, missing topics, and truncated CDR (86.193678ms)
+✔ uses the same ROS 2 CDR path when a message comes from MCAP (22.259519ms)
+✔ TCP delivers opaque frames across split headers, bodies, heartbeats and coalesced packets (116.99128ms)
+✔ TCP payloads decode with the unchanged RLOG decoder and writes reach the peer (39.10272ms)
+✔ TCP stop and restart discard partial frames and suppress the old connection's close (81.041309ms)
+✔ TCP frame rejection stops delivery of the rest of a packet (58.608518ms)
+✔ TCP data timeout disconnects even while outbound heartbeats keep the socket busy (149.607061ms)
+✔ TCP rejects a negative length without hanging or delivering bytes (22.449004ms)
+✔ TCP connection errors notify once despite the following close event (50.40732ms)
+✔ WebSocket preserves text, binary, subprotocol and outbound writes (113.243706ms)
+✔ WebSocket restart suppresses old callbacks and a rejected frame closes once (58.757181ms)
+✔ Foxglove session decodes negotiated telemetry through the frame transport (47.670069ms)
+✔ legacy numeric timestamps and serialized logs keep the same display coordinates (3.968002ms)
+✔ receive, log and named clock timestamps retain their domain (1.587442ms)
+✔ display clock ownership does not depend on mutable caller objects (0.73097ms)
+✔ unrelated clocks require an explicit conversion before insertion (1.29711ms)
+✔ timestamp provenance follows insertion, duplicate replacement, both compression directions and trimming (1.08017ms)
+✔ structured children and queued schema decodes keep their original timestamp (4.089842ms)
+✔ merge alignment shifts display coordinates while retaining explicit originals (1.102636ms)
+✔ queued decodes retain their insertion timestamp when the caller changes its stamp (15.046447ms)
+✔ provenance uses the same samples as range queries after an exact-cutoff trim (0.233837ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 49
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6090.16265
+(node:10000) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/terrascope-live-sources/src/shared/CustomEnvironment.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspace/terrascope-live-sources/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ size and origin define the rectangle from the minimum corner (1.561671ms)
+✔ center frame puts the rectangle center at the origin the 2D view uses (0.205791ms)
+✔ an origin at the center leaves world (0, 0) in the middle (0.14784ms)
+✔ rejects a non-positive or non-finite size (0.153517ms)
+✔ pixel and inch size follow length and width, not a bundled field (0.482314ms)
+(node:10007) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/terrascope-live-sources/src/shared/log/SemanticType.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspace/terrascope-live-sources/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ maps WPILib geometry structs onto semantic kinds (1.750768ms)
+✔ maps AdvantageKit mechanism and Choreo trajectory structs (0.149853ms)
+✔ returns null for unmapped types (0.092479ms)
+✔ pose source lists stay the field-tab sets (1.065723ms)
+✔ trajectory, rotation, mechanism, and numeric lists (0.432344ms)
+✔ pose reader accepts mapped spatial types and rejects mechanism joints (0.136232ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 699.387616
+<DIR>/LineGraphController.test.cjs  chunk │ size: 663.60 kB
+
+✔ rolldown v1.0.2 Finished in 391.61 ms
+✔ detects bounded string and integer enum domains in first occurrence order (2.254623ms)
+✔ enum lanes preserve states over time and colors across zoom and layout reload (6.520046ms)
+✔ enum lane colors handle arbitrary state names and invalid enum fields retain visible values (0.580929ms)
+✔ a declared source unit survives a saved layout and drives numeric conversion (1.437544ms)
+✔ metadata units take precedence and absent or invalid declarations keep legacy numeric output (1.519464ms)
+✔ legacy discrete and numeric source types retain their defaults and output (0.289264ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.883282
+Exit status: 0
+
+$ npm run check-format
+> advantagescope@27.0.0-alpha-6 check-format
+> license-check-and-add check -f file-header-config.json && prettier --check .
+
+No default format specified. Using {"prepend":"/*","append":"*/"} as backup
+✔ All files have licenses.
+Command succeeded
+Checking formatting...
+All matched files use Prettier code style!
+Exit status: 0

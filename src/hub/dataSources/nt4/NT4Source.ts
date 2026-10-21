@@ -49,12 +49,14 @@ export default class NT4Source extends LiveDataSource {
 
     if (window.requestIdleCallback !== undefined) {
       let periodic = () => {
+        if (this.status === LiveDataSourceStatus.Stopped) return;
         this.periodic();
         window.requestIdleCallback(periodic, { timeout: 100 });
       };
       window.requestIdleCallback(periodic, { timeout: 100 });
     } else {
       let periodic = () => {
+        if (this.status === LiveDataSourceStatus.Stopped) return;
         this.periodic();
         window.requestAnimationFrame(periodic);
       };
@@ -66,7 +68,7 @@ export default class NT4Source extends LiveDataSource {
     // Update timestamp range based on connection time
     if (this.client !== null && this.connectTime !== null) {
       let connectServerTime = this.client.getServerTime_us(this.connectTime);
-      if (connectServerTime !== null) window.log.clearBeforeTime(connectServerTime / 1e6);
+      if (connectServerTime !== null) this.log?.clearBeforeTime(connectServerTime / 1e6);
     }
 
     // Update subscriptions
@@ -104,7 +106,7 @@ export default class NT4Source extends LiveDataSource {
 
         // Add active fields
         let activeFields: Set<string> = new Set();
-        if (window.log === this.log) {
+        if (this.log !== null) {
           let announcedKeys = this.log.getFieldKeys().filter((key) => this.log?.getType(key) !== LoggableType.Empty);
           let initialKeys: string[];
           switch (this.mode) {
@@ -127,9 +129,8 @@ export default class NT4Source extends LiveDataSource {
             ...ENABLED_KEYS,
             ...AUTONOMOUS_KEYS,
             ...UTILITY_KEYS,
-            ...window.tabs.getActiveFields(),
-            ...window.sidebar.getActiveFields(),
-            ...getURCLKeys(window.log)
+            ...this.getSourceKeys([...window.tabs.getActiveFields(), ...window.sidebar.getActiveFields()]),
+            ...getURCLKeys(this.log)
           ].forEach((key) => {
             // Compare to announced keys
             announcedKeys.forEach((announcedKey) => {
@@ -420,11 +421,15 @@ export default class NT4Source extends LiveDataSource {
     if (this.periodicCallback !== null) clearInterval(this.periodicCallback);
   }
 
+  getTime(): number | null {
+    return this.client?.getLiveTimestamp()?.display.seconds ?? null;
+  }
+
   getTuner() {
     if (this.client === null || this.log === null) {
       throw "Cannot create NT4 tuner before starting connection";
     } else {
-      return new NT4Tuner(this.client, this.mode);
+      return new NT4Tuner(this.client, this.mode, () => this.log!);
     }
   }
 

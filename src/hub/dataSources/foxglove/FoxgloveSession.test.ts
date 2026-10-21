@@ -16,7 +16,7 @@ import { encodeMessageData, FOXGLOVE_SUBPROTOCOL, FoxgloveSession, foxgloveWebSo
 
 declare global {
   interface Window {
-    preferences?: { timestamps: string };
+    preferences?: { timestamps: string; liveDiscard?: number };
     selection: {
       getTimelineRange(): [number, number];
       getTimelineIsMaxZoom(): boolean;

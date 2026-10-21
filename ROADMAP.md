@@ -101,7 +101,7 @@ largely irrelevant to the debugging and visualization experience.
 
 - [ ] Automatic discovery of available data sources where supported. (NetworkTables probes a fixed port list. Addresses are entered manually.)
 - [x] Manual connection configuration.
-- [ ] Multiple simultaneous live connections.
+- [x] Multiple simultaneous live connections. (Two NetworkTables connections, or NetworkTables and Foxglove, share a namespaced live session.)
 - [x] Dynamic topic and channel discovery.
 - [x] Automatic reconnection.
 - [ ] Connection health monitoring. (Sources report connecting versus connected. There is no connection-health view.)
@@ -681,7 +681,7 @@ largely irrelevant to the debugging and visualization experience.
 - [ ] Device identification.
 - [ ] Process identification.
 - [x] Topic namespaces.
-- [ ] Shared timeline across devices.
+- [x] Shared timeline across devices. (Live sources use explicit receive-estimated clock offsets. This does not establish clock synchronization.)
 - [ ] Multi-device clock synchronization.
 - [ ] Network topology visualization.
 - [ ] Data flow visualization.

@@ -2,7 +2,10 @@
   "ignore": [
     "**/!(*.js|*.mjs|*.ts|*.tsx|*.swift|*.html|*.css|*.c|*.h|*.metal|*.py)",
     ".agents",
+    "build",
     "bundles",
+    "lite/static/bundles",
+    "lite/ipk/overlay/usr/local/bin/advantagescope-lite/static/bundles",
     "docs/build",
     "docs/.docusaurus",
     "runOwletDownload.js",

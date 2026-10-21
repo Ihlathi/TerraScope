@@ -59,7 +59,11 @@ The [verification evidence](verification/chunk-9/README.md) includes the done-ch
 
 ## 10. More than one live source
 
-Remove the single-`liveSource` assumption in `hub.ts` enough to attach two sources at once, namespaced so topics do not collide. Start with two NetworkTables connections or NetworkTables plus the Foxglove source. Shared timeline, no fleet UI yet.
+**Status: done.**
+
+Two NetworkTables connections, or NetworkTables and Foxglove, can share one live session. Adding a source groups fields under stable `/LiveN` namespaces. Each connection owns its decoding log, subscriptions, and discard window. Explicit receive-estimated clock conversions put both sources on one timeline while preserving original timestamps and source clock identities. Disconnecting or reconnecting one source leaves its peer running. Existing single-source Connect commands retain their replacement behavior and field paths. No fleet UI or clock synchronization service is included.
+
+The [verification evidence](verification/chunk-10/README.md) includes the done-check output and screenshots from two local fixture servers.
 
 ## 11. Generic numeric and enum lanes
 

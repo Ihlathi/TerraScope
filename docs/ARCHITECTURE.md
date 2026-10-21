@@ -47,7 +47,7 @@ There is no streaming read from disk. The process holds the file bytes, then the
 
 ### Live connections
 
-`src/hub/hub.ts` `startLive()` keeps one `LiveDataSource`. Connecting stops historical playback. Implementations:
+`src/hub/hub.ts` manages a live session. The existing Connect commands replace the session and retain single-source field paths. Add Live Source attaches another connection and groups fields under stable `/LiveN` namespaces. Connecting stops historical playback. Implementations:
 
 | Mode                                                | Class                                                    | Transport                                                |
 | --------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
@@ -60,6 +60,8 @@ There is no streaming read from disk. The process holds the file bytes, then the
 `src/shared/live/LiveFrameTransport.ts` defines the socket lifecycle and frame delivery contract. RLOG TCP strips its big-endian length prefix before sending payload bytes over IPC. WebSocket messages keep their text or binary form. The transports do not import `Log` or decode telemetry. `RLOGServerSource` and `FoxgloveSource` retain reconnect policy and pass frames to `RLOGDecoder` and `FoxgloveSession` respectively.
 
 `LiveDataSource.ts` can drop samples older than the live discard window. Writes are separate: `NT4Tuner.ts`, `NT4Publisher.ts`, and the FTC config path that implements `LiveDataTuner.ts`. Lite allows only the NetworkTables and FTC modes (`LITE_ALLOWED_LIVE_MODES` in `src/shared/Preferences.ts`).
+
+Each connection owns its decoded log and schema state. A multi-source session projects those fields into one display log without copying accumulated samples on each update. Explicit clock offsets map independent source clocks to a shared receive-time timeline. The alignment is receive-estimated, and original source timestamps remain available. Source-local discard, subscription routing, and reconnect replacement keep one connection from changing another's samples.
 
 `src/hub/SourceList.ts` is not ingestion. It binds log keys to whatever the active tab is showing.
 
@@ -121,13 +123,13 @@ The timeline (`src/hub/Timeline.ts`, `SelectionImpl.ts`) is shared. Playback spe
 
 Roadmap section 42 asks for independent layers. Today:
 
-| Layer         | What is independent                                                                  | What is still coupled                                                                                               |
-| ------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| Ingestion     | Workers and live sources only have to produce a `Log`.                               | File detection, conversion, and dialogs sit in `main.ts`. One live source at a time.                                |
-| Transport     | RLOG TCP and Foxglove WebSocket adapters deliver frames without decoding telemetry.  | NetworkTables still combines WebSocket transport and protocol interpretation.                                       |
-| Serialization | Struct, protobuf, and custom schema decoders are callable from more than one source. | WPILOG record layout, RLOG framing, and CSV parsing are private to those readers. MCAP can be written and not read. |
-| Semantics     | Tabs agree on `LoggableType` and WPILib type strings.                                | Pose, mechanism, and swerve meaning is reimplemented per controller. `RobotState.ts` hard-codes FRC keys.           |
-| Rendering     | Renderers do not import data sources.                                                | A new visual meaning still needs a controller change. There is no semantic object a new renderer can subscribe to.  |
+| Layer         | What is independent                                                                                        | What is still coupled                                                                                               |
+| ------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Ingestion     | Workers and live sources only have to produce a `Log`. Live connections retain independent decoding state. | File detection, conversion, and dialogs sit in `main.ts`.                                                           |
+| Transport     | RLOG TCP and Foxglove WebSocket adapters deliver frames without decoding telemetry.                        | NetworkTables still combines WebSocket transport and protocol interpretation.                                       |
+| Serialization | Struct, protobuf, and custom schema decoders are callable from more than one source.                       | WPILOG record layout, RLOG framing, and CSV parsing are private to those readers. MCAP can be written and not read. |
+| Semantics     | Tabs agree on `LoggableType` and WPILib type strings.                                                      | Pose, mechanism, and swerve meaning is reimplemented per controller. `RobotState.ts` hard-codes FRC keys.           |
+| Rendering     | Renderers do not import data sources.                                                                      | A new visual meaning still needs a controller change. There is no semantic object a new renderer can subscribe to.  |
 
 ## Seams for a new format or protocol
 
@@ -160,4 +162,4 @@ A new visualization:
 
 ## What not to couple further
 
-New work should not teach a renderer about MCAP channels, NetworkTables topic types, or FRC field dimensions. Those facts belong in ingestion, serialization, or an asset, and should arrive at the renderer as log fields or a scene description. `RobotState.ts`, fixed field assets, and the single live connection are the assumptions roadmap section 42 calls out. They stay in place until a change is aimed at them. See [PLAN.md](PLAN.md).
+New work should not teach a renderer about MCAP channels, NetworkTables topic types, or FRC field dimensions. Those facts belong in ingestion, serialization, or an asset, and should arrive at the renderer as log fields or a scene description. `RobotState.ts` and fixed field assets are assumptions roadmap section 42 calls out. They stay in place until a change is aimed at them. See [PLAN.md](PLAN.md).

@@ -112,7 +112,7 @@ test("source frames follow the sample, while absent metadata leaves legacy objec
   log.putRaw("/scan", 3, new Uint8Array([3]));
   log.putString("/scan/header/frame_id", 3, "camera");
   log.putNumber("legacy", 1, 1);
-  assert.equal(readSourceFrame(log, "/scan", 0), null);
+  assert.equal(readSourceFrame(log, "/scan", 0), undefined);
   assert.equal(readSourceFrame(log, "/scan", 2), "laser");
   assert.equal(readSourceFrame(log, "/scan", 3), "camera");
   assert.equal(readSourceFrame(log, "legacy", 3), null);

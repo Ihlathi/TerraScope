@@ -151,10 +151,15 @@ export type Field3dRendererCommand_AnyObj =
   | Field3dRendererCommand_ConeObj
   | Field3dRendererCommand_PointsObj;
 
+export type Field3dRendererCommand_Component =
+  | AnnotatedPose3d
+  | { space: "scene"; value: AnnotatedPose3d }
+  | { space: "unresolved" };
+
 export type Field3dRendererCommand_GenericRobotObj = {
   model: string;
   poses: AnnotatedPose3d[];
-  components: AnnotatedPose3d[];
+  components: Field3dRendererCommand_Component[];
   mechanisms: {
     xz: MechanismState | null;
     yz: MechanismState | null;

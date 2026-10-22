@@ -32,7 +32,11 @@ import LoggableType from "../../shared/log/LoggableType";
 import { ALLIANCE_KEYS, DRIVER_STATION_KEYS, getDriverStation, getIsRedAlliance } from "../../shared/log/RobotState";
 import { SemanticType, canReadAsPose, classifyStructuredType } from "../../shared/log/SemanticType";
 import { readSensorPoints } from "../../shared/log/SpatialSensor";
-import { Field3dRendererCommand, Field3dRendererCommand_AnyObj } from "../../shared/renderers/Field3dRenderer";
+import {
+  Field3dRendererCommand,
+  Field3dRendererCommand_AnyObj,
+  Field3dRendererCommand_Component
+} from "../../shared/renderers/Field3dRenderer";
 import { clampValue, createUUID } from "../../shared/util";
 import SourceList from "../SourceList";
 import Field3dController_Config from "./Field3dController_Config";
@@ -338,6 +342,10 @@ export default class Field3dController implements TabController {
       if (time === null) return undefined;
       const frame = readSourceFrame(window.log, key, time);
       if (frame === null) return undefined;
+      if (frame === undefined) {
+        frameDiagnostics.push(`${key}: No source sample at this time.`);
+        return null;
+      }
       const graph = frameGraphForSource(window.log, key);
       const fixedFrame = this.FIXED_FRAME_INPUT.value.trim() || graph.defaultFixedFrame();
       this.FIXED_FRAME_INPUT.placeholder = fixedFrame || "Select a frame";
@@ -411,8 +419,12 @@ export default class Field3dController implements TabController {
         }
       }
 
+      const transform = sourceTransform(source.logKey);
+      if (transform === null) poses = [];
+      else if (transform) poses = poses.map((value) => ({ ...value, pose: composeFramePose(transform, value.pose) }));
+
       // Add data from children
-      let components: AnnotatedPose3d[] = [];
+      let components: Field3dRendererCommand_Component[] = [];
       let mechanismsXZ: MechanismState[] = [];
       let mechanismsYZ: MechanismState[] = [];
       let visionTargets: AnnotatedPose3d[] = [];
@@ -424,11 +436,19 @@ export default class Field3dController implements TabController {
         children.forEach((child) => {
           switch (child.type) {
             case "component": {
-              // Components are always 3D poses so assume number array format
               if (canReadAsPose(child.logType)) {
-                components = components.concat(
-                  grabPosesAuto(window.log, child.logKey, child.logType, time!, this.UUID)
-                );
+                const childTransform = sourceTransform(child.logKey);
+                const childPoses = grabPosesAuto(window.log, child.logKey, child.logType, time!, this.UUID);
+                if (childTransform === null && childPoses.length === 0) poses = [];
+                childPoses.forEach((value) => {
+                  components.push(
+                    childTransform === null
+                      ? { space: "unresolved" }
+                      : childTransform
+                      ? { space: "scene", value: { ...value, pose: composeFramePose(childTransform, value.pose) } }
+                      : value
+                  );
+                });
               }
               break;
             }
@@ -451,9 +471,15 @@ export default class Field3dController implements TabController {
               let rotations = canReadAsPose(child.logType)
                 ? grabPosesAuto(window.log, child.logKey, child.logType, time!, this.UUID, numberRotationUnits)
                 : [];
-              if (rotations.length > 0) {
+              const childTransform = sourceTransform(child.logKey);
+              if (childTransform === null) poses = [];
+              else if (rotations.length > 0) {
+                const rotationTransform = childTransform ?? transform;
+                const rotation = rotationTransform
+                  ? composeFramePose(rotationTransform, rotations[0].pose).rotation
+                  : rotations[0].pose.rotation;
                 poses.forEach((value) => {
-                  value.pose.rotation = rotations[0].pose.rotation;
+                  value.pose.rotation = rotation;
                 });
               }
               break;
@@ -463,6 +489,13 @@ export default class Field3dController implements TabController {
               let newVisionTargets = canReadAsPose(child.logType)
                 ? grabPosesAuto(window.log, child.logKey, child.logType, time!, this.UUID)
                 : [];
+              const childTransform = sourceTransform(child.logKey);
+              if (childTransform === null) newVisionTargets = [];
+              else if (childTransform)
+                newVisionTargets = newVisionTargets.map((value) => ({
+                  ...value,
+                  pose: composeFramePose(childTransform, value.pose)
+                }));
               newVisionTargets.forEach((annotatedPose) => {
                 annotatedPose.annotation.visionColor = child.options.color;
                 annotatedPose.annotation.visionSize = child.options.size;
@@ -509,10 +542,6 @@ export default class Field3dController implements TabController {
       let mechanismYZ = mechanismsYZ.length === 0 ? null : mergeMechanismStates(mechanismsYZ);
       visionTargets.reverse();
       swerveModuleVelocities.reverse();
-
-      const transform = sourceTransform(source.logKey);
-      if (transform === null) poses = [];
-      else if (transform) poses = poses.map((value) => ({ ...value, pose: composeFramePose(transform, value.pose) }));
 
       // Add object
       switch (source.type) {

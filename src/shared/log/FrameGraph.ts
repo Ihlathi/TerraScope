@@ -54,10 +54,10 @@ function valueAt(log: Log, key: string, time: number): unknown {
   return sample && sample.timestamps.length > 0 && sample.timestamps[0] <= time ? sample.values[0] : undefined;
 }
 
-export function readSourceFrame(log: Log, key: string, time: number): string | null {
+export function readSourceFrame(log: Log, key: string, time: number): string | null | undefined {
   if (log.getField(key + "/header/frame_id") === null) return null;
   const root = log.getRange(key, time, time);
-  if (!root || root.timestamps.length === 0 || root.timestamps[0] > time) return null;
+  if (!root || root.timestamps.length === 0 || root.timestamps[0] > time) return undefined;
   const frame = valueAt(log, key + "/header/frame_id", root.timestamps[0]);
   return typeof frame === "string" ? frame.trim() : "";
 }

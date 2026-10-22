@@ -109,7 +109,11 @@ A small Node or CLI entry that uses the same live source and writer as chunk 16,
 
 ## 18. Plugin loader for readers
 
-Turn `HistoricalDataSource.WORKER_NAMES` and `CustomSchemas` into a declared registration API, still in-process, with one example reader that is not compiled into the core switch. No marketplace and no remote code.
+**Status: done.**
+
+Readers and custom schema decoders register through the typed in-process API in `src/shared/plugins/PluginRegistry.ts`. File dialogs, drag-and-drop, startup arguments, downloads, child logs, and worker dispatch use the declarations. Duplicate reader extensions throw at startup with both ids. All existing readers and custom schemas use the API. The [TerraLog example](reader-plugins.md) is the template for compiled third-party readers. No runtime code loading or marketplace is included.
+
+[Verification evidence](evidence/chunk-18/README.md) includes fixture field comparisons and screenshots of the filters, WPILOG, and MCAP.
 
 ## Later chunks
 

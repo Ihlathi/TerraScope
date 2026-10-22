@@ -1,0 +1,9 @@
+ts	phase	decision	why	evidence	result
+2026-10-22T17:08:41Z	design	Keep existing workers behind typed registrations	Preserve lazy WPILOG and existing decoders during metadata migration	docs/evidence/chunk-18/workflow.md	open
+2026-10-22T17:08:41Z	baseline	Capture all eight committed fixture field lists before migration	Compare registered workers against original decoder results	scripts/reader-fixture-fields.json	captured
+2026-10-22T17:08:41Z	setup	Install Emscripten 4.0.12 and compile the WASM indexer	Run the required repository build gate	wasmCompile.mjs	passed
+2026-10-22T17:13:42Z	verify	Pass dependency install, WASM build, compile, 120 tests, and formatting	Verify the migration against actual worker output and existing suites	docs/evidence/chunk-18/checks.txt	VERIFIED
+2026-10-22T17:13:42Z	review	Make example worker discovery recursive after independent review	Nested readers must build as the public guide documents	rolldown.config.mjs	fixed
+2026-10-22T17:13:42Z	evidence	Use captured output to substantiate the earlier WASM build row	The build script alone did not establish that the command passed	docs/evidence/chunk-18/checks.txt	VERIFIED
+2026-10-22T17:16:06Z	ui	Open WPILOG and MCAP and inspect the native filter dropdown	Verify registry consumers in the running Electron app	docs/evidence/chunk-18/ui-verification.json	VERIFIED
+2026-10-22T17:16:06Z	compile	Confirm a fresh compile exits successfully after dependency installation	The first overlapping compile printed success but stayed alive; its exit was not verified	docs/evidence/chunk-18/checks.txt	VERIFIED

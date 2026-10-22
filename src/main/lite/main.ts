@@ -15,6 +15,7 @@ import { Field2dCameraMode } from "../../shared/Field2dCameraMode";
 import { HubState } from "../../shared/HubState";
 import LineGraphFilter from "../../shared/LineGraphFilter";
 import NamedMessage from "../../shared/NamedMessage";
+import { plugins } from "../../shared/plugins/builtins";
 import {
   DEFAULT_PREFS,
   DEFAULT_PREFS_LITEDS,
@@ -379,7 +380,7 @@ async function handleHubMessage(message: NamedMessage) {
         const uuid: string = message.data.uuid;
         const path: string = message.data.path;
 
-        let extension = path.split(".").pop();
+        let extension = plugins.getReader(path)?.preparation;
         if (extension === "hoot" || extension === "revlog") {
           sendMessage(hubPort, "historical-data", {
             files: [null],
@@ -413,7 +414,7 @@ async function handleHubMessage(message: NamedMessage) {
     case "historical-start-raw":
       {
         const uuid: string = message.data.uuid;
-        const extension: string = message.data.extension;
+        const extension = plugins.getReader(message.data.extension)?.preparation;
 
         if (extension === "hoot" || extension === "revlog") {
           sendMessage(hubPort, "historical-data", {

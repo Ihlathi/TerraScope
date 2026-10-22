@@ -10,9 +10,9 @@ import { SidebarState } from "../shared/HubState";
 import LogFieldTree from "../shared/log/LogFieldTree";
 import LoggableType from "../shared/log/LoggableType";
 import { getOrDefault, searchFields, TYPE_KEY } from "../shared/log/LogUtil";
+import { plugins } from "../shared/plugins/builtins";
 import { SelectionMode } from "../shared/Selection";
 import { arraysEqual, htmlEncode, setsEqual } from "../shared/util";
-import CustomSchemas from "./dataSources/schema/CustomSchemas";
 
 export default class Sidebar {
   private DEFAULT_SIDEBAR_WIDTH = 300;
@@ -525,7 +525,7 @@ export default class Sidebar {
             type === LoggableType.NumberArray ||
             type === LoggableType.StringArray ||
             (type !== LoggableType.Empty && structuredType !== null) ||
-            (type === LoggableType.Raw && wpilibType !== null && CustomSchemas.has(wpilibType)))
+            (type === LoggableType.Raw && wpilibType !== null && plugins.getSchema(wpilibType) !== undefined))
         ) {
           isActive = true;
         }

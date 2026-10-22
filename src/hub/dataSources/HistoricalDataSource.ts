@@ -28,27 +28,12 @@ import {
   SYSTEM_TIME_KEYS,
   UTILITY_KEYS
 } from "../../shared/log/RobotState";
+import { plugins } from "../../shared/plugins/builtins";
 import { calcMockProgress, createUUID, scaleValue, setsEqual } from "../../shared/util";
 
 /** A provider of historical log data (i.e. all the data is returned at once). */
 export class HistoricalDataSource {
   private UUID = createUUID();
-  private WORKER_NAMES = {
-    ".rlog": "rlogWorker.js",
-    ".wpilog": "wpilogWorker.js",
-    ".wpilogxz": "wpilogWorker.js", // Decompressed by main process
-    ".hoot": "wpilogWorker.js", // Converted to WPILOG by main process
-    ".revlog": "wpilogWorker.js", // Converted to WPILOG by main process
-    ".log": "roadRunnerWorker.js",
-    ".csv": "csvWorker.js",
-    ".mcap": "mcapWorker.js",
-    ".db3": "ros2BagWorker.js",
-    ".tsv": "tsvWorker.js",
-    ".json": "jsonWorker.js",
-    ".jsonl": "jsonlWorker.js",
-    ".dslog": "dsLogWorker.js",
-    ".dsevents": "dsLogWorker.js"
-  };
 
   private path = "";
   private keyPrefix = "";
@@ -90,7 +75,7 @@ export class HistoricalDataSource {
     this.refreshCallback = refreshCallback;
 
     this.setStatus(HistoricalDataSourceStatus.Reading);
-    if (["wpilog", "rlog", "csv", "log", "mcap", "db3", "tsv", "json", "jsonl"].includes(extension)) {
+    if (plugins.getReader(extension)?.preparation === "none") {
       setTimeout(() => {
         this.handleMainMessage({
           uuid: this.UUID,
@@ -147,7 +132,7 @@ export class HistoricalDataSource {
     this.refreshCallback = refreshCallback;
 
     // Post message to start reading
-    if (this.path.endsWith(".dsevents")) {
+    if (this.path.toLowerCase().endsWith(".dsevents")) {
       this.path = this.path.slice(0, -8) + "dslog";
     }
     this.setStatus(HistoricalDataSourceStatus.Reading);
@@ -216,17 +201,12 @@ export class HistoricalDataSource {
     }
 
     // Make worker
-    let selectedWorkerName: string | null = null;
-    Object.entries(this.WORKER_NAMES).forEach(([extension, workerName]) => {
-      if (this.path.endsWith(extension)) {
-        selectedWorkerName = workerName;
-      }
-    });
-    if (selectedWorkerName === null) {
+    const reader = plugins.getReader(this.path);
+    if (reader === undefined) {
       this.setStatus(HistoricalDataSourceStatus.Error);
       return;
     }
-    this.worker = new Worker("../bundles/" + selectedWorkerName, { type: "module" });
+    this.worker = new Worker("../bundles/" + reader.worker, { type: "module" });
     let request: HistoricalDataSource_WorkerRequest = {
       type: "start",
       data: fileContents as Uint8Array[]

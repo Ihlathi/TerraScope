@@ -21,12 +21,12 @@ import {
   getEnabledKey,
   getProgramStartTimeKey
 } from "../../../shared/log/RobotState";
+import { plugins } from "../../../shared/plugins/builtins";
 import {
   HistoricalDataSource_WorkerFieldResponse,
   HistoricalDataSource_WorkerRequest,
   HistoricalDataSource_WorkerResponse
 } from "../HistoricalDataSource";
-import CustomSchemas from "../schema/CustomSchemas";
 import { WPILOGDecoder } from "./WPILOGDecoder";
 import { CONTROL_ENTRY } from "./WPILOGShared";
 import * as wpilogIndexer from "./indexer/wpilogIndexer";
@@ -285,9 +285,10 @@ function parseField(key: string, skipMessage = false) {
               log.putProto(key, timestamp, record.getRaw(), schemaType);
             } else {
               log.putRaw(key, timestamp, record.getRaw());
-              if (CustomSchemas.has(type)) {
+              const schema = plugins.getSchema(type);
+              if (schema !== undefined) {
                 try {
-                  CustomSchemas.get(type)!(log, key, timestamp, record.getRaw());
+                  schema.decode(log, key, timestamp, record.getRaw());
                 } catch {
                   console.error('Failed to decode custom schema "' + type + '"');
                 }

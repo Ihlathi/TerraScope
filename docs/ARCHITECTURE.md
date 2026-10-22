@@ -28,7 +28,7 @@ Ingestion turns an outside source into `Log` samples. It is split by lifetime.
 
 ### Recorded files
 
-`src/hub/dataSources/HistoricalDataSource.ts` picks a worker from the file extension (`WORKER_NAMES`). The Electron side reads the whole file in `src/main/electron/main.ts` (`historical-start`) and may convert it before the worker runs.
+`src/hub/dataSources/HistoricalDataSource.ts` picks a worker from the reader registration in `src/shared/plugins/builtins.ts`. The Electron side reads the whole file in `src/main/electron/main.ts` (`historical-start`) and may convert it before the worker runs.
 
 | Extension              | Where it is decoded                                                                    | Notes                                                                 |
 | ---------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -41,7 +41,7 @@ Ingestion turns an outside source into `Log` samples. It is split by lifetime.
 | `.csv`                 | `src/hub/dataSources/csv/CSVDecoder.ts`                                                | Commas only.                                                          |
 | `.dslog` / `.dsevents` | `src/hub/dataSources/dslog/`                                                           | Paired files. Also detected when a WPILOG wrapper says `DS Log File`. |
 
-Open-dialog filters live next to `historical-start` in `src/main/electron/main.ts`. AdvantageScope Lite (`src/main/lite/main.ts`) fetches bytes over HTTP and rejects `.hoot` and `.revlog`.
+Open-dialog filters, drag-and-drop, startup arguments, downloads, and worker dispatch use the same reader registry. AdvantageScope Lite (`src/main/lite/main.ts`) fetches bytes over HTTP and rejects `.hoot` and `.revlog`.
 
 There is no streaming read from disk. The process holds the file bytes, then the worker fills a `Log`.
 
@@ -89,9 +89,9 @@ Shared decoders:
 - `src/shared/log/PhotonStructDecoder.ts` — PhotonVision structs
 - `src/shared/log/ProtoDecoder.ts` — protobuf descriptors
 - `Log.putJSON`, `putMsgpack`, `putRaw`, `putStruct`, `putProto` — the insert API
-- `src/hub/dataSources/schema/CustomSchemas.ts` — hand-written binary layouts (URCL and Spark CAN frames under `schema/spark/`)
+- `src/shared/plugins/builtins.ts` — hand-written binary layouts (URCL and Spark CAN frames under `schema/spark/`)
 
-Schema topics match `/.schema/` (`LogKeyUtils.ts`). WPILOG and NetworkTables recognize `struct:`, `photonstruct:`, `proto:`, `msgpack`, `json`, and names registered in `CustomSchemas`.
+Schema topics match `/.schema/` (`LogKeyUtils.ts`). WPILOG and NetworkTables recognize `struct:`, `photonstruct:`, `proto:`, `msgpack`, `json`, and names registered through `PluginRegistry.registerSchema`.
 
 Export is the write side, and it is separate from ingestion. `src/export.ts` collects options, and `src/hub/exportWorker.ts` emits CSV, WPILOG, or MCAP. MCAP export covers scalar types and skips raw samples.
 
@@ -143,8 +143,8 @@ Roadmap section 42 asks for independent layers. Today:
 
 A new recording format, without new visualizations:
 
-1. If the bytes are not already a supported encoding, convert or index them beside the existing branches in `historical-start` (`src/main/electron/main.ts`).
-2. Add the extension to `HistoricalDataSource.WORKER_NAMES` and to the open-dialog filters.
+1. Declare the reader with `PluginRegistry.registerReader`, including its id, display name, extensions, and compiled worker filename. See [Add a log reader](reader-plugins.md).
+2. Import the registration from `src/shared/plugins/builtins.ts`. Worker sources ending in `Worker.ts` under `src/hub/dataSources/` or `src/examples/` are bundled automatically. Built-in preparation adapters handle DS companion files and compressed or converted WPILOG inputs.
 3. Write a worker that posts `HistoricalDataSource_WorkerResponse` (`initial`, and `parseField` if loading should stay lazy). `wpilogWorker.ts` is the lazy pattern. `csvWorker.ts` is the full-decode pattern.
 4. Insert samples only through `Log.put*`. If the payload is a struct or protobuf, reuse `StructDecoder` or `ProtoDecoder` instead of inventing fields by hand.
 5. Nested recordings use the `log:EXT` structured type (`LogKeyUtils.getChildLogExtension`) so `HistoricalDataSource.openRaw` can open them.
@@ -158,7 +158,7 @@ A new live protocol:
 
 A new serialization, on a format that already exists:
 
-- Register a binary layout in `CustomSchemas.set`, or teach the struct/protobuf path about the schema. Do this before adding a tab.
+- Register a binary layout through `PluginRegistry.registerSchema`, or teach the struct/protobuf path about the schema. Do this before adding a tab.
 
 A new semantic type that existing views should understand:
 

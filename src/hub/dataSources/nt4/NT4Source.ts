@@ -12,9 +12,9 @@ import { ConvertedTimestamp } from "../../../shared/log/LogTimestamp";
 import { getURCLKeys } from "../../../shared/log/LogUtil";
 import LoggableType from "../../../shared/log/LoggableType";
 import { AUTONOMOUS_KEYS, ENABLED_KEYS, UTILITY_KEYS } from "../../../shared/log/RobotState";
+import { plugins } from "../../../shared/plugins/builtins";
 import { checkArrayType } from "../../../shared/util";
 import { LiveDataSource, LiveDataSourceStatus } from "../LiveDataSource";
-import CustomSchemas from "../schema/CustomSchemas";
 import { NT4_Client, NT4_PORTS_DEFAULT, NT4_PORTS_DS, NT4_PORTS_SYSTEMCORE, NT4_Topic } from "./NT4";
 import { NT4_SERVER_CLOCK } from "./NT4Timestamp";
 import NT4Tuner from "./NT4Tuner";
@@ -364,9 +364,10 @@ export default class NT4Source extends LiveDataSource {
                   this.log?.putProto(key, timestamp, value, schemaType);
                 } else {
                   this.log?.putRaw(key, timestamp, value);
-                  if (CustomSchemas.has(topic.type)) {
+                  const schema = plugins.getSchema(topic.type);
+                  if (schema !== undefined) {
                     try {
-                      CustomSchemas.get(topic.type)!(this.log, key, timestamp, value);
+                      schema.decode(this.log, key, timestamp, value);
                     } catch {
                       console.error('Failed to decode custom schema "' + topic.type + '"');
                     }

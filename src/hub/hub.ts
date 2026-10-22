@@ -15,6 +15,7 @@ import { Distribution, DISTRIBUTION, IS_LITE } from "../shared/buildConstants";
 import Log from "../shared/log/Log";
 import { MERGE_PREFIX } from "../shared/log/LogKeyUtils";
 import { AKIT_TIMESTAMP_KEYS, getEnabledData } from "../shared/log/RobotState";
+import { plugins } from "../shared/plugins/builtins";
 import { calcMockProgress, clampValue, htmlEncode, scaleValue } from "../shared/util";
 import LiveRecording, { RecordingControlState } from "./LiveRecording";
 import SelectionImpl from "./SelectionImpl";
@@ -582,7 +583,8 @@ document.addEventListener("drop", (event) => {
   if (event.dataTransfer) {
     let files: string[] = [];
     for (const file of event.dataTransfer.files) {
-      files.push(window.electron.getFilePath(file));
+      const path = window.electron.getFilePath(file);
+      if (plugins.getReader(path) !== undefined) files.push(path);
     }
     if (files.length > 0) {
       window.sendMainMessage("open-files-request", { files: files });

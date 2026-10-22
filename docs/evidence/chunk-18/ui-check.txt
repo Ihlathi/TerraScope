@@ -1,0 +1,1 @@
+Opened WPILOG and MCAP fixtures through the app and captured their field lists, samples, and screenshots.

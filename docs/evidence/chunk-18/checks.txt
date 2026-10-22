@@ -1,0 +1,311 @@
+npm ci
+npm warn skipping integrity check for git dependency ssh://git@github.com/jwbonner/youtube-dl-exec.git
+npm warn skipping integrity check for git dependency ssh://git@github.com/jwbonner/heatmap.js.git
+npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+> advantagescope@27.0.0-alpha-6 postinstall
+> cd docs && npm install && cd .. && node getLicenses.mjs && node tesseractLangDownload.mjs && node bundleLiteAssets.mjs && npm run download-owlet
+
+
+added 1288 packages in 14s
+Saved 744 licenses
+Finished downloading 'Joystick_XboxControllerBlueV3'
+Finished downloading 'Joystick_XboxControllerWhiteV3'
+Finished downloading 'Field2d_20262027FTCFieldV1'
+Finished downloading 'Joystick_LogitechF310V3'
+Finished downloading 'Field2d_2026FRCFieldV2'
+Finished downloading 'Joystick_PS4ControllerV3'
+Finished downloading 'Field3d_2026FRCFieldV2'
+Finished downloading 'Field3d_20262027FTCFieldV1'
+Finished downloading 'Robot_FTCDriveBaseV2'
+Finished downloading 'Robot_2026FRCKitBotV2'
+
+> advantagescope@27.0.0-alpha-6 download-owlet
+> rolldown -c --configRunOwletDownload && node runOwletDownload.js
+
+
+ WARN  Option configRunOwletDownload is unrecognized. We will ignore this option.
+
+<DIR>/runOwletDownload.js  chunk │ size: 12.02 kB
+
+✔ rolldown v1.0.2 Finished in 14.57 s
+Downloading owlet...
+Finished downloading for linux-armv7l
+Finished downloading for linux-arm64
+Finished downloading for win-x64
+Finished downloading for linux-x64
+Finished downloading for win-arm64
+Finished downloading for mac-x64
+Finished downloading for mac-arm64
+
+added 740 packages in 1m
+
+Exit code: 0
+
+npm run wasm:compile
+
+> advantagescope@27.0.0-alpha-6 wasm:compile
+> node wasmCompile.mjs
+
+
+
+
+Exit code: 0
+
+npm run compile
+
+> advantagescope@27.0.0-alpha-6 compile
+> rolldown -c
+
+<DIR>/main.js  chunk │ size: 1,429.69 kB
+<DIR>/preload.js  chunk │ size: 0.64 kB
+<DIR>/chunk/WPILOGShared.js         chunk │ size:     0.48 kB
+<DIR>/chunk/buildConstants.js       chunk │ size:     0.77 kB
+<DIR>/rlogWorker.js                 chunk │ size:     0.89 kB
+<DIR>/chunk/LoggableType.js         chunk │ size:     0.91 kB
+<DIR>/chunk/Preferences.js          chunk │ size:     0.92 kB
+<DIR>/chunk/prepareTransfer.js      chunk │ size:     0.95 kB
+<DIR>/csvWorker.js                  chunk │ size:     1.01 kB
+<DIR>/tsvWorker.js                  chunk │ size:     1.01 kB
+<DIR>/jsonWorker.js                 chunk │ size:     1.02 kB
+<DIR>/jsonlWorker.js                chunk │ size:     1.02 kB
+<DIR>/terraLogWorker.js             chunk │ size:     1.20 kB
+<DIR>/renameTab.js                  chunk │ size:     1.30 kB
+<DIR>/editFov.js                    chunk │ size:     1.37 kB
+<DIR>/betaWelcome.js                chunk │ size:     1.50 kB
+<DIR>/editRange.js                  chunk │ size:     1.61 kB
+<DIR>/loadRobot.js                  chunk │ size:     1.92 kB
+<DIR>/chunk/chunk.js                chunk │ size:     2.14 kB
+<DIR>/chunk/JSONDecoder.js          chunk │ size:     2.40 kB
+<DIR>/export.js                     chunk │ size:     2.82 kB
+<DIR>/chunk/CSVDecoder.js           chunk │ size:     3.21 kB
+<DIR>/loadField.js                  chunk │ size:     4.14 kB
+<DIR>/chunk/util.js                 chunk │ size:     5.46 kB
+<DIR>/preferences.js                chunk │ size:     5.65 kB
+<DIR>/sourceListHelp.js             chunk │ size:     5.97 kB
+<DIR>/mcapWorker.js                 chunk │ size:     7.47 kB
+<DIR>/dsLogWorker.js                chunk │ size:     7.79 kB
+<DIR>/roadRunnerWorker.js           chunk │ size:     8.09 kB
+<DIR>/satellite.js                  chunk │ size:     8.44 kB
+<DIR>/download.js                   chunk │ size:    10.25 kB
+<DIR>/chunk/RLOGDecoder.js          chunk │ size:    10.80 kB
+<DIR>/wpilogWorker.js               chunk │ size:    15.50 kB
+<DIR>/exportWorker.js               chunk │ size:    19.35 kB
+<DIR>/chunk/units.js                chunk │ size:    25.24 kB
+<DIR>/chunk/Colors.js               chunk │ size:    28.11 kB
+<DIR>/ros2BagWorker.js              chunk │ size:    65.94 kB
+<DIR>/xrControls.js                 chunk │ size:    80.68 kB
+<DIR>/chunk/src.js                  chunk │ size:    88.85 kB
+<DIR>/chunk/Log.js                  chunk │ size:    96.31 kB
+<DIR>/chunk/ROS2Decoder.js          chunk │ size:   220.91 kB
+<DIR>/chunk/RobotState.js           chunk │ size:   288.30 kB
+<DIR>/hub.js                        chunk │ size:   402.91 kB
+<DIR>/chunk/VideoRenderer.js        chunk │ size:   532.06 kB
+<DIR>/unitConversion.js             chunk │ size: 1,040.25 kB
+<DIR>/chunk/builtins.js             chunk │ size: 1,067.58 kB
+<DIR>/licenses.js                   chunk │ size: 1,403.02 kB
+<DIR>/chunk/Field3dRendererImpl.js  chunk │ size: 1,417.75 kB
+<DIR>/xrClient.js  chunk │ size: 1,079.97 kB
+
+✔ rolldown v1.0.2 Finished in 38.13 s
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
+
+Exit code: 0
+
+npm test
+
+> advantagescope@27.0.0-alpha-6 test
+> tsc -p tsconfig.test.json && node --test build/unit-test/shared/plugins/PluginRegistry.test.js build/unit-test/hub/LiveRecording.test.js build/unit-test/shared/recording/RecordingCapture.test.js build/unit-test/shared/recording/WPILOGRecordingWriter.test.js build/unit-test/hub/dataSources/LiveRecording.test.js build/unit-test/shared/log/SpatialSensor.test.js build/unit-test/hub/dataSources/ros2/SpatialSensorReaders.test.js build/unit-test/hub/dataSources/LiveSession.test.js build/unit-test/hub/dataSources/ros2/ROS2BagDecoder.test.js build/unit-test/hub/dataSources/mcap/MCAPDecoder.test.js build/unit-test/hub/dataSources/csv/CSVDecoder.test.js build/unit-test/hub/dataSources/json/JSONDecoder.test.js build/unit-test/hub/dataSources/foxglove/FoxgloveSession.test.js build/unit-test/shared/live/LiveFrameTransport.test.js build/unit-test/shared/log/LogTimestamp.test.js build/unit-test/hub/dataSources/nt4/NT4Timestamp.test.js && node --experimental-strip-types --experimental-detect-module --test src/shared/log/SemanticType.test.ts src/shared/CustomEnvironment.test.ts && tsc -p tsconfig.graph-test.json && rolldown src/hub/controllers/LineGraphController.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/LineGraphController.test.cjs && node build/unit-test/LineGraphController.test.cjs && node --test scripts/reader-fixtures.test.mjs
+
+✔ stop drains accepted samples after acknowledgments and detaches the live source (2.686439ms)
+✔ restart ignores an old generation's acknowledgments and terminal status (0.410989ms)
+✔ a stalled writer stops capture at the pending byte limit and preserves its accepted samples (0.54005ms)
+✔ stop during the save dialog completes and ignores a late ready message (0.240977ms)
+✔ main cancellation before the save dialog returns never creates a writer (0.562372ms)
+✔ main acknowledges a batch only after the writer has accepted it (0.679546ms)
+✔ reload shutdown drains a write and reports one terminal failure (0.735318ms)
+✔ automatic writer shutdown detaches capture and does not flush pending samples after an acknowledgment (0.382386ms)
+✔ automatic low-disk shutdown preserves its reason when writes or batches arrive during close (0.611495ms)
+✔ records both namespaces before display callbacks and retains samples after memory discard (4.283482ms)
+✔ recording follows log replacements and ignores writes from a disconnected source's old log (0.366643ms)
+✔ stop and restart exclude stopped samples and seed schemas without exporting display history (1.41135ms)
+✔ adding a source during recording preserves existing recording paths and captures its first samples (8.235504ms)
+✔ a source added while recording observes synchronous writes inside connect (0.437958ms)
+✔ two sources with the same topic have independent namespaces and explicit clock provenance (5.613833ms)
+✔ one disconnect cannot stop the other source's timeline or discard its history (0.998098ms)
+✔ retained timeline suppliers survive disconnects, reconnects and stopping the session (0.740417ms)
+✔ reconnect replaces only its namespace and invalidates equal-count timestamp caches (2.970649ms)
+✔ removal ignores late callbacks and reuses only the freed namespace (0.942756ms)
+✔ legacy replacement keeps original keys, clock and source log across reconnect (0.354415ms)
+✔ adding a connection preserves existing history and maps subscriptions only to their owner (0.535483ms)
+✔ grouped subscriptions preserve source key syntax without requiring a parent field (0.364329ms)
+✔ initial announcements and unavailable clock sync cannot freeze the display conversion (0.644014ms)
+✔ Foxglove numeric timestamps and generated children retain their source identity (1.118346ms)
+✔ live projection rejects a mislabeled source or display conversion before changing data (0.381404ms)
+✔ comma-separated table and list imports are unchanged (4.144727ms)
+✔ tab-separated fixture uses the same timestamp and columns (0.777762ms)
+✔ address uses the typed host and default port (0.920142ms)
+✔ subscribe is sent after serverInfo for each advertised channel (2.374006ms)
+✔ JSON samples become log fields and other encodings stay raw (1.250262ms)
+✔ existing live modes keep their names (0.188529ms)
+✔ fixture server delivers a JSON sample (59.051259ms)
+✔ JSON array of timestamped objects becomes log fields (2.85657ms)
+✔ JSONL records use the same timestamp and fields (0.572437ms)
+✔ reads declared MCAP channels and schemas into log fields (6.22667ms)
+✔ rejects a buffer that is not an MCAP file (0.290591ms)
+✔ NetworkTables explicitly converts receive time to its latency-adjusted server cursor (1.862127ms)
+✔ NetworkTables server samples retain server time without cursor latency subtraction (1.437518ms)
+✔ reads sqlite3 ROS 2 topics, CDR fields, types, and recording timestamps (44.226297ms)
+✔ opens older sqlite3 bags without embedded definitions using common ROS 2 types (52.539596ms)
+✔ prefers embedded definitions to the common type catalog (3.358052ms)
+✔ converts sqlite integer nanoseconds without first rounding them to a number (3.21502ms)
+✔ rejects invalid databases, missing topics, and truncated CDR (7.197167ms)
+✔ uses the same ROS 2 CDR path when a message comes from MCAP (3.502195ms)
+✔ ROS 2 sqlite3 fixture feeds laser scans and clouds through the shared decoder (101.035151ms)
+✔ MCAP feeds the same scan and cloud CDR through the shared decoder (18.671076ms)
+✔ TCP delivers opaque frames across split headers, bodies, heartbeats and coalesced packets (85.406644ms)
+✔ TCP payloads decode with the unchanged RLOG decoder and writes reach the peer (35.587024ms)
+✔ TCP stop and restart discard partial frames and suppress the old connection's close (54.345281ms)
+✔ TCP frame rejection stops delivery of the rest of a packet (21.461248ms)
+✔ TCP data timeout disconnects even while outbound heartbeats keep the socket busy (142.159168ms)
+✔ TCP rejects a negative length without hanging or delivering bytes (21.565467ms)
+✔ TCP connection errors notify once despite the following close event (30.949784ms)
+✔ WebSocket preserves text, binary, subprotocol and outbound writes (67.970666ms)
+✔ WebSocket restart suppresses old callbacks and a rejected frame closes once (34.686882ms)
+✔ Foxglove session decodes negotiated telemetry through the frame transport (13.012137ms)
+✔ legacy numeric timestamps and serialized logs keep the same display coordinates (2.764073ms)
+✔ receive, log and named clock timestamps retain their domain (0.885611ms)
+✔ display clock ownership does not depend on mutable caller objects (0.281046ms)
+✔ unrelated clocks require an explicit conversion before insertion (1.291863ms)
+✔ timestamp provenance follows insertion, duplicate replacement, both compression directions and trimming (0.988133ms)
+✔ structured children and queued schema decodes keep their original timestamp (4.324123ms)
+✔ merge alignment shifts display coordinates while retaining explicit originals (1.234388ms)
+✔ queued decodes retain their insertion timestamp when the caller changes its stamp (12.896516ms)
+✔ provenance uses the same samples as range queries after an exact-cutoff trim (0.427984ms)
+✔ converts laser bearings into XY points in meters (1.017506ms)
+✔ laser scans retain inclusive range limits and omit invalid returns (0.812684ms)
+✔ point clouds honor offsets, organized row padding, byte offsets, scalar widths, and byte order (0.530886ms)
+✔ point clouds omit nonfinite coordinates and reject incomplete or invalid layouts (0.570515ms)
+✔ fixed-stride downsampling bounds scan and cloud points without changing bearings (10.802316ms)
+✔ cursor reads select one complete scan, clear empty samples, and never select a future sample (2.102233ms)
+✔ cloud reads find named axes and use the current field descriptor count (1.817792ms)
+✔ reader lookup uses registered extensions for paths and bare extensions (0.842758ms)
+✔ two readers cannot claim the same extension and both ids appear in the error (0.426602ms)
+✔ open dialog filters contain every registered extension (0.323839ms)
+✔ duplicate extension rejection does not register part of a reader (0.676151ms)
+✔ every existing custom schema exposes a decode entry point (0.154189ms)
+✔ capture preserves repeated, backdated and replaced samples before in-memory compression and trimming (2.325363ms)
+✔ capture owns mutable values and includes array children, field metadata and original clock seconds (0.868767ms)
+✔ capture rejects type conflicts exactly as the live log does (0.219194ms)
+✔ capture also follows writes to fields restored from worker serialization (0.376327ms)
+✔ file grows during recording and existing WPILOG reader round-trips fields, exact timestamps and values (18.277955ms)
+✔ recording retains repeated, equal-timestamp and out-of-order records and metadata changes (3.380405ms)
+✔ stop drains accepted writes, rejects later samples, and restart resets file and entries (3.423359ms)
+✔ low disk before start leaves an existing destination untouched (2.271584ms)
+✔ low disk during idle recording closes a readable file and emits the visible reason (9.093195ms)
+✔ low disk before a batch stops without writing partial records (2.468655ms)
+✔ bounded pending bytes stop a recording visibly instead of retaining an unbounded session (5.467025ms)
+✔ stop during start does not create an orphan open writer (1.871701ms)
+✔ redeclared types and newly added fields always use distinct WPILOG entries (2.354596ms)
+✔ NetworkTables integer aliases use standard WPILOG integer types (1.949466ms)
+✔ a delayed disk check from a stopped recording cannot stop its restarted writer (27.725173ms)
+ℹ tests 92
+ℹ suites 0
+ℹ pass 92
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4348.037332
+(node:4091) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/terrascope-reader-registry/src/shared/CustomEnvironment.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspace/terrascope-reader-registry/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ size and origin define the rectangle from the minimum corner (1.997107ms)
+✔ center frame puts the rectangle center at the origin the 2D view uses (0.298672ms)
+✔ an origin at the center leaves world (0, 0) in the middle (0.159345ms)
+✔ rejects a non-positive or non-finite size (0.102152ms)
+✔ pixel and inch size follow length and width, not a bundled field (0.342978ms)
+(node:4098) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/terrascope-reader-registry/src/shared/log/SemanticType.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspace/terrascope-reader-registry/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ maps WPILib geometry structs onto semantic kinds (1.075212ms)
+✔ maps AdvantageKit mechanism and Choreo trajectory structs (0.173667ms)
+✔ returns null for unmapped types (0.133578ms)
+✔ pose source lists stay the field-tab sets (0.983737ms)
+✔ trajectory, rotation, mechanism, and numeric lists (0.355967ms)
+✔ pose reader accepts mapped spatial types and rejects mechanism joints (21.554096ms)
+✔ maps ROS laser scans and point clouds without admitting them to pose readers (0.380433ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 283.789474
+<DIR>/LineGraphController.test.cjs  chunk │ size: 665.24 kB
+
+✔ rolldown v1.0.2 Finished in 179.13 ms
+✔ detects bounded string and integer enum domains in first occurrence order (2.210063ms)
+✔ enum lanes preserve states over time and colors across zoom and layout reload (4.863831ms)
+✔ enum lane colors handle arbitrary state names and invalid enum fields retain visible values (0.518557ms)
+✔ a declared source unit survives a saved layout and drives numeric conversion (1.726195ms)
+✔ metadata units take precedence and absent or invalid declarations keep legacy numeric output (1.48599ms)
+✔ legacy discrete and numeric source types retain their defaults and output (0.343148ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.313455
+✔ registered reader preserves fields in src/hub/dataSources/csv/fixtures/sample.tsv (90.721644ms)
+✔ registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.json (64.028648ms)
+✔ registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.jsonl (89.794791ms)
+✔ registered reader preserves fields in src/hub/dataSources/mcap/fixtures/sample.mcap (134.281616ms)
+✔ registered reader preserves fields in src/hub/dataSources/ros2/fixtures/sample.db3 (157.820057ms)
+✔ registered reader preserves fields in src/hub/dataSources/ros2/fixtures/spatial-sensors.db3 (265.896464ms)
+✔ registered reader preserves fields in docs/evidence/chunk-11/generic-telemetry.csv (80.530791ms)
+(node:4293) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/terrascope-reader-registry/build/reader-fixtures/wpilogIndexer.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspace/terrascope-reader-registry/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ registered reader preserves fields in docs/evidence/chunk-16/two-sources.wpilog (115.683405ms)
+✔ the regression baseline covers every existing reader fixture (4.350691ms)
+✔ the public API example reader opens numeric samples (73.699181ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2883.334073
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
+
+Exit code: 0
+
+npm run check-format
+
+> advantagescope@27.0.0-alpha-6 check-format
+> license-check-and-add check -f file-header-config.json && prettier --check .
+
+No default format specified. Using {"prepend":"/*","append":"*/"} as backup
+[32m✔[0m All files have licenses.
+Command succeeded
+Checking formatting...
+All matched files use Prettier code style!
+
+Exit code: 0

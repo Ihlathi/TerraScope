@@ -22,6 +22,7 @@ import {
 
 /** A full log field that contains data. */
 export default class LogField {
+  private revision = 0;
   private type: LoggableType;
   private data: LogValueSetAny = { timestamps: [], values: [] };
   private sourceTimestamps: (DomainTimestamp | null)[] | undefined;
@@ -44,6 +45,10 @@ export default class LogField {
 
   setSampleListener(listener: (timestamp: LogTimestamp, value: unknown) => void) {
     this.onSample = listener;
+  }
+
+  getRevision(): number {
+    return this.revision;
   }
 
   /** Returns the constant field type. */
@@ -73,6 +78,7 @@ export default class LogField {
 
   /** Clears all data before the provided timestamp. */
   clearBeforeTime(clearTimestamp: number) {
+    this.revision++;
     for (let i = 0; i < this.data.timestamps.length; i++) {
       // If there is more than 1 timestamps and if it occurs before the given timestamp, remove it
       if (this.data.timestamps.length >= 2 && this.data.timestamps[i + 1] < clearTimestamp) {
@@ -198,6 +204,7 @@ export default class LogField {
     const timestamp = timestampSeconds(time);
     const source = timestampSource(time);
     if (value === null) return;
+    this.revision++;
     this.onSample?.(time, value);
     if (source !== null && this.sourceTimestamps === undefined) {
       this.sourceTimestamps = this.data.timestamps.map(() => null);

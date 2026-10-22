@@ -26,6 +26,10 @@ export default class ProjectedLogField extends LogField {
     this.typeWarning = source.typeWarning;
   }
 
+  getRevision(): number {
+    return this.source.getRevision();
+  }
+
   getTimestamps(): number[] {
     return this.source.getTimestamps().map((time) => time + this.conversion.offsetSeconds);
   }

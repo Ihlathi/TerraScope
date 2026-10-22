@@ -964,3 +964,17 @@ table.metadata-table td.no-data {
     border-right: 1px solid #eee;
   }
 }
+
+.field-3d-frame-alert {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  max-width: calc(100% - 48px);
+  padding: 8px 12px;
+  border: 1px solid #b77900;
+  background: #fff3cd;
+  color: #583d00;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}

@@ -27,6 +27,26 @@ It reads WPILOG, Hoot (CTRE), REVLOG (REV Robotics), Road Runner, CSV, NI Driver
 
 [![Build](https://github.com/Ihlathi/TerraScope/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Ihlathi/TerraScope/actions/workflows/build.yml)
 
+## Record without a window
+
+Use Node.js 22 or newer. Install the dependencies and compile the command from the repository root.
+
+```sh
+npm ci
+npm run compile
+npm run record -- --source 10.0.0.2 --output session.wpilog --duration 60
+```
+
+The command records all NT4 fields with the same live source and incremental WPILOG writer as the app. It does not launch Electron. The destination file is overwritten if it exists. Open the resulting `.wpilog` file in TerraScope.
+
+To use another NT4 port, pass `--source robot.local:5811`. Omit `--duration` to record until Ctrl-C. The duration starts at the first connection. Ctrl-C and SIGTERM drain accepted samples, sync the file, and close it before exit.
+
+Status lines report `connected`, the number of recorded `fields` and `samples`, the `bytes` written, and `free` disk bytes. The command exits with code 0 after a normal stop, code 1 after a connection or storage failure, and code 2 for invalid arguments.
+
+The connection timeout is 10 seconds and also applies after a lost connection. Set `--connect-timeout 30` to change it. Recording stops when free disk space falls below 64 MiB. Set `--minimum-free-bytes` to change that threshold. Run `npm run record -- --help` for the options.
+
+This command supports one NT4 source and WPILOG output. Other live protocols, file rotation, and tagged clock-domain restoration are outside this command.
+
 ## Attribution
 
 AdvantageScope is copyright 2021–2026 Littleton Robotics and its contributors. TerraScope does not replace that copyright and is not endorsed by Littleton Robotics, FRC 6328 ("Mechanical Advantage"), or the AdvantageScope contributors.

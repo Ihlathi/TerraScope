@@ -109,7 +109,13 @@ MCAP recording, headless operation, file rotation, automatic triggers, and resto
 
 ## 17. Headless record
 
-A small Node or CLI entry that uses the same live source and writer as chunk 16, with no Electron window. Status on stdout.
+**Status: done.**
+
+`npm run record` records one NT4 source to WPILOG without launching Electron. The command shares `NT4Source`, its schema and sample decoding, and the chunk 16 `RecordingWriter` implementation with the app. Browser scheduling, active fields, and discard preferences enter through the application edge.
+
+The command accepts a source address, output path, optional duration, connection timeout, and free-space threshold. Status on stdout reports the connection, fields, samples, bytes written, and free disk bytes. Ctrl-C, SIGTERM, and the duration limit drain accepted batches and close the file. Connection and storage failures exit nonzero with a message. Process tests use a local NT4 server and the existing WPILOG reader to compare values, metadata, schemas, and timestamps. They cover duration, SIGINT, failed connections, an unfinished handshake, cancellation during a probe, and low disk space.
+
+See the [README](../README.md#record-without-a-window) for commands. Other protocols, multiple CLI sources, file rotation, and tagged clock-domain restoration remain outside this chunk.
 
 ## 18. Plugin loader for readers
 

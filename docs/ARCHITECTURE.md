@@ -115,7 +115,9 @@ Semantics are "this field is a pose, a mechanism, a joystick, a console line." T
 - Enabled, auto, and alliance ranges: `src/shared/log/RobotState.ts` (fixed key lists)
 - Units: `src/shared/units.ts`, applied from the line-graph controller
 
-`geometry.ts` stores `Rotation3d` as a quaternion `(w, x, y, z)` and can show roll, pitch, and yaw. Coordinate conversion is a single preference over built-in FRC and FTC conventions (`AdvantageScopeAssets.ts`), not a transform tree and not an arbitrary frame.
+`geometry.ts` stores `Rotation3d` as a quaternion `(w, x, y, z)` and can show roll, pitch, and yaw. The coordinate-system preference retains the built-in FRC and FTC conventions (`AdvantageScopeAssets.ts`).
+
+`FrameGraph.ts` builds child-keyed static and dynamic transform histories from decoded ROS TFMessage fields on `/tf` and `/tf_static`. It resolves a source frame into a selected fixed frame at the timeline cursor. Dynamic lookup holds the latest logged display-time sample. Static definitions apply throughout the recording. The cache observes field identity, type, and mutation revisions. Frame ids stay local to their recording or live-source namespace. `Field3dController` reads each object's `header/frame_id` at the object's sample time and sends prepared poses or a point-object pose to the renderer. Lookup failures become scene diagnostics and suppress the affected geometry. Sources without frame ids keep their existing path.
 
 Field size comes from the asset (`topLeft` / `bottomRight`), not from the log. A new environment means a new asset, not a generic scene with free dimensions.
 

@@ -43,6 +43,7 @@ import Preferences, { DEFAULT_PREFS, getLiveModeName, LiveMode, mergePreferences
 import { SourceListConfig, SourceListItemState, SourceListTypeMemory } from "../../shared/SourceListConfig";
 import TabType, { getAllTabTypes, getDefaultTabTitle, getTabAccelerator, getTabIcon } from "../../shared/TabType";
 import { BUILD_DATE, COPYRIGHT, DISTRIBUTION, Distribution } from "../../shared/buildConstants";
+import { plugins } from "../../shared/plugins/builtins";
 import { Units } from "../../shared/units";
 import { createUUID, formatDate } from "../../shared/util";
 import { GITHUB_REPOSITORY } from "../github";
@@ -376,7 +377,7 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
           break;
         }
 
-        if (extension === "revlog") {
+        if (plugins.getReader(extension)?.preparation === "revlog") {
           let chunks: Buffer[] = [];
           let writable = new Writable({
             write(chunk, encoding, callback) {
@@ -508,13 +509,13 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
             });
           });
         };
-        if (logPath.endsWith(".dslog")) {
+        if (plugins.getReader(logPath)?.preparation === "dslog") {
           // DSLog, open DSEvents too
           results = [null, null];
           targetCount += 2;
           openPath(logPath, (buffer) => (results[0] = buffer));
           openPath(logPath.slice(0, logPath.length - 5) + "dsevents", (buffer) => (results[1] = buffer));
-        } else if (logPath.endsWith(".hoot")) {
+        } else if (plugins.getReader(logPath)?.preparation === "hoot") {
           // Hoot, convert to WPILOG
           targetCount += 1;
 
@@ -583,7 +584,7 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
                   });
               });
           }
-        } else if (logPath.endsWith(".revlog")) {
+        } else if (plugins.getReader(logPath)?.preparation === "revlog") {
           // REVLOG, convert to WPILOG
           targetCount += 1;
 
@@ -604,7 +605,7 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
             completedCount++;
             sendIfReady();
           }
-        } else if (logPath.endsWith(".wpilogxz")) {
+        } else if (plugins.getReader(logPath)?.preparation === "wpilogxz") {
           // Externally compressed WPILOG, decompress
           targetCount += 1;
           if (lzma === null) {
@@ -1737,12 +1738,7 @@ function downloadStart() {
                 const filesAndFolders = list.filter(
                   (file) =>
                     !file.filename.startsWith(".") &&
-                    ((file.attrs as Stats).isDirectory() ||
-                      file.filename.endsWith(".rlog") ||
-                      file.filename.endsWith(".wpilog") ||
-                      file.filename.endsWith(".wpilogxz") ||
-                      file.filename.endsWith(".revlog") ||
-                      file.filename.endsWith(".hoot"))
+                    ((file.attrs as Stats).isDirectory() || plugins.getReader(file.filename) !== undefined)
                 );
                 const listData: { name: string; size: number; isFolder: boolean }[] = [];
                 for (const file of filesAndFolders) {
@@ -1842,24 +1838,7 @@ function downloadSave(files: string[]) {
     });
   } else {
     let extension = firstExtension.slice(1);
-    let name = "";
-    switch (extension) {
-      case "wpilog":
-        name = "WPILib robot log";
-        break;
-      case "wpilogxz":
-        name = "Compressed WPILib robot log";
-        break;
-      case "rlog":
-        name = "Robot log";
-        break;
-      case "hoot":
-        name = "Hoot robot log";
-        break;
-      case "revlog":
-        name = "REV Robotics CAN log";
-        break;
-    }
+    let name = plugins.getReader(extension)?.displayName ?? "Log file";
     selectPromise = dialog.showSaveDialog(downloadWindow, {
       title: "Select save location for robot log",
       defaultPath: files[0],
@@ -2187,27 +2166,7 @@ function setupMenu() {
                 title: "Select the robot log file(s) to open",
                 message: "If multiple files are selected, timestamps will be aligned automatically",
                 properties: ["openFile", "multiSelections"],
-                filters: [
-                  {
-                    name: "Robot logs",
-                    extensions: [
-                      "rlog",
-                      "wpilog",
-                      "wpilogxz",
-                      "hoot",
-                      "revlog",
-                      "log",
-                      "csv",
-                      "mcap",
-                      "db3",
-                      "tsv",
-                      "json",
-                      "jsonl",
-                      "dslog",
-                      "dsevents"
-                    ]
-                  }
-                ]
+                filters: plugins.getFileFilters()
               })
               .then((files) => {
                 if (files.filePaths.length > 0) {
@@ -2226,27 +2185,7 @@ function setupMenu() {
               .showOpenDialog(window, {
                 title: "Select the robot log file(s) to add to the current log",
                 properties: ["openFile", "multiSelections"],
-                filters: [
-                  {
-                    name: "Robot logs",
-                    extensions: [
-                      "rlog",
-                      "wpilog",
-                      "wpilogxz",
-                      "hoot",
-                      "revlog",
-                      "log",
-                      "csv",
-                      "mcap",
-                      "db3",
-                      "tsv",
-                      "json",
-                      "jsonl",
-                      "dslog",
-                      "dsevents"
-                    ]
-                  }
-                ]
+                filters: plugins.getFileFilters()
               })
               .then((files) => {
                 if (files.filePaths.length > 0) {
@@ -3955,23 +3894,7 @@ app.whenReady().then(async () => {
   }
 
   // Check for file path given as argument
-  let fileArgs = process.argv.filter(
-    (x) =>
-      x.endsWith(".wpilog") ||
-      x.endsWith(".wpilogxz") ||
-      x.endsWith(".rlog") ||
-      x.endsWith(".hoot") ||
-      x.endsWith(".revlog") ||
-      x.endsWith(".log") ||
-      x.endsWith(".csv") ||
-      x.endsWith(".mcap") ||
-      x.endsWith(".db3") ||
-      x.endsWith(".tsv") ||
-      x.endsWith(".json") ||
-      x.endsWith(".jsonl") ||
-      x.endsWith(".dslog") ||
-      x.endsWith(".dsevents")
-  );
+  let fileArgs = process.argv.filter((file) => plugins.getReader(file) !== undefined);
   if (fileArgs.length > 0) {
     firstOpenPath = fileArgs[0];
   }

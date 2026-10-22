@@ -145,23 +145,18 @@ export default (cliArgs) => {
         ...(!isDS ? ["preferences.ts", "editFov.ts"] : []),
         ...(isLite && !isDS ? ["uploadAsset.ts"] : []),
 
-        "hub/dataSources/wpilog/wpilogWorker.ts",
+        ...fs
+          .readdirSync("src/hub/dataSources", { recursive: true })
+          .filter((file) => file.endsWith("Worker.ts"))
+          .map((file) => "hub/dataSources/" + file),
+        ...fs
+          .readdirSync("src/examples", { recursive: true })
+          .filter((file) => file.endsWith("Worker.ts"))
+          .map((file) => "examples/" + file),
         ...(isLite ? ["main/lite/xzWorker.ts"] : []),
         ...(!isLite ? ["hub/exportWorker.ts"] : []),
         ...(!isDS
-          ? [
-              "hub/dataSources/csv/csvWorker.ts",
-              "hub/dataSources/mcap/mcapWorker.ts",
-              "hub/dataSources/ros2/ros2BagWorker.ts",
-              "hub/dataSources/csv/tsvWorker.ts",
-              "hub/dataSources/json/jsonWorker.ts",
-              "hub/dataSources/json/jsonlWorker.ts",
-              "hub/dataSources/rlog/rlogWorker.ts",
-              "hub/dataSources/roadrunnerlog/roadRunnerWorker.ts",
-              "hub/dataSources/dslog/dsLogWorker.ts",
-              "shared/renderers/field3d/workers/loadField.ts",
-              "shared/renderers/field3d/workers/loadRobot.ts"
-            ]
+          ? ["shared/renderers/field3d/workers/loadField.ts", "shared/renderers/field3d/workers/loadRobot.ts"]
           : [])
       ],
       false,

@@ -8,7 +8,7 @@
 import Log from "../../../shared/log/Log";
 import LoggableType from "../../../shared/log/LoggableType";
 import { PHOTON_PREFIX, PROTO_PREFIX, STRUCT_PREFIX } from "../../../shared/log/LogKeyUtils";
-import CustomSchemas from "../schema/CustomSchemas";
+import { plugins } from "../../../shared/plugins/builtins";
 import { TEXT_DECODER } from "../wpilog/WPILOGShared";
 
 export default class RLOGDecoder {
@@ -201,9 +201,10 @@ export default class RLOGDecoder {
                       log.putProto(key, timestamp, value, schemaType);
                     } else {
                       log.putRaw(key, timestamp, value);
-                      if (CustomSchemas.has(type)) {
+                      const schema = plugins.getSchema(type);
+                      if (schema !== undefined) {
                         try {
-                          CustomSchemas.get(type)!(log, key, timestamp, value);
+                          schema.decode(log, key, timestamp, value);
                         } catch {
                           console.error('Failed to decode custom schema "' + type + '"');
                         }

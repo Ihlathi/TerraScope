@@ -1,0 +1,217 @@
+
+> advantagescope@27.0.0-alpha-6 start
+> electron bundles/main.js --no-sandbox --disable-gpu --inspect=9230 --remote-debugging-port=9222
+
+Debugger listening on ws://127.0.0.1:9230/91adffca-9688-42df-9d00-4ea3ea950109
+For help, see: https://nodejs.org/en/docs/inspector
+[4139:1022/171211.454165:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[4139:1022/171211.454243:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171211.454258:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[4139:1022/171211.454269:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[4139:1022/171211.461669:ERROR:content/browser/zygote_host/zygote_host_impl_linux.cc:279] Failed to adjust OOM score of renderer with pid 4172: Read-only file system (30)
+
+DevTools listening on ws://127.0.0.1:9222/devtools/browser/ce87bb0c-d3c9-4743-bcab-f018f82a2a21
+[4139:1022/171211.712327:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171211.745249:ERROR:content/browser/zygote_host/zygote_host_impl_linux.cc:279] Failed to adjust OOM score of renderer with pid 4202: Read-only file system (30)
+[4139:1022/171211.745783:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[4139:1022/171211.745820:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[4139:1022/171211.745833:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[4139:1022/171211.760674:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171211.761974:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171211.761989:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171211.761995:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171211.761999:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171211.762004:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171212.562456:ERROR:crypto/nss_util.cc:225] Error initializing NSS with a persistent database (sql:/home/agent/.pki/nssdb): NSS error code: -8126
+[4200:1022/171212.610306:ERROR:net/socket/ssl_client_socket_impl.cc:916] handshake failed; returned -1, SSL error code 1, net_error -202
+[4139:1022/171213.517751:ERROR:content/browser/zygote_host/zygote_host_impl_linux.cc:279] Failed to adjust OOM score of renderer with pid 4230: Read-only file system (30)
+[4139:1022/171213.533819:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171213.613780:ERROR:ui/gfx/x/atom_cache.cc:232] Add _NET_WM_STATE_MODAL to kAtomsToCache
+[4139:1022/171213.743629:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171213.749803:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171213.753572:ERROR:content/browser/zygote_host/zygote_host_impl_linux.cc:279] Failed to adjust OOM score of renderer with pid 4238: Read-only file system (30)
+[4139:1022/171215.042144:ERROR:CONSOLE:1] "Request Autofill.enable failed. {"code":-32601,"message":"'Autofill.enable' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)
+[4139:1022/171215.042269:ERROR:CONSOLE:1] "Request Autofill.setAddresses failed. {"code":-32601,"message":"'Autofill.setAddresses' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)
+Debugger attached.
+Debugger ending on ws://127.0.0.1:9230/91adffca-9688-42df-9d00-4ea3ea950109
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Debugger ending on ws://127.0.0.1:9230/91adffca-9688-42df-9d00-4ea3ea950109
+For help, see: https://nodejs.org/en/docs/inspector
+[4139:1022/171246.649528:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171246.652674:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171246.653678:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171246.678885:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171246.681693:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171246.683981:ERROR:content/browser/zygote_host/zygote_host_impl_linux.cc:279] Failed to adjust OOM score of renderer with pid 4459: Read-only file system (30)
+Debugger attached.
+[4139:1022/171254.144819:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171254.144891:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171254.144966:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171254.145014:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171254.145016:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171254.145025:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171255.109823:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171255.110997:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171255.111053:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171255.111069:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171255.111073:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171255.111086:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+Debugger ending on ws://127.0.0.1:9230/91adffca-9688-42df-9d00-4ea3ea950109
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Debugger ending on ws://127.0.0.1:9230/91adffca-9688-42df-9d00-4ea3ea950109
+For help, see: https://nodejs.org/en/docs/inspector
+
+(electron:4139): dconf-WARNING **: 17:13:11.921: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:11.931: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:11.962: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:11.970: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:11.986: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.007: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.023: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.039: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.056: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.073: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.090: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.106: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.124: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.139: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.155: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.172: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:12.189: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.049: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.063: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.080: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.098: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.115: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.131: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.148: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.166: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.181: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:16.198: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:25.710: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:25.729: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:25.743: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.395: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.401: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.428: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.435: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.454: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.472: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.488: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.506: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.522: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.543: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.558: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.571: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:13:41.589: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:04.890: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:14.444: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:14.461: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:14.477: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.728: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.744: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.764: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.792: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.795: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.811: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.829: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.858: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.862: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.880: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.896: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.912: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:51.928: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:52.277: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:52.294: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:14:52.310: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:15:25.717: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+
+(electron:4139): dconf-WARNING **: 17:15:25.721: failed to commit changes to dconf: Unknown or unsupported transport “disabled” for address “disabled:”
+Debugger attached.
+[4139:1022/171535.865691:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171535.903353:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171535.903485:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171535.903498:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171535.903602:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171535.903613:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171537.424751:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171537.424808:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171537.424863:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171537.424882:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[4139:1022/171537.424888:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[4139:1022/171537.424899:ERROR:dbus/object_proxy.cc:573] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+Debugger ending on ws://127.0.0.1:9230/91adffca-9688-42df-9d00-4ea3ea950109
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Debugger ending on ws://127.0.0.1:9230/91adffca-9688-42df-9d00-4ea3ea950109
+For help, see: https://nodejs.org/en/docs/inspector
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

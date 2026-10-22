@@ -27,6 +27,7 @@
     "src/hub/dataSources/LiveRecording.test.ts",
     "src/shared/recording/WPILOGRecordingWriter.test.ts",
     "src/shared/recording/RecordingCapture.test.ts",
-    "src/hub/LiveRecording.test.ts"
+    "src/hub/LiveRecording.test.ts",
+    "src/shared/plugins/PluginRegistry.test.ts"
   ]
 }

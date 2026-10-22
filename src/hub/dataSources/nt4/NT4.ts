@@ -118,6 +118,8 @@ export class NT4_Client {
   private rttWs: WebSocket | null = null;
   private timestampInterval: NodeJS.Timeout | null = null;
   private rttWsTimestampInterval: NodeJS.Timeout | null = null;
+  private retryTimeout: NodeJS.Timeout | null = null;
+  private probeAbort: AbortController | null = null;
   private disconnectTimeout: NodeJS.Timeout | null = null;
   private serverConnectionActive = false;
   private serverConnectionRequested = false;
@@ -178,22 +180,26 @@ export class NT4_Client {
 
   private async connectOnAlive() {
     if (!this.serverConnectionRequested) return;
+    const abort = new AbortController();
+    this.probeAbort = abort;
     let result: Response | null = null;
     let requestStart = new Date().getTime();
     try {
       result = await Promise.any(
         this.serverPorts.map((port) =>
           fetch("http://" + this.serverAddr + ":" + port.toString(), {
-            signal: AbortSignal.timeout(250)
+            signal: AbortSignal.any([abort.signal, AbortSignal.timeout(250)])
           })
         )
       );
     } catch (err) {}
+    if (!this.serverConnectionRequested || this.probeAbort !== abort) return;
+    this.probeAbort = null;
     if (result === null || !result.ok) {
       let requestLength = new Date().getTime() - requestStart;
-      setTimeout(() => this.connectOnAlive(), 350 - requestLength);
+      this.retryTimeout = setTimeout(() => this.connectOnAlive(), Math.max(0, 350 - requestLength));
     } else {
-      this.activeServerPort = parseInt(result.url.split(":")[2].split("/")[0]);
+      this.activeServerPort = Number(new URL(result.url).port || 80);
       this.ws_connect();
     }
   }
@@ -213,9 +219,11 @@ export class NT4_Client {
   disconnect() {
     if (this.serverConnectionRequested) {
       this.serverConnectionRequested = false;
-      if (this.serverConnectionActive && this.ws) {
-        this.ws_onClose(new CloseEvent("close"), this.ws);
-      }
+      this.probeAbort?.abort();
+      this.probeAbort = null;
+      if (this.retryTimeout !== null) clearTimeout(this.retryTimeout);
+      this.retryTimeout = null;
+      if (this.ws) this.ws_onClose({ reason: "" }, this.ws);
       if (this.timestampInterval !== null) {
         clearInterval(this.timestampInterval);
       }
@@ -477,6 +485,10 @@ export class NT4_Client {
   // Websocket connection Maintenance
 
   private ws_onOpen(ws: WebSocket) {
+    if (!this.serverConnectionRequested || (ws !== this.ws && ws !== this.rttWs)) {
+      ws.close();
+      return;
+    }
     // Set the flag allowing general server communication
     this.serverConnectionActive = true;
     console.log('[NT4] Connected with protocol "' + ws.protocol + '"');
@@ -505,7 +517,7 @@ export class NT4_Client {
     }
   }
 
-  private ws_onClose(event: CloseEvent, source: WebSocket) {
+  private ws_onClose(event: Pick<CloseEvent, "reason">, source: WebSocket) {
     if (source !== this.ws) return;
 
     // Stop server communication
@@ -677,7 +689,7 @@ export class NT4_Client {
     this.disconnectTimeout = setTimeout(() => {
       console.log("[NT4] No data for " + timeout.toString() + "ms, closing");
       if (this.ws) {
-        this.ws_onClose(new CloseEvent("close"), this.ws);
+        this.ws_onClose({ reason: "" }, this.ws);
       }
     }, timeout);
   }
@@ -695,7 +707,9 @@ export class NT4_Client {
     }
     ws.binaryType = "arraybuffer";
     ws.addEventListener("open", () => this.ws_onOpen(ws));
-    ws.addEventListener("message", (event: MessageEvent) => this.ws_onMessage(event, rttWs));
+    ws.addEventListener("message", (event: MessageEvent) => {
+      if (this.serverConnectionRequested && (ws === this.ws || ws === this.rttWs)) this.ws_onMessage(event, rttWs);
+    });
     if (!rttWs) {
       // Don't run two callbacks when on normal and RTT close
       ws.addEventListener("error", () => this.ws_onError(ws));

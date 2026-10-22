@@ -13,6 +13,8 @@
     "forceConsistentCasingInFileNames": true
   },
   "files": [
+    "src/cli/record.ts",
+    "src/cli/record.test.ts",
     "src/hub/dataSources/mcap/MCAPDecoder.test.ts",
     "src/hub/dataSources/csv/CSVDecoder.test.ts",
     "src/hub/dataSources/json/JSONDecoder.test.ts",

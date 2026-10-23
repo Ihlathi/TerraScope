@@ -36,6 +36,8 @@ This run used a virtual Xorg display and Electron's SwiftShader renderer. [check
 
 ## Workflow
 
+After rebasing onto main commit `284eb0d2`, [rebase-checks.txt](rebase-checks.txt) records fresh compilation, all 133 tests, formatting, and preservation checks against both branch heads. The test command includes both the frame tests and chunk 18's registry and reader-fixture tests. The reader inventory and field baseline now include the transform bag. Every previous fixture baseline is unchanged. PLAN.md and ROADMAP.md retain both chunks' completed work.
+
 The Feature playbook used two independent read-only designs and a separate design review. Both chose a semantic child-keyed graph over the existing decoded log fields. One implementation owner changed the graph, scene integration, tests, and fixture. The root agent owned app checks, documentation, and final review. Shared writes stayed separate.
 
 Model the Domain led to child-keyed transform histories and typed resolution failures. Build the Lever led to the fixture generator and repeatable app check. Prove It Works required real renderer observations and screenshots. Sequence Work into Verifiable Units separated implementation checks from final evidence and documentation.

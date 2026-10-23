@@ -17,6 +17,7 @@ export const fixturePaths = [
   "src/hub/dataSources/mcap/fixtures/sample.mcap",
   "src/hub/dataSources/ros2/fixtures/sample.db3",
   "src/hub/dataSources/ros2/fixtures/spatial-sensors.db3",
+  "src/hub/dataSources/ros2/fixtures/transform-tree.db3",
   "docs/evidence/chunk-11/generic-telemetry.csv",
   "docs/evidence/chunk-16/two-sources.wpilog"
 ];

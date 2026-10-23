@@ -206,9 +206,9 @@ largely irrelevant to the debugging and visualization experience.
 
 - [x] Record telemetry without launching the graphical application. (The Node command records one NT4 source to WPILOG.)
 - [ ] Support recording on robots and embedded computers.
-- [x] Support remote recording. (The command connects to a configured NT4 network address.)
+- [ ] Support remote recording.
 - [x] Support configurable source and destination settings. (NT4 address, port, and WPILOG output path.)
-- [x] Support automated recording workflows. (The command accepts a duration and returns process exit codes.)
+- [ ] Support automated recording workflows.
 - [x] Provide recording status and health information. (Stdout reports connection, fields, samples, bytes written, and free disk space.)
 - [x] Allow recordings to be opened directly in TerraScope. (Headless recordings use the existing WPILOG reader.)
 

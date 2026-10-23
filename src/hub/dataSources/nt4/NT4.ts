@@ -521,18 +521,20 @@ export class NT4_Client {
     if (source !== this.ws) return;
 
     // Stop server communication
-    this.ws?.close();
-    this.rttWs?.close();
+    const ws = this.ws;
+    const rttWs = this.rttWs;
     this.ws = null;
     this.rttWs = null;
+    ws.close();
+    rttWs?.close();
     if (this.disconnectTimeout !== null) {
       clearTimeout(this.disconnectTimeout);
     }
 
     // User connection-closed hook
     if (this.serverConnectionActive) {
-      this.onDisconnect();
       this.serverConnectionActive = false;
+      this.onDisconnect();
     }
 
     // Clear out any local cache of server state
@@ -550,9 +552,7 @@ export class NT4_Client {
   }
 
   private ws_onError(source: WebSocket) {
-    if (source !== this.ws) return;
-    this.ws?.close();
-    this.rttWs?.close();
+    this.ws_onClose({ reason: "" }, source);
   }
 
   private ws_onMessage(event: MessageEvent, rttOnly: boolean) {

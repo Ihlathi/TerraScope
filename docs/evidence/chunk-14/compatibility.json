@@ -1,0 +1,88 @@
+{
+  "objects": ["axes", "cone", "trajectory"],
+  "commandEqual": true,
+  "width": 980,
+  "height": 564,
+  "changedPixels": 0,
+  "command": {
+    "field": "custom",
+    "isRedAlliance": false,
+    "coordinateSystem": "center-red",
+    "objects": [
+      {
+        "type": "axes",
+        "poses": [
+          {
+            "pose": {
+              "translation": [1, 1, 0.6],
+              "rotation": [1, 0, 0, 0]
+            },
+            "annotation": {
+              "is2DSource": false
+            }
+          }
+        ]
+      },
+      {
+        "type": "cone",
+        "color": "#ff8c00",
+        "position": "center",
+        "poses": [
+          {
+            "pose": {
+              "translation": [1, 1, 0.6],
+              "rotation": [1, 0, 0, 0]
+            },
+            "annotation": {
+              "is2DSource": false
+            }
+          }
+        ]
+      },
+      {
+        "type": "trajectory",
+        "color": "#2b66a2",
+        "size": "bold",
+        "poses": [
+          {
+            "pose": {
+              "translation": [-2, -1, 0.2],
+              "rotation": [1, 0, 0, 0]
+            },
+            "annotation": {
+              "is2DSource": false
+            }
+          },
+          {
+            "pose": {
+              "translation": [0, 2, 0.7],
+              "rotation": [1, 0, 0, 0]
+            },
+            "annotation": {
+              "is2DSource": false
+            }
+          },
+          {
+            "pose": {
+              "translation": [2, 1, 1.2],
+              "rotation": [1, 0, 0, 0]
+            },
+            "annotation": {
+              "is2DSource": false
+            }
+          }
+        ]
+      }
+    ],
+    "cameraOverride": null,
+    "autoDriverStation": -1,
+    "allRobotModels": [],
+    "customEnvironment": {
+      "lengthMeters": 10,
+      "widthMeters": 8,
+      "originXMeters": -5,
+      "originYMeters": -4
+    },
+    "customAssetUrl": null
+  }
+}

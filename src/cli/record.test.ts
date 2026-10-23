@@ -161,6 +161,7 @@ test("CLI connection timeout closes an unfinished WebSocket handshake", { timeou
   const run = cli(t, ["--source", server.address, "--output", output, "--connect-timeout", "0.15"]);
   assert.equal(await run.done(), 1);
   assert.match(run.stderr, /Unable to connect/);
+  assert.doesNotMatch(run.stderr, /RangeError|Maximum call stack size exceeded/);
   assert.deepEqual((await readRecording(output)).samples, []);
 });
 
@@ -173,6 +174,7 @@ test("CLI reconnect timeout reports a lost connection and retains recorded data"
   server.disconnect();
   assert.equal(await run.done(), 1);
   assert.match(run.stderr, /Lost connection to NT4 source/);
+  assert.doesNotMatch(run.stderr, /RangeError|Maximum call stack size exceeded/);
   await assertFixture(output);
 });
 

@@ -32,6 +32,7 @@
     "src/shared/recording/WPILOGRecordingWriter.test.ts",
     "src/shared/recording/RecordingCapture.test.ts",
     "src/hub/LiveRecording.test.ts",
-    "src/shared/plugins/PluginRegistry.test.ts"
+    "src/shared/plugins/PluginRegistry.test.ts",
+    "src/hub/dataSources/nt4/NT4Lifecycle.test.ts"
   ]
 }

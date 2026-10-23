@@ -13,6 +13,8 @@
     "forceConsistentCasingInFileNames": true
   },
   "files": [
+    "src/cli/record.ts",
+    "src/cli/record.test.ts",
     "src/hub/dataSources/mcap/MCAPDecoder.test.ts",
     "src/hub/dataSources/csv/CSVDecoder.test.ts",
     "src/hub/dataSources/json/JSONDecoder.test.ts",
@@ -28,6 +30,7 @@
     "src/shared/recording/WPILOGRecordingWriter.test.ts",
     "src/shared/recording/RecordingCapture.test.ts",
     "src/hub/LiveRecording.test.ts",
-    "src/shared/plugins/PluginRegistry.test.ts"
+    "src/shared/plugins/PluginRegistry.test.ts",
+    "src/hub/dataSources/nt4/NT4Lifecycle.test.ts"
   ]
 }

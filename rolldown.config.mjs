@@ -105,6 +105,8 @@ export default (cliArgs) => {
   }
 
   return [
+    bundle(["cli/record.ts"], true, false, ["node:path", "node:util", "node:fs/promises", "check-disk-space"]),
+
     // Main bundles
     ...(isLite
       ? [bundle(["main/lite/main.ts"], false, false)]

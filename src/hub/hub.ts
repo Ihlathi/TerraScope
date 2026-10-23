@@ -530,19 +530,45 @@ async function startLive(request: LiveRequest, additional = false) {
   liveActive = true;
   setLoading(null);
 
+  const nt4Runtime = {
+    getSubscriptionMode: () => window.preferences?.liveSubscribeMode ?? "low-bandwidth",
+    getActiveFields: () => [...window.tabs.getActiveFields(), ...window.sidebar.getActiveFields()],
+    startPeriodic(callback: () => void) {
+      let cancelled = false;
+      let handle: number;
+      const useIdle = window.requestIdleCallback !== undefined;
+      const schedule = () => {
+        handle = useIdle
+          ? window.requestIdleCallback(periodic, { timeout: 100 })
+          : window.requestAnimationFrame(periodic);
+      };
+      const periodic = () => {
+        if (cancelled) return;
+        callback();
+        if (!cancelled) schedule();
+      };
+      schedule();
+      return () => {
+        cancelled = true;
+        if (useIdle) window.cancelIdleCallback(handle);
+        else window.cancelAnimationFrame(handle);
+      };
+    },
+    onError: (content: string) => window.sendMainMessage("error", { title: "Problem with NT4 connection", content })
+  };
   let source: LiveDataSource;
   if (sourceType === "ds") {
-    source = new NT4Source(NT4Mode.DriverStation);
+    source = new NT4Source(NT4Mode.DriverStation, nt4Runtime);
   } else {
     switch (mode) {
       case "nt4":
-        source = new NT4Source(NT4Mode.Default);
+        source = new NT4Source(NT4Mode.Default, nt4Runtime);
         break;
       case "nt4-akit":
-        source = new NT4Source(NT4Mode.AdvantageKit);
+        source = new NT4Source(NT4Mode.AdvantageKit, nt4Runtime);
         break;
       case "nt4-systemcore":
-        source = new NT4Source(NT4Mode.Systemcore);
+        source = new NT4Source(NT4Mode.Systemcore, nt4Runtime);
         break;
       case "phoenix":
         source = new PhoenixDiagnosticsSource();
@@ -567,6 +593,7 @@ async function startLive(request: LiveRequest, additional = false) {
   if (typeof request === "string" && !IS_LITE && sourceType !== "ds" && mode === "foxglove") {
     address = window.preferences.robotAddress;
   }
+  source.setDiscardSupplier(() => window.preferences?.liveDiscard ?? -1);
   liveSession.attach(source, address, additional);
   window.tuner = liveSession;
   updateRecording();

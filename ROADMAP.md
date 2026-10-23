@@ -204,13 +204,13 @@ largely irrelevant to the debugging and visualization experience.
 
 ## Headless Recording
 
-- [ ] Record telemetry without launching the graphical application.
+- [x] Record telemetry without launching the graphical application. (The Node command records one NT4 source to WPILOG.)
 - [ ] Support recording on robots and embedded computers.
 - [ ] Support remote recording.
-- [ ] Support configurable source and destination settings.
+- [x] Support configurable source and destination settings. (NT4 address, port, and WPILOG output path.)
 - [ ] Support automated recording workflows.
-- [ ] Provide recording status and health information.
-- [ ] Allow recordings to be opened directly in TerraScope.
+- [x] Provide recording status and health information. (Stdout reports connection, fields, samples, bytes written, and free disk space.)
+- [x] Allow recordings to be opened directly in TerraScope. (Headless recordings use the existing WPILOG reader.)
 
 ## Flight Recorder
 
@@ -1266,7 +1266,7 @@ implementation methods.
 - [x] Allow additional protocols without redesigning telemetry processing.
 - [ ] Allow additional semantic types without changing data transports. (New WPILib-style structs decode without a new transport. New visual meaning usually needs a tab or object type.)
 - [x] Allow additional visualizations without modifying data sources.
-- [ ] Enable headless operation for relevant functionality. (AdvantageScope Lite is still a UI. There is no headless recorder or analysis tool.)
+- [x] Enable headless operation for relevant functionality. (The Node command records NT4 to WPILOG. Headless analysis is not implemented.)
 - [x] Support both streaming and random-access data.
 - [ ] Support analysis of incomplete or partially decoded data. (WPILOG can show fields before every body is decoded. A failed file does not open partially.)
 - [ ] Support configurable performance and memory tradeoffs. (3D quality settings and the live discard window.)

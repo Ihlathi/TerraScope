@@ -103,7 +103,7 @@
   },
   "build": {
     "appId": "org.littletonrobotics.advantagescope",
-    "copyright": "Copyright \u00a9 2021-2026 Littleton Robotics",
+    "copyright": "Copyright © 2021-2026 Littleton Robotics",
     "npmRebuild": false,
     "publish": [],
     "electronFuses": {

@@ -6,7 +6,7 @@ The order favors the seams in [ARCHITECTURE.md](ARCHITECTURE.md): a shared seman
 
 ## 1. Identity, audit, and architecture
 
-**Status: in progress (this PR).**
+**Status: done.**
 
 - Add `ROADMAP.md`, checked against the current AdvantageScope code.
 - Present the fork as TerraScope in the README, window title, product name, and about text, without renaming protocols, the npm package, or log formats.
@@ -17,23 +17,33 @@ No log or rendering behavior changes.
 
 ## 2. Semantic types on top of the log
 
+**Status: done.**
+
 Add a small semantic layer between `src/shared/log` and the tab controllers. Types to name first: pose 2d/3d, translation, rotation, trajectory, mechanism joint, and a plain numeric series. Map today's WPILib and AdvantageKit structs onto those types in one module the field, mechanism, and swerve controllers can call.
 
 Do not add a format in this PR. The proof is that existing pose and mechanism views still render from the mapping, with tests around the mapping function.
 
 ## 3. Arbitrary 2D and 3D environments
 
+**Status: done.**
+
 Stop requiring an FRC or FTC field asset for a spatial view. Allow a user-set width, length, and origin, plus an optional image or glTF model. Keep bundled fields working. `RobotState.ts` mode colors can stay on the timeline; they should not define the scene size.
 
 ## 4. MCAP import
+
+**Status: done.**
 
 `@mcap/core` is already used to export scalars from `src/hub/exportWorker.ts`. Add a historical reader that opens `.mcap` into the same `Log`, including the channels and schemas the file declares. Leave Hoot-to-WPILOG conversion as it is. Cover a small fixture in a test. Foxglove-specific scene schemas wait for the semantic layer to grow.
 
 ## 5. JSON, JSONL, and TSV readers
 
+**Status: done.**
+
 CSV import already exists and only splits on commas (`CSVDecoder.ts`). Add TSV as a delimiter option, and add JSON/JSONL readers that turn an array of timestamped objects into log fields. Reuse `Log.putJSON` rather than a second object model.
 
 ## 6. Foxglove WebSocket live source
+
+**Status: done.**
 
 Add one `LiveDataSource` for the Foxglove WebSocket protocol: connect, advertise channels, subscribe, and append samples to the log. Manual address only. No second live connection in this PR. Decoding should land in the serialization seam, not in a renderer.
 

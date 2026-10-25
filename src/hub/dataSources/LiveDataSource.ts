@@ -78,6 +78,12 @@ export abstract class LiveDataSource {
     return keys.map(this.displayKeyToSource).filter((key): key is string => key !== null);
   }
 
+  private getDiscardSeconds: () => number = () => -1;
+
+  setDiscardSupplier(supplier: () => number) {
+    this.getDiscardSeconds = supplier;
+  }
+
   private clearDataCallback: NodeJS.Timeout | null = null;
   private timeSupplier: (() => number) | null = null;
 
@@ -105,8 +111,8 @@ export abstract class LiveDataSource {
     if (enableClearData) {
       this.clearDataCallback = setInterval(() => {
         if (this.log && this.timeSupplier) {
-          let liveDiscardSecs = window.preferences?.liveDiscard;
-          if (liveDiscardSecs !== undefined && liveDiscardSecs !== -1) {
+          let liveDiscardSecs = this.getDiscardSeconds();
+          if (liveDiscardSecs !== -1) {
             let minTime = this.timeSupplier() - liveDiscardSecs;
             this.log.clearBeforeTime(Math.max(0, minTime), false);
           }

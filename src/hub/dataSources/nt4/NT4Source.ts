@@ -31,37 +31,32 @@ export enum NT4Mode {
   DriverStation
 }
 
+export interface NT4SourceRuntime {
+  getSubscriptionMode(): "logging" | "low-bandwidth";
+  getActiveFields(): string[];
+  startPeriodic(callback: () => void): () => void;
+  onError(message: string): void;
+  ports?: number[];
+}
+
 export default class NT4Source extends LiveDataSource {
   private mode: NT4Mode;
   private client: NT4_Client | null = null;
 
   private shouldRunOutputCallback = false;
   private connectTime: number | null = null;
-  private periodicCallback: NodeJS.Timeout | null = null;
+  private cancelPeriodic: (() => void) | null = null;
   private noFieldsTimeout: NodeJS.Timeout | null = null;
   private loggingSubscription: number | null = null;
   private lowBandwidthTopicSubscription: number | null = null;
   private lowBandwidthDataSubscriptions: { [id: string]: number } = {};
 
-  constructor(mode: NT4Mode) {
+  constructor(
+    mode: NT4Mode,
+    private readonly runtime: NT4SourceRuntime
+  ) {
     super();
     this.mode = mode;
-
-    if (window.requestIdleCallback !== undefined) {
-      let periodic = () => {
-        if (this.status === LiveDataSourceStatus.Stopped) return;
-        this.periodic();
-        window.requestIdleCallback(periodic, { timeout: 100 });
-      };
-      window.requestIdleCallback(periodic, { timeout: 100 });
-    } else {
-      let periodic = () => {
-        if (this.status === LiveDataSourceStatus.Stopped) return;
-        this.periodic();
-        window.requestAnimationFrame(periodic);
-      };
-      window.requestAnimationFrame(periodic);
-    }
   }
 
   private periodic() {
@@ -73,7 +68,7 @@ export default class NT4Source extends LiveDataSource {
 
     // Update subscriptions
     if (this.client !== null) {
-      if (this.isRecording() || window.preferences?.liveSubscribeMode === "logging") {
+      if (this.isRecording() || this.runtime.getSubscriptionMode() === "logging") {
         // Switch to logging subscribe mode
         Object.values(this.lowBandwidthDataSubscriptions).forEach((subscriptionId) => {
           this.client?.unsubscribe(subscriptionId);
@@ -129,7 +124,7 @@ export default class NT4Source extends LiveDataSource {
             ...ENABLED_KEYS,
             ...AUTONOMOUS_KEYS,
             ...UTILITY_KEYS,
-            ...this.getSourceKeys([...window.tabs.getActiveFields(), ...window.sidebar.getActiveFields()]),
+            ...this.getSourceKeys(this.runtime.getActiveFields()),
             ...getURCLKeys(this.log)
           ].forEach((key) => {
             // Compare to announced keys
@@ -214,212 +209,209 @@ export default class NT4Source extends LiveDataSource {
     super.connect(address, statusCallback, outputCallback);
     this.shouldRunOutputCallback = false;
 
-    if (window.preferences === null) {
-      this.setStatus(LiveDataSourceStatus.Error);
-    } else {
-      this.log = new Log(true, NT4_SERVER_CLOCK);
-      let ports: number[];
-      switch (this.mode) {
-        case NT4Mode.Systemcore:
-          ports = NT4_PORTS_SYSTEMCORE;
-          break;
-        case NT4Mode.DriverStation:
-          ports = NT4_PORTS_DS;
-          break;
-        default:
-          ports = NT4_PORTS_DEFAULT;
-          break;
-      }
-      this.client = new NT4_Client(
-        address,
-        ports,
-        IS_LITE ? "AdvantageScopeLite" : "AdvantageScope",
-        (topic: NT4_Topic) => {
-          // Announce
-          if (!this.log) return;
-          if (this.noFieldsTimeout) clearTimeout(this.noFieldsTimeout);
-          if (topic.name === "") return;
-          let modifiedKey = this.getKeyFromTopic(topic);
-          let structuredType = getStructuredTypeFromRaw(topic.type);
-          this.log.createBlankField(modifiedKey, this.getLogType(topic.type));
-          this.log.setWpilibType(modifiedKey, topic.type);
-          this.log.setStructuredType(modifiedKey, structuredType);
-          this.log.setMetadataString(
-            modifiedKey,
-            Object.keys(topic.properties).length > 0 ? JSON.stringify(topic.properties) : ""
-          );
-          this.shouldRunOutputCallback = true;
-        },
-        (topic: NT4_Topic) => {
-          // Unannounce
-        },
-        (topic: NT4_Topic) => {
-          // Properties
-          if (!this.log) return;
-          if (topic.name === "") return;
-          let modifiedKey = this.getKeyFromTopic(topic);
-          this.log.setMetadataString(
-            modifiedKey,
-            Object.keys(topic.properties).length > 0 ? JSON.stringify(topic.properties) : ""
-          );
-          this.shouldRunOutputCallback = true;
-        },
-        (topic: NT4_Topic, timestamp_us: number, value: unknown) => {
-          // Data
-          if (!this.log || !this.client || topic.name === "") return;
-
-          let key = this.getKeyFromTopic(topic);
-          const timestamp: ConvertedTimestamp = {
-            source: { seconds: timestamp_us / 1e6, domain: NT4_SERVER_CLOCK },
-            display: {
-              seconds: Math.max(timestamp_us, this.log.getTimestampRange()[0]) / 1000000,
-              domain: NT4_SERVER_CLOCK
-            }
-          };
-
-          let updated = false;
-          switch (topic.type) {
-            case "boolean":
-              if (typeof value === "boolean") {
-                this.log?.putBoolean(key, timestamp, value);
-                updated = true;
-              } else {
-                console.warn('Expected a boolean value for "' + key + '" but got:', value);
-              }
-              break;
-            case "int":
-            case "float":
-            case "double":
-              if (typeof value === "number") {
-                this.log?.putNumber(key, timestamp, value);
-                updated = true;
-              } else {
-                console.warn('Expected a number value for "' + key + '" but got:', value);
-              }
-              break;
-            case "string":
-              if (typeof value === "string") {
-                this.log?.putString(key, timestamp, value);
-                updated = true;
-              } else {
-                console.warn('Expected a string value for "' + key + '" but got:', value);
-              }
-              break;
-            case "boolean[]":
-              if (checkArrayType(value, "boolean")) {
-                this.log?.putBooleanArray(key, timestamp, value as boolean[]);
-                updated = true;
-              } else {
-                console.warn('Expected a boolean[] value for "' + key + '" but got:', value);
-              }
-              break;
-            case "int[]":
-            case "float[]":
-            case "double[]":
-              if (checkArrayType(value, "number")) {
-                this.log?.putNumberArray(key, timestamp, value as number[]);
-                updated = true;
-              } else {
-                console.warn('Expected a number[] value for "' + key + '" but got:', value);
-              }
-              break;
-            case "string[]":
-              if (checkArrayType(value, "string")) {
-                this.log?.putStringArray(key, timestamp, value as string[]);
-                updated = true;
-              } else {
-                console.warn('Expected a string[] value for "' + key + '" but got:', value);
-              }
-              break;
-            case "json":
-              if (typeof value === "string") {
-                this.log?.putJSON(key, timestamp, value);
-                updated = true;
-              } else {
-                console.warn('Expected a string value for "' + key + '" but got:', value);
-              }
-              break;
-            case "msgpack":
-              if (value instanceof Uint8Array) {
-                this.log?.putMsgpack(key, timestamp, value);
-                updated = true;
-              } else {
-                console.warn('Expected a raw value for "' + key + '" but got:', value);
-              }
-              break;
-            default: // Default to raw
-              if (value instanceof Uint8Array) {
-                if (topic.type.startsWith(STRUCT_PREFIX)) {
-                  let schemaType = topic.type.split(STRUCT_PREFIX)[1];
-                  if (schemaType.endsWith("[]")) {
-                    this.log?.putStruct(key, timestamp, value, schemaType.slice(0, -2), true);
-                  } else {
-                    this.log?.putStruct(key, timestamp, value, schemaType, false);
-                  }
-                } else if (topic.type.startsWith(PHOTON_PREFIX)) {
-                  let schemaType = topic.type.split(PHOTON_PREFIX)[1];
-                  this.log?.putPhotonStruct(key, timestamp, value, schemaType);
-                } else if (topic.type.startsWith(PROTO_PREFIX)) {
-                  let schemaType = topic.type.split(PROTO_PREFIX)[1];
-                  this.log?.putProto(key, timestamp, value, schemaType);
-                } else {
-                  this.log?.putRaw(key, timestamp, value);
-                  const schema = plugins.getSchema(topic.type);
-                  if (schema !== undefined) {
-                    try {
-                      schema.decode(this.log, key, timestamp, value);
-                    } catch {
-                      console.error('Failed to decode custom schema "' + topic.type + '"');
-                    }
-                    this.log.setGeneratedParent(key);
-                  }
-                }
-                updated = true;
-              } else {
-                console.warn('Expected a raw value for "' + key + '" but got:', value);
-              }
-              break;
-          }
-          if (updated) {
-            this.shouldRunOutputCallback = true;
-          }
-        },
-        () => {
-          // Connected
-          this.setStatus(LiveDataSourceStatus.Active);
-          this.log = new Log(true, NT4_SERVER_CLOCK);
-          this.shouldRunOutputCallback = true;
-          if (!this.connectTime && this.client !== null) {
-            this.connectTime = this.client.getClientTime_us();
-          }
-          if (this.mode === NT4Mode.AdvantageKit) {
-            this.noFieldsTimeout = setTimeout(() => {
-              window.sendMainMessage("error", {
-                title: "Problem with NT4 connection",
-                content:
-                  "No fields were received from the server. AdvantageKit mode is selected. Are you connecting to a server without AdvantageKit?"
-              });
-            }, 5000);
-          }
-        },
-        () => {
-          // Disconnected
-          this.setStatus(LiveDataSourceStatus.Connecting);
-          this.shouldRunOutputCallback = false;
-          this.connectTime = null;
-          if (this.noFieldsTimeout) clearTimeout(this.noFieldsTimeout);
-        }
-      );
-
-      // Start connection
-      this.client.connect();
+    this.log = new Log(true, NT4_SERVER_CLOCK);
+    let ports: number[];
+    switch (this.mode) {
+      case NT4Mode.Systemcore:
+        ports = NT4_PORTS_SYSTEMCORE;
+        break;
+      case NT4Mode.DriverStation:
+        ports = NT4_PORTS_DS;
+        break;
+      default:
+        ports = NT4_PORTS_DEFAULT;
+        break;
     }
+    this.client = new NT4_Client(
+      address,
+      this.runtime.ports ?? ports,
+      IS_LITE ? "AdvantageScopeLite" : "AdvantageScope",
+      (topic: NT4_Topic) => {
+        // Announce
+        if (!this.log) return;
+        if (this.noFieldsTimeout) clearTimeout(this.noFieldsTimeout);
+        if (topic.name === "") return;
+        let modifiedKey = this.getKeyFromTopic(topic);
+        let structuredType = getStructuredTypeFromRaw(topic.type);
+        this.log.createBlankField(modifiedKey, this.getLogType(topic.type));
+        this.log.setWpilibType(modifiedKey, topic.type);
+        this.log.setStructuredType(modifiedKey, structuredType);
+        this.log.setMetadataString(
+          modifiedKey,
+          Object.keys(topic.properties).length > 0 ? JSON.stringify(topic.properties) : ""
+        );
+        this.shouldRunOutputCallback = true;
+      },
+      (topic: NT4_Topic) => {
+        // Unannounce
+      },
+      (topic: NT4_Topic) => {
+        // Properties
+        if (!this.log) return;
+        if (topic.name === "") return;
+        let modifiedKey = this.getKeyFromTopic(topic);
+        this.log.setMetadataString(
+          modifiedKey,
+          Object.keys(topic.properties).length > 0 ? JSON.stringify(topic.properties) : ""
+        );
+        this.shouldRunOutputCallback = true;
+      },
+      (topic: NT4_Topic, timestamp_us: number, value: unknown) => {
+        // Data
+        if (!this.log || !this.client || topic.name === "") return;
+
+        let key = this.getKeyFromTopic(topic);
+        const timestamp: ConvertedTimestamp = {
+          source: { seconds: timestamp_us / 1e6, domain: NT4_SERVER_CLOCK },
+          display: {
+            seconds: Math.max(timestamp_us, this.log.getTimestampRange()[0]) / 1000000,
+            domain: NT4_SERVER_CLOCK
+          }
+        };
+
+        let updated = false;
+        switch (topic.type) {
+          case "boolean":
+            if (typeof value === "boolean") {
+              this.log?.putBoolean(key, timestamp, value);
+              updated = true;
+            } else {
+              console.warn('Expected a boolean value for "' + key + '" but got:', value);
+            }
+            break;
+          case "int":
+          case "float":
+          case "double":
+            if (typeof value === "number") {
+              this.log?.putNumber(key, timestamp, value);
+              updated = true;
+            } else {
+              console.warn('Expected a number value for "' + key + '" but got:', value);
+            }
+            break;
+          case "string":
+            if (typeof value === "string") {
+              this.log?.putString(key, timestamp, value);
+              updated = true;
+            } else {
+              console.warn('Expected a string value for "' + key + '" but got:', value);
+            }
+            break;
+          case "boolean[]":
+            if (checkArrayType(value, "boolean")) {
+              this.log?.putBooleanArray(key, timestamp, value as boolean[]);
+              updated = true;
+            } else {
+              console.warn('Expected a boolean[] value for "' + key + '" but got:', value);
+            }
+            break;
+          case "int[]":
+          case "float[]":
+          case "double[]":
+            if (checkArrayType(value, "number")) {
+              this.log?.putNumberArray(key, timestamp, value as number[]);
+              updated = true;
+            } else {
+              console.warn('Expected a number[] value for "' + key + '" but got:', value);
+            }
+            break;
+          case "string[]":
+            if (checkArrayType(value, "string")) {
+              this.log?.putStringArray(key, timestamp, value as string[]);
+              updated = true;
+            } else {
+              console.warn('Expected a string[] value for "' + key + '" but got:', value);
+            }
+            break;
+          case "json":
+            if (typeof value === "string") {
+              this.log?.putJSON(key, timestamp, value);
+              updated = true;
+            } else {
+              console.warn('Expected a string value for "' + key + '" but got:', value);
+            }
+            break;
+          case "msgpack":
+            if (value instanceof Uint8Array) {
+              this.log?.putMsgpack(key, timestamp, value);
+              updated = true;
+            } else {
+              console.warn('Expected a raw value for "' + key + '" but got:', value);
+            }
+            break;
+          default: // Default to raw
+            if (value instanceof Uint8Array) {
+              if (topic.type.startsWith(STRUCT_PREFIX)) {
+                let schemaType = topic.type.split(STRUCT_PREFIX)[1];
+                if (schemaType.endsWith("[]")) {
+                  this.log?.putStruct(key, timestamp, value, schemaType.slice(0, -2), true);
+                } else {
+                  this.log?.putStruct(key, timestamp, value, schemaType, false);
+                }
+              } else if (topic.type.startsWith(PHOTON_PREFIX)) {
+                let schemaType = topic.type.split(PHOTON_PREFIX)[1];
+                this.log?.putPhotonStruct(key, timestamp, value, schemaType);
+              } else if (topic.type.startsWith(PROTO_PREFIX)) {
+                let schemaType = topic.type.split(PROTO_PREFIX)[1];
+                this.log?.putProto(key, timestamp, value, schemaType);
+              } else {
+                this.log?.putRaw(key, timestamp, value);
+                const schema = plugins.getSchema(topic.type);
+                if (schema !== undefined) {
+                  try {
+                    schema.decode(this.log, key, timestamp, value);
+                  } catch {
+                    console.error('Failed to decode custom schema "' + topic.type + '"');
+                  }
+                  this.log.setGeneratedParent(key);
+                }
+              }
+              updated = true;
+            } else {
+              console.warn('Expected a raw value for "' + key + '" but got:', value);
+            }
+            break;
+        }
+        if (updated) {
+          this.shouldRunOutputCallback = true;
+        }
+      },
+      () => {
+        // Connected
+        this.setStatus(LiveDataSourceStatus.Active);
+        this.log = new Log(true, NT4_SERVER_CLOCK);
+        this.shouldRunOutputCallback = true;
+        if (!this.connectTime && this.client !== null) {
+          this.connectTime = this.client.getClientTime_us();
+        }
+        if (this.mode === NT4Mode.AdvantageKit) {
+          this.noFieldsTimeout = setTimeout(() => {
+            this.runtime.onError(
+              "No fields were received from the server. AdvantageKit mode is selected. Are you connecting to a server without AdvantageKit?"
+            );
+          }, 5000);
+        }
+      },
+      () => {
+        // Disconnected
+        this.setStatus(LiveDataSourceStatus.Connecting);
+        this.shouldRunOutputCallback = false;
+        this.connectTime = null;
+        if (this.noFieldsTimeout) clearTimeout(this.noFieldsTimeout);
+      }
+    );
+
+    // Start connection
+    this.cancelPeriodic = this.runtime.startPeriodic(() => this.periodic());
+    this.client.connect();
   }
 
   stop() {
     super.stop();
     this.client?.disconnect();
-    if (this.periodicCallback !== null) clearInterval(this.periodicCallback);
+    this.cancelPeriodic?.();
+    this.cancelPeriodic = null;
+    if (this.noFieldsTimeout !== null) clearTimeout(this.noFieldsTimeout);
   }
 
   getTime(): number | null {

@@ -6,7 +6,7 @@ The order favors the seams in [ARCHITECTURE.md](ARCHITECTURE.md): a shared seman
 
 ## 1. Identity, audit, and architecture
 
-**Status: in progress (this PR).**
+**Status: done.**
 
 - Add `ROADMAP.md`, checked against the current AdvantageScope code.
 - Present the fork as TerraScope in the README, window title, product name, and about text, without renaming protocols, the npm package, or log formats.
@@ -17,23 +17,33 @@ No log or rendering behavior changes.
 
 ## 2. Semantic types on top of the log
 
+**Status: done.**
+
 Add a small semantic layer between `src/shared/log` and the tab controllers. Types to name first: pose 2d/3d, translation, rotation, trajectory, mechanism joint, and a plain numeric series. Map today's WPILib and AdvantageKit structs onto those types in one module the field, mechanism, and swerve controllers can call.
 
 Do not add a format in this PR. The proof is that existing pose and mechanism views still render from the mapping, with tests around the mapping function.
 
 ## 3. Arbitrary 2D and 3D environments
 
+**Status: done.**
+
 Stop requiring an FRC or FTC field asset for a spatial view. Allow a user-set width, length, and origin, plus an optional image or glTF model. Keep bundled fields working. `RobotState.ts` mode colors can stay on the timeline; they should not define the scene size.
 
 ## 4. MCAP import
+
+**Status: done.**
 
 `@mcap/core` is already used to export scalars from `src/hub/exportWorker.ts`. Add a historical reader that opens `.mcap` into the same `Log`, including the channels and schemas the file declares. Leave Hoot-to-WPILOG conversion as it is. Cover a small fixture in a test. Foxglove-specific scene schemas wait for the semantic layer to grow.
 
 ## 5. JSON, JSONL, and TSV readers
 
+**Status: done.**
+
 CSV import already exists and only splits on commas (`CSVDecoder.ts`). Add TSV as a delimiter option, and add JSON/JSONL readers that turn an array of timestamped objects into log fields. Reuse `Log.putJSON` rather than a second object model.
 
 ## 6. Foxglove WebSocket live source
+
+**Status: done.**
 
 Add one `LiveDataSource` for the Foxglove WebSocket protocol: connect, advertise channels, subscribe, and append samples to the log. Manual address only. No second live connection in this PR. Decoding should land in the serialization seam, not in a renderer.
 
@@ -109,7 +119,13 @@ MCAP recording, headless operation, file rotation, automatic triggers, and resto
 
 ## 17. Headless record
 
-A small Node or CLI entry that uses the same live source and writer as chunk 16, with no Electron window. Status on stdout.
+**Status: done.**
+
+`npm run record` records one NT4 source to WPILOG without launching Electron. The command shares `NT4Source`, its schema and sample decoding, and the chunk 16 `RecordingWriter` implementation with the app. Browser scheduling, active fields, and discard preferences enter through the application edge.
+
+The command accepts a source address, output path, optional duration, connection timeout, and free-space threshold. Status on stdout reports the connection, fields, samples, bytes written, and free disk bytes. Ctrl-C, SIGTERM, and the duration limit drain accepted batches and close the file. Connection and storage failures exit nonzero with a message. Process tests use a local NT4 server and the existing WPILOG reader to compare values, metadata, schemas, and timestamps. They cover duration, SIGINT, failed connections, an unfinished handshake, cancellation during a probe, and low disk space.
+
+See the [README](../README.md#record-without-a-window) for commands. Other protocols, multiple CLI sources, file rotation, and tagged clock-domain restoration remain outside this chunk.
 
 ## 18. Plugin loader for readers
 

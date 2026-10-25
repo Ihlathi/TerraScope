@@ -129,7 +129,7 @@ largely irrelevant to the debugging and visualization experience.
 - [ ] Source identification. (NetworkTables and Driver Station fields use NT: and DS: prefixes. Merged files are grouped as /LogN.)
 - [x] Schema and type metadata.
 - [x] Units and measurement metadata.
-- [ ] Coordinate frame metadata. (A global coordinate-system preference converts poses. Frames are not stored per sample.)
+- [x] Coordinate frame metadata. (ROS message headers retain per-sample frame ids. The 3D scene resolves them through logged transforms.)
 - [x] Support for multiple timestamp domains. (Samples retain log, receive, or named-clock timestamps with explicit display conversions.)
 - [ ] Preservation of original message data where practical. (Raw samples are retained for raw and some structured inputs. MCAP export drops raw samples.)
 - [x] Support for both structured and unstructured data.
@@ -382,18 +382,18 @@ largely irrelevant to the debugging and visualization experience.
 ## Coordinate Frames and Transforms
 
 - [x] Coordinate frame visualization.
-- [ ] Transform trees.
-- [ ] Parent-child frame relationships.
-- [ ] Static transforms.
-- [ ] Dynamic transforms.
-- [ ] Historical transforms.
-- [ ] Frame-relative visualization.
+- [x] Transform trees. (Logged ROS TFMessage data from MCAP and ROS 2 bags.)
+- [x] Parent-child frame relationships.
+- [x] Static transforms.
+- [x] Dynamic transforms. (Latest sample at or before the timeline cursor.)
+- [x] Historical transforms.
+- [x] Frame-relative visualization.
 - [ ] Transform interpolation where appropriate.
-- [ ] Missing transform detection.
-- [ ] Invalid transform detection.
+- [x] Missing transform detection. (Disconnected chains and unavailable dynamic samples suppress affected objects and show a scene indicator.)
+- [x] Invalid transform detection. (Nonfinite values, zero quaternions, cycles, and conflicting static/dynamic ownership show a scene indicator.)
 - [ ] Transform consistency diagnostics.
 - [ ] Frame hierarchy inspection.
-- [ ] Visualization of measurements in selected reference frames.
+- [x] Visualization of measurements in selected reference frames. (A saved fixed-frame setting places frame-bearing laser scans, point clouds, and poses.)
 
 ---
 
@@ -466,7 +466,7 @@ largely irrelevant to the debugging and visualization experience.
 - [ ] Radar detections.
 - [ ] Sonar and ultrasonic measurements.
 - [ ] Range measurements.
-- [x] Multi-sensor spatial overlays. (Direct coordinates in the selected scene. No sensor-frame transforms.)
+- [x] Multi-sensor spatial overlays. (Logged ROS transforms place frame-bearing laser scans and point clouds in the selected fixed frame. Frameless sources keep scene coordinates.)
 - [ ] Point cloud coloring.
 - [ ] Point cloud filtering.
 - [ ] Point cloud accumulation.

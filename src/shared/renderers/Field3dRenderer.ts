@@ -7,7 +7,7 @@
 
 import { CoordinateSystem } from "../AdvantageScopeAssets";
 import { CustomEnvironment } from "../CustomEnvironment";
-import { AnnotatedPose3d, ModuleVelocity } from "../geometry";
+import { AnnotatedPose3d, ModuleVelocity, Pose3d } from "../geometry";
 import { MechanismState } from "../log/LogMechanismState";
 import Field3dRendererImpl from "./Field3dRendererImpl";
 import TabRenderer from "./TabRenderer";
@@ -17,6 +17,7 @@ export default class Field3dRenderer implements TabRenderer {
   private CANVAS_CONTAINER: HTMLElement;
   private ALERT: HTMLElement;
   private SPINNER: HTMLElement;
+  private FRAME_ALERT: HTMLElement;
 
   private implementation: Field3dRendererImpl | null = null;
   private lastMode: "cinematic" | "standard" | "low-power" | null = null;
@@ -27,6 +28,11 @@ export default class Field3dRenderer implements TabRenderer {
     this.CANVAS = root.getElementsByClassName("field-3d-canvas")[0] as HTMLCanvasElement;
     this.CANVAS_CONTAINER = root.getElementsByClassName("field-3d-canvas-container")[0] as HTMLElement;
     this.ALERT = root.getElementsByClassName("field-3d-alert")[0] as HTMLElement;
+    this.FRAME_ALERT = document.createElement("div");
+    this.FRAME_ALERT.className = "field-3d-frame-alert";
+    this.FRAME_ALERT.setAttribute("role", "status");
+    this.FRAME_ALERT.hidden = true;
+    this.CANVAS_CONTAINER.appendChild(this.FRAME_ALERT);
     this.SPINNER = root.getElementsByClassName("spinner-cubes-container")[0] as HTMLElement;
     this.updateImplementation();
   }
@@ -112,6 +118,8 @@ export default class Field3dRenderer implements TabRenderer {
 
   render(command: Field3dRendererCommand): void {
     this.updateImplementation();
+    this.FRAME_ALERT.textContent = (command.frameDiagnostics ?? []).join("\n");
+    this.FRAME_ALERT.hidden = !command.frameDiagnostics?.length;
     this.implementation?.render(command);
   }
 }
@@ -128,6 +136,7 @@ export type Field3dRendererCommand = {
   allRobotModels: string[];
   customEnvironment: CustomEnvironment | null;
   customAssetUrl: string | null;
+  frameDiagnostics?: string[];
 };
 
 export type Field3dRendererCommand_AnyObj =
@@ -142,10 +151,15 @@ export type Field3dRendererCommand_AnyObj =
   | Field3dRendererCommand_ConeObj
   | Field3dRendererCommand_PointsObj;
 
+export type Field3dRendererCommand_Component =
+  | AnnotatedPose3d
+  | { space: "scene"; value: AnnotatedPose3d }
+  | { space: "unresolved" };
+
 export type Field3dRendererCommand_GenericRobotObj = {
   model: string;
   poses: AnnotatedPose3d[];
-  components: AnnotatedPose3d[];
+  components: Field3dRendererCommand_Component[];
   mechanisms: {
     xz: MechanismState | null;
     yz: MechanismState | null;
@@ -215,4 +229,5 @@ export type Field3dRendererCommand_PointsObj = {
   type: "points";
   color: string;
   positions: number[];
+  pose?: Pose3d;
 };

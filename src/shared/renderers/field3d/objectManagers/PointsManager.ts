@@ -26,6 +26,10 @@ export default class PointsManager extends ObjectManager<Field3dRendererCommand_
   }
 
   setObjectData(object: Field3dRendererCommand_PointsObj): void {
+    const pose = object.pose;
+    this.points.position.set(...(pose?.translation ?? [0, 0, 0]));
+    const [w, x, y, z] = pose?.rotation ?? [1, 0, 0, 0];
+    this.points.quaternion.set(x, y, z, w);
     this.points.visible = object.positions.length > 0;
     this.points.material.color.set(object.color);
     let position = this.points.geometry.getAttribute("position") as THREE.BufferAttribute | undefined;

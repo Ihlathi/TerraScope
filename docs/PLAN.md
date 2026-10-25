@@ -87,7 +87,11 @@ Add an image sample type and a tab or 3D overlay that shows the frame nearest th
 
 ## 14. Transform tree
 
-A frame graph (parent, child, static or dynamic transform) queried by the 3D scene, replacing one-off pose math where a log actually publishes frames. Missing parents are visible. Do not invent frames for old WPILib logs that do not have them.
+**Status: done.**
+
+A shared frame graph reads logged TFMessage transforms on `/tf` and `/tf_static` from MCAP and ROS 2 bags. The 3D scene resolves frame-bearing scans, clouds, and poses into a saved fixed frame at the timeline cursor. Static transforms apply throughout the recording. Dynamic transforms use the latest sample at or before the cursor in the log's display clock. Missing parents, unavailable samples, invalid transforms, and cycles suppress affected objects and appear in the scene indicator. Sources without frame ids retain their existing coordinates.
+
+The [verification evidence](evidence/chunk-14/README.md) includes the generated fixture, command output, and screenshots at two cursor times and with a missing parent. Transform interpolation and a frame-hierarchy inspector remain outside this chunk.
 
 ## 15. URDF mechanism
 

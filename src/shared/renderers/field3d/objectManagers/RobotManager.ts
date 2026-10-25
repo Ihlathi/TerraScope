@@ -340,15 +340,28 @@ export default class RobotManager extends ObjectManager<
 
     // Update components
     for (let i = 1; i < this.meshes.length; i++) {
+      const component = object.components[i - 1];
+      if (component && "space" in component && component.space === "unresolved") {
+        this.meshes[i].setPoses([]);
+        continue;
+      }
+      const sceneComponent = component && "space" in component ? component.value : null;
       this.meshes[i].setPoses(
         object.poses
           .map((x) => x.pose)
           .map((robotPose) => {
-            this.dummyRobotPose.rotation.setFromQuaternion(rotation3dToQuaternion(robotPose.rotation));
-            this.dummyRobotPose.position.set(...robotPose.translation);
+            if (sceneComponent) {
+              this.dummyRobotPose.rotation.set(0, 0, 0);
+              this.dummyRobotPose.position.set(0, 0, 0);
+            } else {
+              this.dummyRobotPose.rotation.setFromQuaternion(rotation3dToQuaternion(robotPose.rotation));
+              this.dummyRobotPose.position.set(...robotPose.translation);
+            }
 
             let userPose =
-              i - 1 < object.components.length && robotConfig !== undefined ? object.components[i - 1].pose : null;
+              component && robotConfig !== undefined
+                ? sceneComponent?.pose ?? ("pose" in component ? component.pose : null)
+                : null;
             if (userPose === null) {
               this.dummyUserPose.rotation.set(0, 0, 0);
               this.dummyUserPose.position.set(0, 0, 0);

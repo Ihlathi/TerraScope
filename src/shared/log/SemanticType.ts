@@ -19,7 +19,9 @@ export const SemanticType = {
   MechanismJoint: "mechanismJoint",
   NumericSeries: "numericSeries",
   LaserScan: "laserScan",
-  PointCloud: "pointCloud"
+  PointCloud: "pointCloud",
+  Image: "image",
+  CompressedImage: "compressedImage"
 } as const;
 
 export type SemanticType = (typeof SemanticType)[keyof typeof SemanticType];
@@ -56,7 +58,11 @@ const STRUCTURED_TYPES: readonly StructuredTypeEntry[] = [
   { logType: "sensor_msgs/msg/LaserScan", semantic: SemanticType.LaserScan, array: false },
   { logType: "sensor_msgs/LaserScan", semantic: SemanticType.LaserScan, array: false },
   { logType: "sensor_msgs/msg/PointCloud2", semantic: SemanticType.PointCloud, array: false },
-  { logType: "sensor_msgs/PointCloud2", semantic: SemanticType.PointCloud, array: false }
+  { logType: "sensor_msgs/PointCloud2", semantic: SemanticType.PointCloud, array: false },
+  { logType: "sensor_msgs/msg/Image", semantic: SemanticType.Image, array: false },
+  { logType: "sensor_msgs/Image", semantic: SemanticType.Image, array: false },
+  { logType: "sensor_msgs/msg/CompressedImage", semantic: SemanticType.CompressedImage, array: false },
+  { logType: "sensor_msgs/CompressedImage", semantic: SemanticType.CompressedImage, array: false }
 ];
 
 const BY_LOG_TYPE = new Map(STRUCTURED_TYPES.map((entry) => [entry.logType, entry.semantic]));

@@ -93,7 +93,13 @@ The [verification evidence](evidence/chunk-12/README.md) includes command output
 
 ## 13. Image frames
 
-Add an image sample type and a tab or 3D overlay that shows the frame nearest the timeline cursor. Camera calibration and detection boxes are separate PRs.
+**Status: done.**
+
+The Image tab displays ROS 2 Image and CompressedImage samples from the shared Log. It selects the latest sample at or before the timeline cursor, matching the laser scan and point cloud views. Before the first sample, the tab shows a message instead of a future image.
+
+Image decoders register through the chunk 18 plugin registry. The pure image module converts selected rgb8, bgr8, and mono8 frames to RGBA with row stride padding, and decodes JPEG and PNG bytes. Unsupported encodings, big-endian raw images, invalid dimensions, and malformed payloads produce visible diagnostics. Each tab caches at most three decoded frames and clears its cache on topic change or close. Satellite windows receive self-contained RGBA bytes. Each renderer owns one data URL and updates its aspect ratio after the image loads. No blob URL or ImageBitmap is shared or cached.
+
+The committed `generate-images.py` script creates the separate `images.db3` fixture with three frames per encoding. Tests decode those bytes and check pixels, selection boundaries, lazy decoding, bounded caching, satellite message transport, and renderer load and disposal behavior. Camera calibration, detection boxes, depth encodings, and images above 16 million pixels remain outside this chunk.
 
 ## 14. Transform tree
 

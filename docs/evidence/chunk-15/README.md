@@ -35,7 +35,7 @@ For the WPILib comparison, launch current main in another checkout on port 9223 
 SCENE_PORT=9223 node docs/evidence/chunk-15/verify-urdf.cjs wpilib-main
 ```
 
-The verifier generates a WPILOG containing a typed WPILib Pose3d, opens it through the WPILOG reader, and renders the bundled KitBot with URDF set to None. [wpilib-compatibility.json](wpilib-compatibility.json) records identical robot commands and zero changed pixels across the 980 by 484 scene canvas against main `2b941d2d`. The full-window screenshots retain the different settings controls between branches.
+The verifier generates a WPILOG containing a typed WPILib Pose3d, opens it through the WPILOG reader, and renders the bundled KitBot with URDF set to None. [wpilib-compatibility.json](wpilib-compatibility.json) records identical robot commands and zero changed pixels across the 980 by 484 scene canvas against main `74591d98`. The full-window screenshots retain the different settings controls between branches.
 
 ![URDF at cursor 1.5](urdf-1.5.png)
 ![URDF at cursor 2.5](urdf-2.5.png)

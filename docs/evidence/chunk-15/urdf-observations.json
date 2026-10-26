@@ -10,7 +10,7 @@
           {
             "type": "urdf",
             "robot": {
-              "id": "dcbcb12e-4f75-416a-9ef7-257a0934df12",
+              "id": "6e7109ce-0b0d-4be6-8b30-83ee69d1eb77",
               "name": "TerraScope fixture",
               "links": [
                 {
@@ -291,7 +291,7 @@
           {
             "type": "urdf",
             "robot": {
-              "id": "dcbcb12e-4f75-416a-9ef7-257a0934df12",
+              "id": "6e7109ce-0b0d-4be6-8b30-83ee69d1eb77",
               "name": "TerraScope fixture",
               "links": [
                 {
@@ -572,7 +572,7 @@
           {
             "type": "urdf",
             "robot": {
-              "id": "dcbcb12e-4f75-416a-9ef7-257a0934df12",
+              "id": "6e7109ce-0b0d-4be6-8b30-83ee69d1eb77",
               "name": "TerraScope fixture",
               "links": [
                 {
@@ -854,7 +854,7 @@
         {
           "type": "urdf",
           "robot": {
-            "id": "407cfa61-8d1f-4d78-9acc-d1a0790d1213",
+            "id": "120faffc-e65d-4723-a429-d136b519ed56",
             "name": "Y_UP upright",
             "links": [
               {

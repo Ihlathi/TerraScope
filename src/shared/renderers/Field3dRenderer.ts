@@ -9,6 +9,7 @@ import { CoordinateSystem } from "../AdvantageScopeAssets";
 import { CustomEnvironment } from "../CustomEnvironment";
 import { AnnotatedPose3d, ModuleVelocity, Pose3d } from "../geometry";
 import { MechanismState } from "../log/LogMechanismState";
+import { URDFRobot } from "../urdf/URDF";
 import Field3dRendererImpl from "./Field3dRendererImpl";
 import TabRenderer from "./TabRenderer";
 
@@ -118,8 +119,11 @@ export default class Field3dRenderer implements TabRenderer {
 
   render(command: Field3dRendererCommand): void {
     this.updateImplementation();
-    this.FRAME_ALERT.textContent = (command.frameDiagnostics ?? []).join("\n");
-    this.FRAME_ALERT.hidden = !command.frameDiagnostics?.length;
+    this.FRAME_ALERT.textContent = [
+      ...(command.frameDiagnostics ?? []),
+      ...(this.implementation?.getURDFDiagnostics() ?? [])
+    ].join("\n");
+    this.FRAME_ALERT.hidden = !this.FRAME_ALERT.textContent;
     this.implementation?.render(command);
   }
 }
@@ -149,7 +153,8 @@ export type Field3dRendererCommand_AnyObj =
   | Field3dRendererCommand_AprilTagBuiltInObj
   | Field3dRendererCommand_AxesObj
   | Field3dRendererCommand_ConeObj
-  | Field3dRendererCommand_PointsObj;
+  | Field3dRendererCommand_PointsObj
+  | Field3dRendererCommand_URDFObj;
 
 export type Field3dRendererCommand_Component =
   | AnnotatedPose3d
@@ -230,4 +235,12 @@ export type Field3dRendererCommand_PointsObj = {
   color: string;
   positions: number[];
   pose?: Pose3d;
+};
+
+export type Field3dRendererCommand_URDFObj = {
+  type: "urdf";
+  robot: URDFRobot;
+  baseUrl: string | null;
+  packageRootUrl: string | null;
+  links: { name: string; pose: Pose3d | null }[];
 };

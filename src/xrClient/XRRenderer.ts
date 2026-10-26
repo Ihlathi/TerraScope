@@ -31,6 +31,7 @@ import HeatmapManager from "../shared/renderers/field3d/objectManagers/HeatmapMa
 import PointsManager from "../shared/renderers/field3d/objectManagers/PointsManager";
 import RobotManager from "../shared/renderers/field3d/objectManagers/RobotManager";
 import TrajectoryManager from "../shared/renderers/field3d/objectManagers/TrajectoryManager";
+import URDFManager from "../shared/renderers/field3d/objectManagers/URDFManager";
 import { Units } from "../shared/units";
 import { clampValue, wrapRadians } from "../shared/util";
 import XRCamera from "./XRCamera";
@@ -262,6 +263,9 @@ export default class XRRenderer {
         break;
       case "gamePiece":
         manager = new GamePieceManager(...args, this.fieldPieces);
+        break;
+      case "urdf":
+        manager = new URDFManager(...args);
         break;
       case "points":
         manager = new PointsManager(...args);

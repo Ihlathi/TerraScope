@@ -32,6 +32,7 @@ import os from "os";
 import path from "path";
 import { Client, FileEntry, Stats } from "ssh2";
 import { Readable, Writable } from "stream";
+import { pathToFileURL } from "url";
 import { AdvantageScopeAssets } from "../../shared/AdvantageScopeAssets";
 import ButtonRect from "../../shared/ButtonRect";
 import { ensureThemeContrast } from "../../shared/Colors";
@@ -244,6 +245,41 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
   if (window.isDestroyed()) return;
   let windowId = window.id;
   switch (message.name) {
+    case "urdf-pick": {
+      const uuid = message.data?.uuid;
+      const kind = message.data?.kind;
+      if (typeof uuid !== "string" || (kind !== "robot" && kind !== "packages" && kind !== "resources")) break;
+      try {
+        const result = await dialog.showOpenDialog(
+          window,
+          kind === "robot"
+            ? {
+                title: "Load URDF robot",
+                filters: [{ name: "URDF robot", extensions: ["urdf"] }],
+                properties: ["openFile"]
+              }
+            : {
+                title:
+                  kind === "packages"
+                    ? "Choose a folder containing ROS packages"
+                    : "Choose the directory for logged URDF mesh paths",
+                properties: ["openDirectory"]
+              }
+        );
+        if (result.canceled || !result.filePaths[0]) break;
+        const selected = result.filePaths[0];
+        sendMessage(window, "urdf-picked", {
+          uuid,
+          kind,
+          url: pathToFileURL(selected + (kind !== "robot" ? path.sep : "")).href,
+          name: path.basename(selected),
+          ...(kind === "robot" ? { xml: await fs.promises.readFile(selected, "utf8") } : {})
+        });
+      } catch (error) {
+        sendMessage(window, "urdf-picked", { uuid, kind, error: String(error) });
+      }
+      break;
+    }
     case "recording-start": {
       const id = message.data?.id;
       if (!Number.isSafeInteger(id) || id < 1) break;

@@ -32,6 +32,7 @@ import HeatmapManager from "./field3d/objectManagers/HeatmapManager";
 import PointsManager from "./field3d/objectManagers/PointsManager";
 import RobotManager from "./field3d/objectManagers/RobotManager";
 import TrajectoryManager from "./field3d/objectManagers/TrajectoryManager";
+import URDFManager from "./field3d/objectManagers/URDFManager";
 
 export const FTC_GRID_COLOR = "#888";
 
@@ -499,6 +500,9 @@ export default class Field3dRendererImpl implements TabRenderer {
       case "gamePiece":
         manager = new GamePieceManager(...args, this.fieldPieces);
         break;
+      case "urdf":
+        manager = new URDFManager(...args);
+        break;
       case "points":
         manager = new PointsManager(...args);
         break;
@@ -539,6 +543,12 @@ export default class Field3dRendererImpl implements TabRenderer {
     }
     manager.setResolution(this.resolutionVector);
     return manager;
+  }
+
+  getURDFDiagnostics(): string[] {
+    return this.objectManagers.flatMap((entry) =>
+      entry.manager instanceof URDFManager ? entry.manager.getDiagnostics() : []
+    );
   }
 
   getAspectRatio(): number | null {

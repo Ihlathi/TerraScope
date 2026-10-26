@@ -15,6 +15,7 @@ export type FrameResolution =
 
 type FrameFailure = Exclude<FrameResolution, { status: "resolved" }>;
 
+export type SupplementalFrameEdge = { child: string; parent: string; pose: Pose3d };
 type Edge = { parent: string; pose: Pose3d | null };
 type Sample = { time: number; edge: Edge };
 type SampleQueue = { samples: Sample[]; start: number; boundary: Sample[] };
@@ -205,15 +206,22 @@ export class FrameGraph {
     }
   }
 
-  defaultFixedFrame(): string {
-    for (const preferred of ["map", "odom", "world"]) if (this.frames.has(preferred)) return preferred;
-    const roots = [...this.frames.keys()].filter((frame) => !this.tracks.has(frame));
+  defaultFixedFrame(supplemental: readonly SupplementalFrameEdge[] = []): string {
+    supplemental = supplemental.filter((edge) => !this.tracks.has(edge.child));
+    const frames = new Set(this.frames.keys());
+    supplemental.forEach((edge) => {
+      frames.add(edge.child);
+      frames.add(edge.parent);
+    });
+    for (const preferred of ["map", "odom", "world"]) if (frames.has(preferred)) return preferred;
+    const children = new Set(supplemental.map((edge) => edge.child));
+    const roots = [...frames].filter((frame) => !this.tracks.has(frame) && !children.has(frame));
     return roots.length === 1 ? roots[0] : "";
   }
 
-  private edgeAt(frame: string, time: number): Edge | FrameFailure {
+  private edgeAt(frame: string, time: number, supplemental: ReadonlyMap<string, Edge>): Edge | FrameFailure {
     const track = this.tracks.get(frame);
-    if (!track) return { status: "missing-parent", frame };
+    if (!track) return supplemental.get(frame) ?? { status: "missing-parent", frame };
     if (track.static.size && track.dynamic.size) return { status: "invalid", frame };
     if (track.static.size) {
       const topic = Math.max(...track.static.keys());
@@ -235,7 +243,13 @@ export class FrameGraph {
     return sample.edge;
   }
 
-  resolve(frame: string, fixedFrame: string, time: number): FrameResolution {
+  resolve(
+    frame: string,
+    fixedFrame: string,
+    time: number,
+    edges: readonly SupplementalFrameEdge[] = []
+  ): FrameResolution {
+    const supplemental = new Map(edges.map((edge) => [edge.child, edge]));
     if (!frame || !fixedFrame) return { status: "missing-parent", frame: frame || "(empty frame id)" };
     const ancestors = new Map<string, Pose3d>();
     let current = frame,
@@ -244,7 +258,7 @@ export class FrameGraph {
     while (!ancestors.has(current)) {
       ancestors.set(current, pose);
       if (current === fixedFrame) return { status: "resolved", pose };
-      const edge = this.edgeAt(current, time);
+      const edge = this.edgeAt(current, time, supplemental);
       if ("status" in edge) {
         failure = edge;
         break;
@@ -264,7 +278,7 @@ export class FrameGraph {
       const sourcePose = ancestors.get(current);
       if (sourcePose) return { status: "resolved", pose: composeFramePose(inverse(pose), sourcePose) };
       seen.add(current);
-      const edge = this.edgeAt(current, time);
+      const edge = this.edgeAt(current, time, supplemental);
       if ("status" in edge)
         return failure.status === "missing-parent" && edge.status !== "missing-parent" ? edge : failure;
       if (!edge.pose || !edge.parent) return { status: "invalid", frame: current };

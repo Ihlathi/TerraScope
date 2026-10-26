@@ -23,7 +23,7 @@ import { Units } from "../../shared/units";
 import { clampValue, createUUID, scaleValueClamped } from "../../shared/util";
 import SourceList from "../SourceList";
 import { LineGraphController_DiscreteConfig, LineGraphController_NumericConfig } from "./LineGraphController_Config";
-import { detectEnum, getNumericSourceUnit } from "./LineGraphFieldSemantics";
+import { getEnumDomain, getNumericSourceUnit } from "./LineGraphFieldSemantics";
 import TabController from "./TabController";
 
 type NumericCommandCacheValue = LineGraphRendererCommand_NumericField & { hasUnit: boolean };
@@ -719,10 +719,7 @@ export default class LineGraphController implements TabController {
       let data = window.log.getRange(fieldItem.logKey, timeRange[0], timeRange[1]);
       if (data === undefined) return;
 
-      let enumDomain =
-        fieldItem.type === "enum"
-          ? detectEnum(window.log.getRange(fieldItem.logKey, -Infinity, Infinity)?.values ?? [])
-          : null;
+      let enumDomain = fieldItem.type === "enum" ? getEnumDomain(window.log.getField(fieldItem.logKey)) : null;
 
       // Get toggle reference
       let toggleReference = window.log.getTimestamps([fieldItem.logKey]).indexOf(data.timestamps[0]) % 2 === 0;

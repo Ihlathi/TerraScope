@@ -8,6 +8,7 @@
 import { GraphColors } from "../../shared/Colors";
 import { SourceListItemState } from "../../shared/SourceListConfig";
 import Log from "../../shared/log/Log";
+import LogField from "../../shared/log/LogField";
 import { Units } from "../../shared/units";
 
 export type EnumDomain = { values: (string | number)[] };
@@ -23,6 +24,19 @@ export function detectEnum(values: readonly unknown[]): EnumDomain | null {
     if (states.size > GraphColors.length) return null;
   }
   return states.size === 0 ? null : { values: [...states] };
+}
+
+const enumDomains = new WeakMap<LogField, { revision: number; domain: EnumDomain | null }>();
+
+export function getEnumDomain(field: LogField | null): EnumDomain | null {
+  if (field === null) return null;
+  const revision = field.getRevision();
+  let cached = enumDomains.get(field);
+  if (cached === undefined || cached.revision !== revision) {
+    cached = { revision, domain: detectEnum(field.getRange(-Infinity, Infinity).values) };
+    enumDomains.set(field, cached);
+  }
+  return cached.domain;
 }
 
 export function getNumericSourceUnit(log: Log, item: SourceListItemState): string | null {

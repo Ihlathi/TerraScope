@@ -187,3 +187,22 @@ test("registry rejects duplicate decoder ids and semantic registrations", () => 
   assert.ok(plugins.getImageDecoder(SemanticType.Image));
   assert.ok(plugins.getImageDecoder(SemanticType.CompressedImage));
 });
+
+test("missing endianness defaults to little-endian while explicit big-endian remains unsupported", () => {
+  const fields: Record<string, unknown> = {
+    width: 1,
+    height: 1,
+    encoding: "rgb8",
+    step: 3,
+    data: new Uint8Array([10, 20, 30])
+  };
+  for (const endian of [undefined, 0, false]) {
+    fields.is_bigendian = endian;
+    const pixels = decodeRawImage((field) => fields[field]);
+    assert.deepEqual([...pixels.rgba], [10, 20, 30, 255]);
+  }
+  for (const endian of [1, true]) {
+    fields.is_bigendian = endian;
+    assert.throws(() => decodeRawImage((field) => fields[field]), /Big-endian/);
+  }
+});

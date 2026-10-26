@@ -35,6 +35,9 @@
     "src/shared/plugins/PluginRegistry.test.ts",
     "src/hub/dataSources/nt4/NT4Lifecycle.test.ts",
     "src/shared/log/ImageSensor.test.ts",
-    "src/shared/renderers/ImageRenderer.test.ts"
+    "src/shared/renderers/ImageRenderer.test.ts",
+    "src/hub/controllers/ImageController.test.ts",
+    "src/hub/ImageSatellitePublisher.test.ts",
+    "src/main/ImageSatelliteRouting.test.ts"
   ]
 }

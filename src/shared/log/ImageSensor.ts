@@ -46,7 +46,7 @@ function imageBytes(read: ImageFieldReader): Uint8Array {
 
 export function decodeRawImage(read: ImageFieldReader): ImagePixels {
   const { width, height } = dimensions(read("width"), read("height"));
-  const endian = read("is_bigendian");
+  const endian = read("is_bigendian") ?? 0;
   if (endian !== 0 && endian !== false) throw new Error("Big-endian images are not supported.");
   const encoding = read("encoding");
   if (encoding !== "rgb8" && encoding !== "bgr8" && encoding !== "mono8") {

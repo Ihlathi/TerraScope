@@ -14,7 +14,7 @@ import ConsoleRenderer from "../shared/renderers/ConsoleRenderer";
 import DocumentationRenderer from "../shared/renderers/DocumentationRenderer";
 import Field2dRenderer from "../shared/renderers/Field2dRenderer";
 import Field3dRenderer from "../shared/renderers/Field3dRenderer";
-import ImageRenderer from "../shared/renderers/ImageRenderer";
+import ImageRenderer, { ImageRendererCommand } from "../shared/renderers/ImageRenderer";
 import JoysticksRenderer from "../shared/renderers/JoysticksRenderer";
 import LineGraphRenderer from "../shared/renderers/LineGraphRenderer";
 import MechanismRenderer from "../shared/renderers/MechanismRenderer";
@@ -27,6 +27,7 @@ import TableRenderer from "../shared/renderers/TableRenderer";
 import VideoRenderer from "../shared/renderers/VideoRenderer";
 import { Units } from "../shared/units";
 import { clampValue } from "../shared/util";
+import ImageSatellitePublisher from "./ImageSatellitePublisher";
 import ScrollSensor, { ScrollSensorMouseControl } from "./ScrollSensor";
 import Timeline from "./Timeline";
 import ConsoleController from "./controllers/ConsoleController";
@@ -81,6 +82,7 @@ export default class Tabs {
   }[] = [];
   private selectedTab = 0;
   private activeSatellites: string[] = [];
+  private imageSatellites = new ImageSatellitePublisher((update) => window.sendMainMessage("update-satellite", update));
   private activeXRUUID: string | null = null;
   private controlsHandleActive = false;
 
@@ -369,11 +371,15 @@ export default class Tabs {
                 : tab.title === ""
                 ? getDefaultTabTitle(tab.type)
                 : tab.title;
-            window.sendMainMessage("update-satellite", {
-              uuid: tab.controller.UUID,
-              command: command,
-              title: title
-            });
+            if (tab.type === TabType.Image) {
+              this.imageSatellites.publish(tab.controller.UUID, command as ImageRendererCommand, title);
+            } else {
+              window.sendMainMessage("update-satellite", {
+                uuid: tab.controller.UUID,
+                command: command,
+                title: title
+              });
+            }
           }
           if (activeXR) {
             window.sendMainMessage("update-xr-command", command);
@@ -551,6 +557,7 @@ export default class Tabs {
         renderer = new ImageRenderer(rendererElement);
         controller = new ImageController(controlsElement, () => {
           renderer.dispose?.();
+          this.imageSatellites.clear(controller.UUID);
           window.sendMainMessage("clear-satellite", { uuid: controller.UUID });
         });
         break;
@@ -692,7 +699,17 @@ export default class Tabs {
 
   /** Updates the list of active satellites for data publishing. */
   setActiveSatellites(activeSatellites: string[]) {
+    this.activeSatellites.forEach((uuid) => {
+      if (!activeSatellites.includes(uuid)) this.imageSatellites.clear(uuid);
+    });
     this.activeSatellites = activeSatellites;
+  }
+
+  refreshSatellite(uuid: string, satelliteId: number): void {
+    const tab = this.tabList.find((tab) => tab.controller.UUID === uuid);
+    if (tab?.type !== TabType.Image) return;
+    const title = tab.title === "" ? getDefaultTabTitle(tab.type) : tab.title;
+    this.imageSatellites.publish(uuid, tab.controller.getCommand() as ImageRendererCommand, title, satelliteId);
   }
 
   /** Updates the UUID for the tab broadcasting to XR. */

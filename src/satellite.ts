@@ -166,8 +166,8 @@ window.addEventListener("message", (event) => {
           }
 
           // Render frame
-          lastCommand = message.data.command;
-          if (renderer) {
+          if (message.data.command !== undefined) lastCommand = message.data.command;
+          if (renderer && message.data.command !== undefined) {
             renderer.render(message.data.command);
             let aspectRatio = renderer.getAspectRatio();
             processAspectRatio(aspectRatio);

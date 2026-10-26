@@ -32,7 +32,7 @@ import os from "os";
 import path from "path";
 import { Client, FileEntry, Stats } from "ssh2";
 import { Readable, Writable } from "stream";
-import { pathToFileURL } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import { AdvantageScopeAssets } from "../../shared/AdvantageScopeAssets";
 import ButtonRect from "../../shared/ButtonRect";
 import { ensureThemeContrast } from "../../shared/Colors";
@@ -245,32 +245,54 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
   if (window.isDestroyed()) return;
   let windowId = window.id;
   switch (message.name) {
+    case "urdf-restore":
     case "urdf-pick": {
       const uuid = message.data?.uuid;
       const kind = message.data?.kind;
       if (typeof uuid !== "string" || (kind !== "robot" && kind !== "packages" && kind !== "resources")) break;
       try {
-        const result = await dialog.showOpenDialog(
-          window,
-          kind === "robot"
-            ? {
-                title: "Load URDF robot",
-                filters: [{ name: "URDF robot", extensions: ["urdf"] }],
-                properties: ["openFile"]
-              }
-            : {
-                title:
-                  kind === "packages"
-                    ? "Choose a folder containing ROS packages"
-                    : "Choose the directory for logged URDF mesh paths",
-                properties: ["openDirectory"]
-              }
-        );
-        if (result.canceled || !result.filePaths[0]) break;
-        const selected = result.filePaths[0];
+        const referencesPath = path.join(app.getPath("userData"), "urdf-sources.json");
+        let references: Record<string, { kind: string; path: string }> = fs.existsSync(referencesPath)
+          ? jsonfile.readFileSync(referencesPath)
+          : {};
+        const restoring = message.name === "urdf-restore";
+        let selected: string;
+        if (restoring) {
+          const reference = typeof message.data.reference === "string" ? references[message.data.reference] : null;
+          if (reference && reference.kind === kind) selected = reference.path;
+          else if (typeof message.data.url === "string") selected = fileURLToPath(message.data.url);
+          else throw new Error("URDF source is unavailable on this computer. Select the local source again.");
+        } else {
+          const result = await dialog.showOpenDialog(
+            window,
+            kind === "robot"
+              ? {
+                  title: "Load URDF robot",
+                  filters: [{ name: "URDF robot", extensions: ["urdf"] }],
+                  properties: ["openFile"]
+                }
+              : {
+                  title:
+                    kind === "packages"
+                      ? "Choose a folder containing ROS packages"
+                      : "Choose the directory for logged URDF mesh paths",
+                  properties: ["openDirectory"]
+                }
+          );
+          if (result.canceled || !result.filePaths[0]) break;
+          selected = result.filePaths[0];
+          references = fs.existsSync(referencesPath) ? jsonfile.readFileSync(referencesPath) : {};
+        }
+        const reference =
+          Object.keys(references).find((key) => references[key].kind === kind && references[key].path === selected) ??
+          createUUID();
+        references[reference] = { kind, path: selected };
+        jsonfile.writeFileSync(referencesPath, references);
         sendMessage(window, "urdf-picked", {
           uuid,
           kind,
+          reference,
+          restoring,
           url: pathToFileURL(selected + (kind !== "robot" ? path.sep : "")).href,
           name: path.basename(selected),
           ...(kind === "robot" ? { xml: await fs.promises.readFile(selected, "utf8") } : {})

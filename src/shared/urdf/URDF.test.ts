@@ -62,12 +62,11 @@ test("parse default joint axis, default visual origin and inline color", () => {
   );
 });
 
-test("reject malformed XML, unsupported geometry and invalid numeric values", () => {
+test("reject malformed XML and invalid numeric values", () => {
   const invalid = [
     "<robot>",
     '<sdf name="wrong"/>',
     '<!DOCTYPE robot [<!ENTITY x "bad">]><robot name="bad"><link name="a"/></robot>',
-    '<robot name="bad"><link name="a"><visual><geometry><cone radius="1"/></geometry></visual></link></robot>',
     description.replace('size="1 2 3"', 'size="1 nope 3"'),
     description.replace('radius="0.2"', 'radius="-1"'),
     description.replace('scale="1 2 3"', 'scale="1 0 3"'),
@@ -87,7 +86,6 @@ test("reject duplicate links, duplicate joints, missing references, cycles, mult
     description.replace('parent link="base"', 'parent link="tool"'),
     description.replace('child link="slide"', 'child link="arm"'),
     description.replace("</robot>", '<link name="detached"/></robot>'),
-    description.replace('type="revolute"', 'type="floating"'),
     description.replace('<axis xyz="0 0 2"/>', '<mimic joint="other"/>')
   ];
   for (const xml of invalid) assert.throws(() => parseURDF(xml), /URDF/);
@@ -171,4 +169,73 @@ test("resolve package paths against a user-selected parent root and report every
     resolveURDFMesh("mesh.obj", "file:///robots/demo/robot.urdf", null)
   ])
     assert.ok("error" in result, JSON.stringify(result));
+});
+
+test("mimic joints apply multipliers and offsets through chains regardless of joint order", () => {
+  const robot = parseURDF(`<robot name="mimic">
+    <link name="base"/><link name="first"/><link name="second"/><link name="third"/>
+    <joint name="chained" type="prismatic"><parent link="second"/><child link="third"/><limit lower="-10" upper="10"/><mimic joint="follower" multiplier="-2" offset="0.5"/></joint>
+    <joint name="follower" type="prismatic"><parent link="first"/><child link="second"/><limit lower="-10" upper="10"/><mimic joint="driver" multiplier="2" offset="0.25"/></joint>
+    <joint name="driver" type="prismatic"><parent link="base"/><child link="first"/><limit lower="-10" upper="10"/></joint>
+  </robot>`);
+  const positions = new Map([
+    ["driver", 0.5],
+    ["follower", 9],
+    ["chained", 9]
+  ]);
+  const edges = urdfEdges(robot, positions);
+  close(edges[0].pose.translation, [-2, 0, 0]);
+  close(edges[1].pose.translation, [1.25, 0, 0]);
+  close(edges[2].pose.translation, [0.5, 0, 0]);
+  close(urdfEdges(robot, new Map())[1].pose.translation, [0.25, 0, 0]);
+});
+
+test("mimic defaults copy their source and bounded mimics respect their own limits", () => {
+  const robot = parseURDF(description.replace('<axis xyz="1 0 0"/>', '<axis xyz="1 0 0"/><mimic joint="hinge"/>'));
+  close(urdfEdges(robot, new Map([["hinge", 0.4]]))[1].pose.translation, [0.4, 0, 0]);
+  close(urdfEdges(robot, new Map([["hinge", 1]]))[1].pose.translation, [0.6, 0, 0]);
+});
+
+test("reject missing mimic targets, mimic cycles and non-finite mimic coefficients", () => {
+  const withMimic = description.replace('<axis xyz="1 0 0"/>', '<axis xyz="1 0 0"/><mimic joint="hinge"/>');
+  for (const xml of [
+    withMimic.replace('mimic joint="hinge"', 'mimic joint="missing"'),
+    withMimic.replace('mimic joint="hinge"', 'mimic joint="slide_joint"'),
+    withMimic.replace('<axis xyz="0 0 2"/>', '<axis xyz="0 0 2"/><mimic joint="slide_joint"/>'),
+    withMimic.replace('mimic joint="hinge"', 'mimic joint="hinge" multiplier="Infinity"'),
+    withMimic.replace('mimic joint="hinge"', 'mimic joint="hinge" offset="NaN"')
+  ])
+    assert.throws(() => parseURDF(xml), /URDF/);
+});
+
+test("planar and floating joints keep their origin as fixed joints with a diagnostic", () => {
+  for (const type of ["planar", "floating"]) {
+    const robot = parseURDF(description.replace('type="revolute"', `type="${type}"`));
+    assert.equal(robot.joints[0].type, "fixed");
+    assert.deepEqual(urdfEdges(robot, new Map([["hinge", 1]]))[0].pose, robot.joints[0].origin);
+    assert.deepEqual(robot.diagnostics, [`URDF joint "hinge": treating unsupported ${type} joint as fixed.`]);
+    assert.equal(robot.links.length, 4);
+  }
+});
+
+test("unsupported visual geometry is skipped with a diagnostic and supported visuals survive", () => {
+  const robot = parseURDF(
+    description.replace('<geometry><box size="1 2 3"/></geometry>', '<geometry><cone radius="1"/></geometry>')
+  );
+  assert.equal(robot.links[0].visuals.length, 0);
+  assert.equal(robot.links[1].visuals[0].geometry.type, "cylinder");
+  assert.deepEqual(robot.diagnostics, ['URDF link "base": skipped unsupported visual geometry <cone>.']);
+  assert.equal(urdfEdges(robot, new Map()).length, 3);
+});
+
+test("named materials retain their identity and resolve across links including inline definitions", () => {
+  const robot = parseURDF(`<robot name="materials">
+    <link name="a"><visual><geometry><sphere radius="1"/></geometry><material name="green"/></visual></link>
+    <link name="b"><visual><geometry><sphere radius="1"/></geometry><material name="green"><color rgba="0 1 0 0.5"/></material></visual></link>
+    <joint name="joint" type="fixed"><parent link="a"/><child link="b"/></joint>
+  </robot>`);
+  for (const link of robot.links) {
+    assert.equal(link.visuals[0].materialName, "green");
+    assert.deepEqual(link.visuals[0].color, [0, 1, 0, 0.5]);
+  }
 });

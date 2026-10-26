@@ -429,7 +429,7 @@ largely irrelevant to the debugging and visualization experience.
 
 # 11. Robot Models and Mechanisms
 
-- [x] URDF support. (Visual geometry and fixed, revolute, continuous, and prismatic joints.)
+- [x] URDF support. (Visual geometry and fixed, revolute, continuous, prismatic, and mimic joints. Planar and floating joints render as fixed with diagnostics.)
 - [ ] SDF support.
 - [x] Common 3D model formats. (glTF/GLB assets and local STL/DAE URDF visuals.)
 - [x] Custom robot models.

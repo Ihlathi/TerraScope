@@ -26,6 +26,7 @@ import {
   rotationSequenceToQuaternion
 } from "../../shared/geometry";
 import { composeFramePose, frameGraphForSource, readSourceFrame, transformTopics } from "../../shared/log/FrameGraph";
+import Log from "../../shared/log/Log";
 import { MechanismState, getMechanismState, mergeMechanismStates } from "../../shared/log/LogMechanismState";
 import { getOrDefault } from "../../shared/log/LogUtil";
 import LoggableType from "../../shared/log/LoggableType";
@@ -38,14 +39,7 @@ import {
   Field3dRendererCommand_Component
 } from "../../shared/renderers/Field3dRenderer";
 import { URDFRobot, parseURDF, urdfEdges } from "../../shared/urdf/URDF";
-import {
-  inURDFScope,
-  jointStateTopics,
-  readURDFJointPositions,
-  urdfDescriptionTopics,
-  urdfScope,
-  valueAtURDFTime
-} from "../../shared/urdf/URDFLog";
+import { inURDFScope, readURDFJointPositions, urdfScope, valueAtURDFTime } from "../../shared/urdf/URDFLog";
 import { clampValue, createUUID } from "../../shared/util";
 import SourceList from "../SourceList";
 import Field3dController_Config from "./Field3dController_Config";
@@ -68,7 +62,11 @@ export default class Field3dController implements TabController {
   private JOINT_SELECT: HTMLSelectElement;
   private URDF_STATUS: HTMLElement;
   private PACKAGE_NAME: HTMLElement;
-  private urdfFile: { xml: string; url: string; name: string } | null = null;
+  private urdfFile: { xml: string; url: string; name: string; reference?: string } | null = null;
+  private packageRootReference: string | null = null;
+  private meshBaseReference: string | null = null;
+  private urdfTopics: { log: Log; descriptions: string[]; joints: string[] } | null = null;
+  private urdfOptionsDirty = true;
   private packageRootUrl: string | null = null;
   private meshBaseUrl: string | null = null;
   private RESOURCE_NAME: HTMLElement;
@@ -122,14 +120,17 @@ export default class Field3dController implements TabController {
         typeof data.url === "string" &&
         typeof data.name === "string"
       ) {
-        this.urdfFile = { xml: data.xml, url: data.url, name: data.name };
+        this.urdfFile = { xml: data.xml, url: data.url, name: data.name, reference: data.reference };
+        this.urdfOptionsDirty = true;
         this.updateURDFOptions();
-        this.URDF_SELECT.value = "file";
+        if (!data.restoring) this.URDF_SELECT.value = "file";
       } else if (data.kind === "packages" && typeof data.url === "string") {
         this.packageRootUrl = data.url;
+        this.packageRootReference = data.reference ?? null;
         this.PACKAGE_NAME.textContent = data.url;
       } else if (data.kind === "resources" && typeof data.url === "string") {
         this.meshBaseUrl = data.url;
+        this.meshBaseReference = data.reference ?? null;
         this.RESOURCE_NAME.textContent = data.url;
       }
     };
@@ -323,7 +324,27 @@ export default class Field3dController implements TabController {
     this.updateRobotOptions();
   }
 
+  private discoverURDFTopics() {
+    if (this.urdfTopics?.log === window.log) return this.urdfTopics;
+    const descriptions: string[] = [];
+    const joints: string[] = [];
+    for (const key of window.log.getFieldKeys()) {
+      if (
+        /(?:^|\/)robot_description$/.test(key) &&
+        (window.log.getType(key) === LoggableType.String || window.log.getType(key + "/data") === LoggableType.String)
+      )
+        descriptions.push(key);
+      if (["sensor_msgs/msg/JointState", "sensor_msgs/JointState"].includes(window.log.getStructuredType(key) ?? ""))
+        joints.push(key);
+    }
+    this.urdfOptionsDirty = true;
+    return (this.urdfTopics = { log: window.log, descriptions, joints });
+  }
+
   private updateURDFOptions() {
+    const topics = this.discoverURDFTopics();
+    if (!this.urdfOptionsDirty) return;
+    this.urdfOptionsDirty = false;
     const update = (select: HTMLSelectElement, options: { value: string; label: string }[]) => {
       const value = select.value;
       if (value && !options.some((option) => option.value === value))
@@ -347,11 +368,11 @@ export default class Field3dController implements TabController {
     update(this.URDF_SELECT, [
       { value: "", label: "None" },
       ...(this.urdfFile ? [{ value: "file", label: this.urdfFile.name }] : []),
-      ...urdfDescriptionTopics(window.log).map((key) => ({ value: key, label: key }))
+      ...topics.descriptions.map((key) => ({ value: key, label: key }))
     ]);
     update(this.JOINT_SELECT, [
       { value: "", label: "Automatic" },
-      ...jointStateTopics(window.log).map((key) => ({ value: key, label: key }))
+      ...topics.joints.map((key) => ({ value: key, label: key }))
     ]);
   }
 
@@ -362,11 +383,11 @@ export default class Field3dController implements TabController {
       customEnvironment: this.readEnvironment(),
       fixedFrame: this.FIXED_FRAME_INPUT.value,
       urdf: {
-        file: this.urdfFile,
+        file: this.urdfFile?.reference ? { reference: this.urdfFile.reference, name: this.urdfFile.name } : null,
         description: this.URDF_SELECT.value,
         joints: this.JOINT_SELECT.value,
-        packageRootUrl: this.packageRootUrl,
-        meshBaseUrl: this.meshBaseUrl
+        packageRoot: this.packageRootReference,
+        meshBase: this.meshBaseReference
       }
     };
   }
@@ -400,6 +421,13 @@ export default class Field3dController implements TabController {
     }
     if ("urdf" in state && typeof state.urdf === "object" && state.urdf !== null) {
       const config = state.urdf;
+      this.urdfFile = null;
+      this.packageRootReference = null;
+      this.meshBaseReference = null;
+      this.packageRootUrl = null;
+      this.meshBaseUrl = null;
+      this.PACKAGE_NAME.textContent = "";
+      this.RESOURCE_NAME.textContent = "";
       if (
         "file" in config &&
         typeof config.file === "object" &&
@@ -412,14 +440,38 @@ export default class Field3dController implements TabController {
         typeof config.file.name === "string"
       )
         this.urdfFile = { xml: config.file.xml, url: config.file.url, name: config.file.name };
+      if (
+        "file" in config &&
+        typeof config.file === "object" &&
+        config.file !== null &&
+        "reference" in config.file &&
+        typeof config.file.reference === "string"
+      )
+        window.sendMainMessage("urdf-restore", { uuid: this.UUID, kind: "robot", reference: config.file.reference });
+      else if (this.urdfFile)
+        window.sendMainMessage("urdf-restore", { uuid: this.UUID, kind: "robot", url: this.urdfFile.url });
+      for (const [property, kind] of [
+        ["packageRoot", "packages"],
+        ["meshBase", "resources"]
+      ] as const) {
+        if (property in config && typeof (config as Record<string, unknown>)[property] === "string")
+          window.sendMainMessage("urdf-restore", {
+            uuid: this.UUID,
+            kind,
+            reference: (config as Record<string, unknown>)[property]
+          });
+      }
       if ("packageRootUrl" in config && typeof config.packageRootUrl === "string") {
         this.packageRootUrl = config.packageRootUrl;
         this.PACKAGE_NAME.textContent = config.packageRootUrl;
+        window.sendMainMessage("urdf-restore", { uuid: this.UUID, kind: "packages", url: config.packageRootUrl });
       }
       if ("meshBaseUrl" in config && typeof config.meshBaseUrl === "string") {
         this.meshBaseUrl = config.meshBaseUrl;
         this.RESOURCE_NAME.textContent = config.meshBaseUrl;
+        window.sendMainMessage("urdf-restore", { uuid: this.UUID, kind: "resources", url: config.meshBaseUrl });
       }
+      this.urdfOptionsDirty = true;
       this.updateURDFOptions();
       const restoreSelect = (select: HTMLSelectElement, value: unknown) => {
         if (typeof value !== "string") return;
@@ -438,6 +490,7 @@ export default class Field3dController implements TabController {
   }
 
   refresh(): void {
+    this.urdfTopics = null;
     this.sourceList.refresh();
   }
 
@@ -450,8 +503,9 @@ export default class Field3dController implements TabController {
     return [
       ...this.sourceList.getActiveFields(),
       ...transformTopics(window.log),
-      ...urdfDescriptionTopics(window.log),
-      ...jointStateTopics(window.log),
+      ...(this.URDF_SELECT.value
+        ? [...this.discoverURDFTopics().descriptions, ...this.discoverURDFTopics().joints]
+        : []),
       ...ALLIANCE_KEYS,
       ...DRIVER_STATION_KEYS
     ];
@@ -508,7 +562,7 @@ export default class Field3dController implements TabController {
       }
     }
     const robot = description ? this.urdfRobot : null;
-    const allJointTopics = jointStateTopics(window.log);
+    const allJointTopics = description ? this.discoverURDFTopics().joints : [];
     const jointTopic =
       this.JOINT_SELECT.value ||
       allJointTopics.find((key) => description === "file" || inURDFScope(key, urdfScope(description))) ||
@@ -530,7 +584,7 @@ export default class Field3dController implements TabController {
     if (description) {
       if (this.urdfError) frameDiagnostics.push(`URDF: ${this.urdfError}`);
       else if (!robot) frameDiagnostics.push("URDF: No robot_description sample at this time.");
-      if (robot) frameDiagnostics.push(...jointSample.diagnostics);
+      if (robot) frameDiagnostics.push(...robot.diagnostics, ...jointSample.diagnostics);
       if (robot && jointTopic && !inURDFScope(jointTopic, scope))
         frameDiagnostics.push(`URDF: JointState topic "${jointTopic}" is outside the description namespace.`);
     }
@@ -538,7 +592,9 @@ export default class Field3dController implements TabController {
       this.urdfLoadError ??
       this.urdfError ??
       (robot
-        ? `${robot.name}. ${robot.links.length} links. ${jointTopic || "No JointState topic; joints use zero."}`
+        ? `${robot.name}. ${robot.links.length} links. ${
+            jointTopic || "No JointState topic; joints use zero."
+          } ${robot.diagnostics.join(" ")}`
         : "");
     if (robot && robotGraph) {
       const graph = robotGraph;

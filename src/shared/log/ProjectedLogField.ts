@@ -6,7 +6,7 @@
 // at the root directory of this project.
 
 import LogField from "./LogField";
-import { ClockConversion, DomainTimestamp, TimestampDomain } from "./LogTimestamp";
+import { ClockConversion, DomainTimestamp, sameTimestampDomain, TimestampDomain } from "./LogTimestamp";
 
 export function sourceClock(namespace: string, domain: TimestampDomain): TimestampDomain {
   return { kind: "clock", id: namespace.slice(1) + "/" + (domain.kind === "clock" ? domain.id : domain.kind) };
@@ -26,6 +26,39 @@ export default class ProjectedLogField extends LogField {
     this.wpilibType = source.wpilibType;
     this.metadataString = source.metadataString;
     this.typeWarning = source.typeWarning;
+  }
+
+  canReuse(
+    source: LogField,
+    sourceDisplayClock: TimestampDomain,
+    namespace: string,
+    conversion: ClockConversion
+  ): boolean {
+    return (
+      this.source === source &&
+      sameTimestampDomain(this.sourceDisplayClock, sourceDisplayClock) &&
+      this.namespace === namespace &&
+      this.conversion.offsetSeconds === conversion.offsetSeconds &&
+      sameTimestampDomain(this.conversion.from, conversion.from) &&
+      sameTimestampDomain(this.conversion.to, conversion.to) &&
+      this.structuredType === source.structuredType &&
+      this.wpilibType === source.wpilibType &&
+      this.metadataString === source.metadataString &&
+      this.typeWarning === source.typeWarning
+    );
+  }
+
+  hasOnlyAppendedSince(revision: number): boolean {
+    return this.source.hasOnlyAppendedSince(revision);
+  }
+
+  getTimestampCount(): number {
+    return this.source.getTimestampCount();
+  }
+
+  getTimestampAt(index: number): number | undefined {
+    const time = this.source.getTimestampAt(index);
+    return time === undefined ? undefined : time + this.conversion.offsetSeconds;
   }
 
   getRevision(): number {

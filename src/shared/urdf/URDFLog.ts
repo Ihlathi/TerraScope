@@ -42,12 +42,14 @@ export function valueAtURDFTime(log: Log, key: string, time: number): unknown {
   return range && range.timestamps.length && range.timestamps[0] <= time ? range.values[0] : undefined;
 }
 
-type Version = { field: LogField; revision: number };
+type Version = { field: LogField | null; revision: number; length: number };
 type JointSample = { time: number; position: number };
-const cache = new WeakMap<
-  Log,
-  Map<string, { versions: Version[]; tracks: Map<string, JointSample[]>; errors: string[] }>
->();
+type TopicCache = {
+  versions: Version[];
+  tracks: Map<string, JointSample[]>;
+  errors: { time: number; message: string }[];
+};
+const cache = new WeakMap<Log, Map<string, TopicCache>>();
 
 export function readURDFJointPositions(
   log: Log,
@@ -59,60 +61,76 @@ export function readURDFJointPositions(
     entries = new Map();
     cache.set(log, entries);
   }
-  const key = JSON.stringify(topics);
-  const versions = topics
-    .flatMap((topic) => [topic, topic + "/name", topic + "/position"])
-    .map((key) => log.getField(key))
-    .filter((field): field is LogField => field !== null)
-    .map((field) => ({ field, revision: field.getRevision() }));
-  let entry = entries.get(key);
-  if (
-    !entry ||
-    versions.length !== entry.versions.length ||
-    versions.some(
-      (version, i) => version.field !== entry!.versions[i].field || version.revision !== entry!.versions[i].revision
-    )
-  ) {
-    const tracks = new Map<string, JointSample[]>();
-    const errors: string[] = [];
-    for (const topic of topics) {
-      for (const stamp of log.getRange(topic, -Infinity, Infinity)?.timestamps ?? []) {
+  const positions = new Map<string, number>();
+  const selectedTimes = new Map<string, number>();
+  const diagnostics: string[] = [];
+  for (const topic of topics) {
+    const versions = [topic, topic + "/name", topic + "/position"].map((key) => {
+      const field = log.getField(key);
+      return { field, revision: field?.getRevision() ?? 0, length: field?.getTimestampCount() ?? 0 };
+    });
+    let entry = entries.get(topic);
+    let start = entry ? Infinity : -Infinity;
+    if (entry) {
+      versions.forEach((version, i) => {
+        const previous = entry!.versions[i];
+        if (version.field !== previous.field) {
+          start = -Infinity;
+        } else if (version.revision !== previous.revision && !version.field?.hasOnlyAppendedSince(previous.revision)) {
+          start = -Infinity;
+        } else if (version.field && version.length > previous.length) {
+          start = Math.min(start, version.field.getTimestampAt(previous.length)!);
+        }
+      });
+    } else {
+      entry = { versions, tracks: new Map(), errors: [] };
+      entries.set(topic, entry);
+    }
+    if (start < Infinity) {
+      entry.tracks.forEach((samples, name) => {
+        while (samples.length && samples[samples.length - 1].time >= start) samples.pop();
+        if (!samples.length) entry!.tracks.delete(name);
+      });
+      while (entry.errors.length && entry.errors[entry.errors.length - 1].time >= start) entry.errors.pop();
+      for (const stamp of log.getRange(topic, start, Infinity)?.timestamps ?? []) {
+        if (stamp < start) continue;
         const names = valueAtURDFTime(log, topic + "/name", stamp);
-        const positions = valueAtURDFTime(log, topic + "/position", stamp);
+        const values = valueAtURDFTime(log, topic + "/position", stamp);
         if (
           !Array.isArray(names) ||
-          !Array.isArray(positions) ||
-          names.length !== positions.length ||
+          !Array.isArray(values) ||
+          names.length !== values.length ||
           names.some((name) => typeof name !== "string") ||
-          positions.some((position) => typeof position !== "number" || !Number.isFinite(position))
+          values.some((position) => typeof position !== "number" || !Number.isFinite(position))
         ) {
-          errors.push(`${topic}: Invalid JointState names or positions at ${stamp}.`);
+          entry.errors.push({ time: stamp, message: `${topic}: Invalid JointState names or positions at ${stamp}.` });
           continue;
         }
         names.forEach((name: string, index: number) => {
-          let samples = tracks.get(name);
+          let samples = entry!.tracks.get(name);
           if (!samples) {
             samples = [];
-            tracks.set(name, samples);
+            entry!.tracks.set(name, samples);
           }
-          samples.push({ time: stamp, position: positions[index] });
+          samples.push({ time: stamp, position: values[index] });
         });
       }
     }
-    tracks.forEach((samples) => samples.sort((a, b) => a.time - b.time));
-    entry = { versions, tracks, errors };
-    entries.set(key, entry);
+    entry.versions = versions;
+    diagnostics.push(...entry.errors.map((error) => error.message));
+    entry.tracks.forEach((samples, name) => {
+      let low = 0,
+        high = samples.length;
+      while (low < high) {
+        const mid = (low + high) >>> 1;
+        if (samples[mid].time <= time) low = mid + 1;
+        else high = mid;
+      }
+      if (low && samples[low - 1].time >= (selectedTimes.get(name) ?? -Infinity)) {
+        positions.set(name, samples[low - 1].position);
+        selectedTimes.set(name, samples[low - 1].time);
+      }
+    });
   }
-  const positions = new Map<string, number>();
-  entry.tracks.forEach((samples, name) => {
-    let low = 0,
-      high = samples.length;
-    while (low < high) {
-      const mid = (low + high) >>> 1;
-      if (samples[mid].time <= time) low = mid + 1;
-      else high = mid;
-    }
-    if (low) positions.set(name, samples[low - 1].position);
-  });
-  return { positions, diagnostics: entry.errors };
+  return { positions, diagnostics };
 }

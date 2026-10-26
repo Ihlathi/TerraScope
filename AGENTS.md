@@ -43,6 +43,7 @@ npm run check-format   # run `npm run format` to fix
 
 - New behavior has tests. Add new test files to the `test` script in `package.json`.
 - Any visible UI change is verified by launching the app (`npm start` after compiling) and attaching a screenshot to the PR.
+- Screenshots are required. The container has no DISPLAY. Start one: `Xvfb :99 -screen 0 1600x1000x24 &` (apt-get install -y xvfb if missing), then `DISPLAY=:99 XDG_CONFIG_HOME=/tmp/ts/config XDG_DATA_HOME=/tmp/ts/data XDG_CACHE_HOME=/tmp/ts/cache npm start -- --no-sandbox --disable-gpu --remote-debugging-port=9222`, capture with CDP Page.captureScreenshot like docs/evidence/chunk-14/verify-transform-tree.cjs, commit PNGs to docs/evidence/chunk-N/, and embed them with raw.githubusercontent.com/<sha> URLs. Report a failure only after this was tried, with the exact error. A UI PR without real screenshots fails review.
 - New source files carry the license header (`npm run format` adds it).
 - CI (`.github/workflows/ci.yml`) must pass on the PR.
 

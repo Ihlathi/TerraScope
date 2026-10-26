@@ -1,0 +1,959 @@
+{
+  "observations": [
+    {
+      "time": 1.5,
+      "command": {
+        "field": "custom",
+        "isRedAlliance": false,
+        "coordinateSystem": "center-red",
+        "objects": [
+          {
+            "type": "urdf",
+            "robot": {
+              "id": "dcbcb12e-4f75-416a-9ef7-257a0934df12",
+              "name": "TerraScope fixture",
+              "links": [
+                {
+                  "name": "base_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0.15],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "box",
+                        "size": [0.9, 0.7, 0.3]
+                      },
+                      "color": [0.1, 0.35, 0.85, 1],
+                      "materialName": "blue"
+                    }
+                  ]
+                },
+                {
+                  "name": "arm_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0.6, 0, 0],
+                        "rotation": [0.7071067811865476, 0, 0.7071067811865475, 0]
+                      },
+                      "geometry": {
+                        "type": "cylinder",
+                        "radius": 0.09,
+                        "length": 1.2
+                      },
+                      "color": [0.95, 0.4, 0.05, 1],
+                      "materialName": "orange"
+                    },
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "sphere",
+                        "radius": 0.16
+                      },
+                      "color": [0.1, 0.35, 0.85, 1],
+                      "materialName": "blue"
+                    }
+                  ]
+                },
+                {
+                  "name": "carriage_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "mesh",
+                        "filename": "meshes/carriage.stl",
+                        "scale": [0.3, 0.3, 0.3]
+                      },
+                      "color": [0.1, 0.35, 0.85, 1],
+                      "materialName": "blue"
+                    }
+                  ]
+                },
+                {
+                  "name": "tool_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "mesh",
+                        "filename": "package://demo/meshes/tool.dae",
+                        "scale": [0.3, 0.3, 0.3]
+                      },
+                      "color": [0.95, 0.4, 0.05, 1],
+                      "materialName": "orange"
+                    }
+                  ]
+                }
+              ],
+              "joints": [
+                {
+                  "name": "shoulder",
+                  "parent": "base_link",
+                  "child": "arm_link",
+                  "origin": {
+                    "translation": [0, 0, 0.5],
+                    "rotation": [1, 0, 0, 0]
+                  },
+                  "type": "revolute",
+                  "axis": [0, 0, 1],
+                  "lower": -1.2,
+                  "upper": 1.2
+                },
+                {
+                  "name": "slider",
+                  "parent": "arm_link",
+                  "child": "carriage_link",
+                  "origin": {
+                    "translation": [1.2, 0, 0],
+                    "rotation": [1, 0, 0, 0]
+                  },
+                  "type": "prismatic",
+                  "axis": [1, 0, 0],
+                  "lower": 0,
+                  "upper": 0.8
+                },
+                {
+                  "name": "fixed_tool",
+                  "parent": "carriage_link",
+                  "child": "tool_link",
+                  "origin": {
+                    "translation": [0.2, 0, 0.2],
+                    "rotation": [0.9950041652780258, 0, 0, 0.09983341664682815]
+                  },
+                  "type": "fixed"
+                }
+              ],
+              "rootLinks": ["base_link"],
+              "diagnostics": []
+            },
+            "baseUrl": "file:///workspace/TerraScope/src/hub/dataSources/ros2/fixtures/urdf/",
+            "packageRootUrl": "file:///workspace/TerraScope/src/hub/dataSources/ros2/fixtures/urdf/packages/",
+            "links": [
+              {
+                "name": "base_link",
+                "pose": {
+                  "translation": [0, 0, 0],
+                  "rotation": [1, 0, 0, 0]
+                }
+              },
+              {
+                "name": "arm_link",
+                "pose": {
+                  "translation": [0, 0, 0.5],
+                  "rotation": [1, 0, 0, 0]
+                }
+              },
+              {
+                "name": "carriage_link",
+                "pose": {
+                  "translation": [1.2, 0, 0.5],
+                  "rotation": [1, 0, 0, 0]
+                }
+              },
+              {
+                "name": "tool_link",
+                "pose": {
+                  "translation": [1.4, 0, 0.7],
+                  "rotation": [0.9950041652780258, 0, 0, 0.09983341664682815]
+                }
+              }
+            ]
+          }
+        ],
+        "cameraOverride": null,
+        "autoDriverStation": -1,
+        "allRobotModels": [],
+        "customEnvironment": {
+          "lengthMeters": 7,
+          "widthMeters": 5,
+          "originXMeters": -2,
+          "originYMeters": -2.5
+        },
+        "customAssetUrl": null
+      },
+      "managers": [
+        {
+          "type": "urdf",
+          "diagnostics": [],
+          "normals": [true, true, true, true, true],
+          "links": [
+            {
+              "name": "base_link",
+              "visible": true,
+              "position": [0, 0, 0],
+              "quaternion": [0, 0, 0, 1],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Mesh",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "arm_link",
+              "visible": true,
+              "position": [0, 0, 0.5],
+              "quaternion": [0, 0, 0, 1],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Mesh",
+                      "quaternion": [0.7071067811865475, 0, 0, 0.7071067811865476],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Mesh",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "carriage_link",
+              "visible": true,
+              "position": [1.2, 0, 0.5],
+              "quaternion": [0, 0, 0, 1],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Group",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": [
+                        {
+                          "type": "Mesh",
+                          "quaternion": [0, 0, 0, 1]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "tool_link",
+              "visible": true,
+              "position": [1.4, 0, 0.7],
+              "quaternion": [0, 0, 0.09983341664682815, 0.9950041652780258],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Group",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": [
+                        {
+                          "type": "Group",
+                          "quaternion": [0, 0, 0, 1]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "alert": ""
+    },
+    {
+      "time": 2.5,
+      "command": {
+        "field": "custom",
+        "isRedAlliance": false,
+        "coordinateSystem": "center-red",
+        "objects": [
+          {
+            "type": "urdf",
+            "robot": {
+              "id": "dcbcb12e-4f75-416a-9ef7-257a0934df12",
+              "name": "TerraScope fixture",
+              "links": [
+                {
+                  "name": "base_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0.15],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "box",
+                        "size": [0.9, 0.7, 0.3]
+                      },
+                      "color": [0.1, 0.35, 0.85, 1],
+                      "materialName": "blue"
+                    }
+                  ]
+                },
+                {
+                  "name": "arm_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0.6, 0, 0],
+                        "rotation": [0.7071067811865476, 0, 0.7071067811865475, 0]
+                      },
+                      "geometry": {
+                        "type": "cylinder",
+                        "radius": 0.09,
+                        "length": 1.2
+                      },
+                      "color": [0.95, 0.4, 0.05, 1],
+                      "materialName": "orange"
+                    },
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "sphere",
+                        "radius": 0.16
+                      },
+                      "color": [0.1, 0.35, 0.85, 1],
+                      "materialName": "blue"
+                    }
+                  ]
+                },
+                {
+                  "name": "carriage_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "mesh",
+                        "filename": "meshes/carriage.stl",
+                        "scale": [0.3, 0.3, 0.3]
+                      },
+                      "color": [0.1, 0.35, 0.85, 1],
+                      "materialName": "blue"
+                    }
+                  ]
+                },
+                {
+                  "name": "tool_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "mesh",
+                        "filename": "package://demo/meshes/tool.dae",
+                        "scale": [0.3, 0.3, 0.3]
+                      },
+                      "color": [0.95, 0.4, 0.05, 1],
+                      "materialName": "orange"
+                    }
+                  ]
+                }
+              ],
+              "joints": [
+                {
+                  "name": "shoulder",
+                  "parent": "base_link",
+                  "child": "arm_link",
+                  "origin": {
+                    "translation": [0, 0, 0.5],
+                    "rotation": [1, 0, 0, 0]
+                  },
+                  "type": "revolute",
+                  "axis": [0, 0, 1],
+                  "lower": -1.2,
+                  "upper": 1.2
+                },
+                {
+                  "name": "slider",
+                  "parent": "arm_link",
+                  "child": "carriage_link",
+                  "origin": {
+                    "translation": [1.2, 0, 0],
+                    "rotation": [1, 0, 0, 0]
+                  },
+                  "type": "prismatic",
+                  "axis": [1, 0, 0],
+                  "lower": 0,
+                  "upper": 0.8
+                },
+                {
+                  "name": "fixed_tool",
+                  "parent": "carriage_link",
+                  "child": "tool_link",
+                  "origin": {
+                    "translation": [0.2, 0, 0.2],
+                    "rotation": [0.9950041652780258, 0, 0, 0.09983341664682815]
+                  },
+                  "type": "fixed"
+                }
+              ],
+              "rootLinks": ["base_link"],
+              "diagnostics": []
+            },
+            "baseUrl": "file:///workspace/TerraScope/src/hub/dataSources/ros2/fixtures/urdf/",
+            "packageRootUrl": "file:///workspace/TerraScope/src/hub/dataSources/ros2/fixtures/urdf/packages/",
+            "links": [
+              {
+                "name": "base_link",
+                "pose": {
+                  "translation": [0, 0, 0],
+                  "rotation": [1, 0, 0, 0]
+                }
+              },
+              {
+                "name": "arm_link",
+                "pose": {
+                  "translation": [0, 0, 0.5],
+                  "rotation": [0.8775825618903728, 0, 0, 0.479425538604203]
+                }
+              },
+              {
+                "name": "carriage_link",
+                "pose": {
+                  "translation": [1.0265743811494656, 1.5987948711350035, 0.5],
+                  "rotation": [0.8775825618903728, 0, 0, 0.479425538604203]
+                }
+              },
+              {
+                "name": "tool_link",
+                "pose": {
+                  "translation": [1.1346348423230936, 1.767089068096583, 0.7000000000000001],
+                  "rotation": [0.8253356149096783, 0, 0, 0.5646424733950354]
+                }
+              }
+            ]
+          }
+        ],
+        "cameraOverride": null,
+        "autoDriverStation": -1,
+        "allRobotModels": [],
+        "customEnvironment": {
+          "lengthMeters": 7,
+          "widthMeters": 5,
+          "originXMeters": -2,
+          "originYMeters": -2.5
+        },
+        "customAssetUrl": null
+      },
+      "managers": [
+        {
+          "type": "urdf",
+          "diagnostics": [],
+          "normals": [true, true, true, true, true],
+          "links": [
+            {
+              "name": "base_link",
+              "visible": true,
+              "position": [0, 0, 0],
+              "quaternion": [0, 0, 0, 1],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Mesh",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "arm_link",
+              "visible": true,
+              "position": [0, 0, 0.5],
+              "quaternion": [0, 0, 0.479425538604203, 0.8775825618903728],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Mesh",
+                      "quaternion": [0.7071067811865475, 0, 0, 0.7071067811865476],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Mesh",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "carriage_link",
+              "visible": true,
+              "position": [1.0265743811494656, 1.5987948711350035, 0.5],
+              "quaternion": [0, 0, 0.479425538604203, 0.8775825618903728],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Group",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": [
+                        {
+                          "type": "Mesh",
+                          "quaternion": [0, 0, 0, 1]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "tool_link",
+              "visible": true,
+              "position": [1.1346348423230936, 1.767089068096583, 0.7000000000000001],
+              "quaternion": [0, 0, 0.5646424733950354, 0.8253356149096783],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Group",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": [
+                        {
+                          "type": "Group",
+                          "quaternion": [0, 0, 0, 1]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "alert": ""
+    },
+    {
+      "time": 1.5,
+      "command": {
+        "field": "custom",
+        "isRedAlliance": false,
+        "coordinateSystem": "center-red",
+        "objects": [
+          {
+            "type": "urdf",
+            "robot": {
+              "id": "dcbcb12e-4f75-416a-9ef7-257a0934df12",
+              "name": "TerraScope fixture",
+              "links": [
+                {
+                  "name": "base_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0.15],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "box",
+                        "size": [0.9, 0.7, 0.3]
+                      },
+                      "color": [0.1, 0.35, 0.85, 1],
+                      "materialName": "blue"
+                    }
+                  ]
+                },
+                {
+                  "name": "arm_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0.6, 0, 0],
+                        "rotation": [0.7071067811865476, 0, 0.7071067811865475, 0]
+                      },
+                      "geometry": {
+                        "type": "cylinder",
+                        "radius": 0.09,
+                        "length": 1.2
+                      },
+                      "color": [0.95, 0.4, 0.05, 1],
+                      "materialName": "orange"
+                    },
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "sphere",
+                        "radius": 0.16
+                      },
+                      "color": [0.1, 0.35, 0.85, 1],
+                      "materialName": "blue"
+                    }
+                  ]
+                },
+                {
+                  "name": "carriage_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "mesh",
+                        "filename": "meshes/carriage.stl",
+                        "scale": [0.3, 0.3, 0.3]
+                      },
+                      "color": [0.1, 0.35, 0.85, 1],
+                      "materialName": "blue"
+                    }
+                  ]
+                },
+                {
+                  "name": "tool_link",
+                  "visuals": [
+                    {
+                      "origin": {
+                        "translation": [0, 0, 0],
+                        "rotation": [1, 0, 0, 0]
+                      },
+                      "geometry": {
+                        "type": "mesh",
+                        "filename": "package://demo/meshes/tool.dae",
+                        "scale": [0.3, 0.3, 0.3]
+                      },
+                      "color": [0.95, 0.4, 0.05, 1],
+                      "materialName": "orange"
+                    }
+                  ]
+                }
+              ],
+              "joints": [
+                {
+                  "name": "shoulder",
+                  "parent": "base_link",
+                  "child": "arm_link",
+                  "origin": {
+                    "translation": [0, 0, 0.5],
+                    "rotation": [1, 0, 0, 0]
+                  },
+                  "type": "revolute",
+                  "axis": [0, 0, 1],
+                  "lower": -1.2,
+                  "upper": 1.2
+                },
+                {
+                  "name": "slider",
+                  "parent": "arm_link",
+                  "child": "carriage_link",
+                  "origin": {
+                    "translation": [1.2, 0, 0],
+                    "rotation": [1, 0, 0, 0]
+                  },
+                  "type": "prismatic",
+                  "axis": [1, 0, 0],
+                  "lower": 0,
+                  "upper": 0.8
+                },
+                {
+                  "name": "fixed_tool",
+                  "parent": "carriage_link",
+                  "child": "tool_link",
+                  "origin": {
+                    "translation": [0.2, 0, 0.2],
+                    "rotation": [0.9950041652780258, 0, 0, 0.09983341664682815]
+                  },
+                  "type": "fixed"
+                }
+              ],
+              "rootLinks": ["base_link"],
+              "diagnostics": []
+            },
+            "baseUrl": "file:///workspace/TerraScope/src/hub/dataSources/ros2/fixtures/urdf/",
+            "packageRootUrl": "file:///workspace/TerraScope/src/hub/dataSources/ros2/fixtures/urdf/packages/",
+            "links": [
+              {
+                "name": "base_link",
+                "pose": {
+                  "translation": [0, 0, 0],
+                  "rotation": [1, 0, 0, 0]
+                }
+              },
+              {
+                "name": "arm_link",
+                "pose": {
+                  "translation": [0, 0, 0.5],
+                  "rotation": [1, 0, 0, 0]
+                }
+              },
+              {
+                "name": "carriage_link",
+                "pose": {
+                  "translation": [1.2, 0, 0.5],
+                  "rotation": [1, 0, 0, 0]
+                }
+              },
+              {
+                "name": "tool_link",
+                "pose": {
+                  "translation": [1.4, 0, 0.7],
+                  "rotation": [0.9950041652780258, 0, 0, 0.09983341664682815]
+                }
+              }
+            ]
+          }
+        ],
+        "cameraOverride": null,
+        "autoDriverStation": -1,
+        "allRobotModels": [],
+        "customEnvironment": {
+          "lengthMeters": 7,
+          "widthMeters": 5,
+          "originXMeters": -2,
+          "originYMeters": -2.5
+        },
+        "customAssetUrl": null
+      },
+      "managers": [
+        {
+          "type": "urdf",
+          "diagnostics": [],
+          "normals": [true, true, true, true, true],
+          "links": [
+            {
+              "name": "base_link",
+              "visible": true,
+              "position": [0, 0, 0],
+              "quaternion": [0, 0, 0, 1],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Mesh",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "arm_link",
+              "visible": true,
+              "position": [0, 0, 0.5],
+              "quaternion": [0, 0, 0, 1],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Mesh",
+                      "quaternion": [0.7071067811865475, 0, 0, 0.7071067811865476],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Mesh",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "carriage_link",
+              "visible": true,
+              "position": [1.2, 0, 0.5],
+              "quaternion": [0, 0, 0, 1],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Group",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": [
+                        {
+                          "type": "Mesh",
+                          "quaternion": [0, 0, 0, 1]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "tool_link",
+              "visible": true,
+              "position": [1.4, 0, 0.7],
+              "quaternion": [0, 0, 0.09983341664682815, 0.9950041652780258],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Group",
+                      "quaternion": [0, 0, 0, 1],
+                      "children": [
+                        {
+                          "type": "Group",
+                          "quaternion": [0, 0, 0, 1]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "alert": ""
+    }
+  ],
+  "upright": {
+    "time": 1.5,
+    "command": {
+      "field": "custom",
+      "isRedAlliance": false,
+      "coordinateSystem": "center-red",
+      "objects": [
+        {
+          "type": "urdf",
+          "robot": {
+            "id": "407cfa61-8d1f-4d78-9acc-d1a0790d1213",
+            "name": "Y_UP upright",
+            "links": [
+              {
+                "name": "base_link",
+                "visuals": [
+                  {
+                    "origin": {
+                      "translation": [0, 0, 0.1],
+                      "rotation": [1, 0, 0, 0]
+                    },
+                    "geometry": {
+                      "type": "box",
+                      "size": [1, 1, 0.2]
+                    },
+                    "color": [0.1, 0.35, 0.85, 1]
+                  },
+                  {
+                    "origin": {
+                      "translation": [0, 0, 0.2],
+                      "rotation": [1, 0, 0, 0]
+                    },
+                    "geometry": {
+                      "type": "mesh",
+                      "filename": "upright-y.dae",
+                      "scale": [1, 1, 1]
+                    },
+                    "color": [0.95, 0.4, 0.05, 1]
+                  }
+                ]
+              }
+            ],
+            "joints": [],
+            "rootLinks": ["base_link"],
+            "diagnostics": []
+          },
+          "baseUrl": "file:///workspace/TerraScope/build/urdf-visual-verification/upright.urdf",
+          "packageRootUrl": null,
+          "links": [
+            {
+              "name": "base_link",
+              "pose": {
+                "translation": [0, 0, 0],
+                "rotation": [1, 0, 0, 0]
+              }
+            }
+          ]
+        }
+      ],
+      "cameraOverride": null,
+      "autoDriverStation": -1,
+      "allRobotModels": [],
+      "customEnvironment": {
+        "lengthMeters": 7,
+        "widthMeters": 5,
+        "originXMeters": -2,
+        "originYMeters": -2.5
+      },
+      "customAssetUrl": null
+    },
+    "managers": [
+      {
+        "type": "urdf",
+        "diagnostics": [],
+        "normals": [true, true],
+        "links": [
+          {
+            "name": "base_link",
+            "visible": true,
+            "position": [0, 0, 0],
+            "quaternion": [0, 0, 0, 1],
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "Mesh",
+                    "quaternion": [0, 0, 0, 1],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "children": [
+                  {
+                    "type": "Group",
+                    "quaternion": [0, 0, 0, 1],
+                    "children": [
+                      {
+                        "type": "Group",
+                        "quaternion": [0.7071067811865475, 0, 0, 0.7071067811865476]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "alert": ""
+  }
+}

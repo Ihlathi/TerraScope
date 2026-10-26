@@ -14,16 +14,34 @@ export type URDFGeometry =
   | { type: "cylinder"; radius: number; length: number }
   | { type: "sphere"; radius: number }
   | { type: "mesh"; filename: string; scale: Translation3d };
-export type URDFVisual = { origin: Pose3d; geometry: URDFGeometry; color: [number, number, number, number] };
+export type URDFVisual = {
+  origin: Pose3d;
+  geometry: URDFGeometry;
+  color: [number, number, number, number];
+  materialName?: string;
+};
 export type URDFLink = { name: string; visuals: URDFVisual[] };
-type JointBase = { name: string; parent: string; child: string; origin: Pose3d };
+type JointBase = {
+  name: string;
+  parent: string;
+  child: string;
+  origin: Pose3d;
+  mimic?: { joint: string; multiplier: number; offset: number };
+};
 export type URDFJoint = JointBase &
   (
     | { type: "fixed" }
     | { type: "continuous"; axis: Translation3d }
     | { type: "revolute" | "prismatic"; axis: Translation3d; lower: number; upper: number }
   );
-export type URDFRobot = { name: string; links: URDFLink[]; joints: URDFJoint[]; rootLinks: string[] };
+export type URDFRobot = {
+  id: string;
+  name: string;
+  links: URDFLink[];
+  joints: URDFJoint[];
+  rootLinks: string[];
+  diagnostics: string[];
+};
 export type URDFEdge = { child: string; parent: string; pose: Pose3d };
 
 function children(element: Element, tag?: string): Element[] {
@@ -87,7 +105,7 @@ function materialColor(element: Element): URDFVisual["color"] | undefined {
   return rgba as URDFVisual["color"];
 }
 
-function geometry(visual: Element): URDFGeometry {
+function geometry(visual: Element): URDFGeometry | null {
   const container = one(visual, "geometry");
   const entries = container ? children(container) : [];
   if (entries.length !== 1) throw new Error("URDF visual requires exactly one geometry.");
@@ -108,7 +126,7 @@ function geometry(visual: Element): URDFGeometry {
       return { type: "mesh", filename: required(shape, "filename"), scale };
     }
     default:
-      throw new Error(`Unsupported URDF geometry <${shape.tagName}>.`);
+      return null;
   }
 }
 
@@ -121,10 +139,21 @@ export function parseURDF(xml: string): URDFRobot {
   }).parseFromString(xml, "text/xml");
   const robot = document.documentElement;
   if (!robot || robot.tagName !== "robot") throw new Error("URDF requires a <robot> root element.");
+  const diagnostics: string[] = [];
   const materials = new Map<string, URDFVisual["color"]>();
   for (const material of children(robot, "material")) {
     const color = materialColor(material);
     if (color) materials.set(required(material, "name"), color);
+  }
+  for (const link of children(robot, "link")) {
+    for (const visual of children(link, "visual")) {
+      const material = one(visual, "material");
+      const name = material?.getAttribute("name");
+      if (material && name) {
+        const color = materialColor(material);
+        if (color && !materials.has(name)) materials.set(name, color);
+      }
+    }
   }
   const linkNames = new Set<string>();
   const links = children(robot, "link").map((link): URDFLink => {
@@ -133,12 +162,25 @@ export function parseURDF(xml: string): URDFRobot {
     linkNames.add(name);
     return {
       name,
-      visuals: children(link, "visual").map((visual) => {
+      visuals: children(link, "visual").flatMap((visual): URDFVisual[] => {
+        const shape = geometry(visual);
+        if (!shape) {
+          const tag = children(one(visual, "geometry")!)[0].tagName;
+          diagnostics.push(`URDF link "${name}": skipped unsupported visual geometry <${tag}>.`);
+          return [];
+        }
         const material = one(visual, "material");
         const color = material
           ? materialColor(material) ?? materials.get(material.getAttribute("name") ?? "")
           : undefined;
-        return { origin: origin(visual), geometry: geometry(visual), color: color ?? [0.65, 0.65, 0.7, 1] };
+        return [
+          {
+            origin: origin(visual),
+            geometry: shape,
+            color: color ?? [0.65, 0.65, 0.7, 1],
+            materialName: material?.getAttribute("name") ?? undefined
+          }
+        ];
       })
     };
   });
@@ -158,10 +200,21 @@ export function parseURDF(xml: string): URDFRobot {
       throw new Error(`URDF joint "${name}" references an unknown link.`);
     if (parents.has(child)) throw new Error(`URDF link "${child}" has more than one parent.`);
     parents.set(child, parent);
-    if (one(node, "mimic")) throw new Error(`URDF mimic joint "${name}" is not supported.`);
-    const base = { name, parent, child, origin: origin(node) };
+    const mimicNode = one(node, "mimic");
+    const mimic = mimicNode
+      ? {
+          joint: required(mimicNode, "joint"),
+          multiplier: numbers(mimicNode.getAttribute("multiplier") ?? "1", 1)[0],
+          offset: numbers(mimicNode.getAttribute("offset") ?? "0", 1)[0]
+        }
+      : undefined;
+    const base = { name, parent, child, origin: origin(node), mimic };
     const type = required(node, "type");
     if (type === "fixed") return { ...base, type };
+    if (type === "planar" || type === "floating") {
+      diagnostics.push(`URDF joint "${name}": treating unsupported ${type} joint as fixed.`);
+      return { ...base, type: "fixed" };
+    }
     if (!["revolute", "continuous", "prismatic"].includes(type))
       throw new Error(`Unsupported URDF joint type "${type}".`);
     const axis = triple(one(node, "axis")?.getAttribute("xyz"), [1, 0, 0]);
@@ -176,6 +229,18 @@ export function parseURDF(xml: string): URDFRobot {
     if (lower > upper) throw new Error(`URDF joint "${name}" lower limit exceeds upper limit.`);
     return { ...base, type: type as "revolute" | "prismatic", axis: normalized, lower, upper };
   });
+  const jointsByName = new Map(joints.map((joint) => [joint.name, joint]));
+  for (const joint of joints) {
+    const seen = new Set<string>();
+    let current: URDFJoint | undefined = joint;
+    while (current?.mimic) {
+      if (seen.has(current.name)) throw new Error(`URDF mimic joints contain a cycle at "${current.name}".`);
+      seen.add(current.name);
+      const target = current.mimic.joint;
+      current = jointsByName.get(target);
+      if (!current) throw new Error(`URDF mimic joint "${joint.name}" references unknown joint "${target}".`);
+    }
+  }
   for (const name of linkNames) {
     const seen = new Set<string>();
     let current: string | undefined = name;
@@ -187,7 +252,7 @@ export function parseURDF(xml: string): URDFRobot {
   }
   const rootLinks = links.filter((link) => !parents.has(link.name)).map((link) => link.name);
   if (rootLinks.length !== 1) throw new Error("URDF must contain one connected link tree.");
-  return { name: required(robot, "name"), links, joints, rootLinks };
+  return { id: crypto.randomUUID(), name: required(robot, "name"), links, joints, rootLinks, diagnostics };
 }
 
 export function jointPose(joint: URDFJoint, position: number): Pose3d {
@@ -207,10 +272,21 @@ export function jointPose(joint: URDFJoint, position: number): Pose3d {
 }
 
 export function urdfEdges(robot: URDFRobot, positions: ReadonlyMap<string, number>): URDFEdge[] {
+  const joints = new Map(robot.joints.map((joint) => [joint.name, joint]));
+  const resolved = new Map<string, number>();
+  function position(joint: URDFJoint): number {
+    const cached = resolved.get(joint.name);
+    if (cached !== undefined) return cached;
+    const value = joint.mimic
+      ? joint.mimic.multiplier * position(joints.get(joint.mimic.joint)!) + joint.mimic.offset
+      : positions.get(joint.name) ?? 0;
+    resolved.set(joint.name, value);
+    return value;
+  }
   return robot.joints.map((joint) => ({
     child: joint.child,
     parent: joint.parent,
-    pose: jointPose(joint, positions.get(joint.name) ?? 0)
+    pose: jointPose(joint, position(joint))
   }));
 }
 

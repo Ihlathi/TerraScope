@@ -39,7 +39,10 @@ function disposeObject(object: THREE.Object3D) {
 export default class URDFManager extends ObjectManager<Field3dRendererCommand_URDFObj> {
   private group = new THREE.Group();
   private links = new Map<string, THREE.Group>();
-  private modelKey: string | null = null;
+  private modelId: string | null = null;
+  private baseUrl: string | null = null;
+  private packageRootUrl: string | null = null;
+  private materials = new Map<string, THREE.MeshPhongMaterial>();
   private generation = 0;
   private diagnostics = new Set<string>();
 
@@ -60,14 +63,19 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
   }
 
   private material(visual: URDFVisual): THREE.MeshPhongMaterial {
+    const key = visual.materialName ? `${visual.materialName}:${visual.color.join(",")}` : null;
+    const existing = key ? this.materials.get(key) : undefined;
+    if (existing) return existing;
     const [r, g, b, opacity] = visual.color;
-    return new THREE.MeshPhongMaterial({
+    const material = new THREE.MeshPhongMaterial({
       color: new THREE.Color(r, g, b),
       opacity,
       transparent: opacity < 1,
       specular: this.materialSpecular,
       shininess: this.materialShininess
     });
+    if (key) this.materials.set(key, material);
+    return material;
   }
 
   private addVisual(parent: THREE.Group, visual: URDFVisual, command: Field3dRendererCommand_URDFObj) {
@@ -129,7 +137,13 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
         if (extension === "stl") {
           new STLLoader(manager).load(
             url,
-            (meshGeometry) => attach(new THREE.Mesh(meshGeometry, this.material(visual))),
+            (meshGeometry) => {
+              if (generation !== this.generation) {
+                meshGeometry.dispose();
+                return;
+              }
+              attach(new THREE.Mesh(meshGeometry, this.material(visual)));
+            },
             undefined,
             () => report(`Could not load "${url}".`)
           );
@@ -146,11 +160,18 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
                 const xml = new DOMParser().parseFromString(text, "application/xml");
                 const upAxis = xml.getElementsByTagName("up_axis")[0]?.textContent?.trim();
                 const collada = new ColladaLoader(manager).parse(text, new URL(".", url).href);
-                // ColladaLoader converts Z-up meshes to Y-up. URDF link coordinates retain the mesh's Z-up axes.
-                if (upAxis === "Z_UP") collada.scene.quaternion.identity();
+                // ColladaLoader normalizes to Y-up. RViz displays meshes in the URDF Z-up frame.
+                collada.scene.rotation.set(upAxis === "Z_UP" ? 0 : Math.PI / 2, 0, 0);
+                const replacedMaterials = new Set<THREE.Material>();
                 collada.scene.traverse((child) => {
                   if (!(child instanceof THREE.Mesh)) return;
+                  if (!child.geometry.getAttribute("normal")) child.geometry.computeVertexNormals();
                   const materials = Array.isArray(child.material) ? child.material : [child.material];
+                  if (visual.materialName) {
+                    materials.forEach((material) => replacedMaterials.add(material));
+                    child.material = this.material(visual);
+                    return;
+                  }
                   for (const material of materials) {
                     if ("color" in material && material.color instanceof THREE.Color) {
                       const [r, g, b] = visual.color;
@@ -159,6 +180,10 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
                     material.opacity *= visual.color[3];
                     material.transparent ||= material.opacity < 1;
                   }
+                });
+                replacedMaterials.forEach((material) => {
+                  for (const value of Object.values(material)) if (value instanceof THREE.Texture) value.dispose();
+                  material.dispose();
                 });
                 attach(collada.scene);
               } catch (error) {
@@ -177,14 +202,20 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
   }
 
   setObjectData(object: Field3dRendererCommand_URDFObj): void {
-    const key = JSON.stringify([object.robot, object.baseUrl, object.packageRootUrl]);
-    if (key !== this.modelKey) {
+    if (
+      object.robot.id !== this.modelId ||
+      object.baseUrl !== this.baseUrl ||
+      object.packageRootUrl !== this.packageRootUrl
+    ) {
       this.generation++;
       disposeObject(this.group);
       this.group.clear();
       this.links.clear();
       this.diagnostics.clear();
-      this.modelKey = key;
+      this.materials.clear();
+      this.modelId = object.robot.id;
+      this.baseUrl = object.baseUrl;
+      this.packageRootUrl = object.packageRootUrl;
       for (const link of object.robot.links) {
         const group = new THREE.Group();
         this.links.set(link.name, group);
@@ -206,5 +237,7 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
     this.group.clear();
     this.links.clear();
     this.diagnostics.clear();
+    this.materials.clear();
+    this.modelId = null;
   }
 }

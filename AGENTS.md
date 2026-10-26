@@ -15,6 +15,7 @@ Every task runs in poteto mode. The full rules live in this repo, so you do not 
 1. Read `.agents/PSTACK.md`. It maps the Cursor-specific names in the skills to what you have.
 2. Read `.agents/skills/poteto-mode/SKILL.md` and follow it. Match the task to its playbook in `.agents/skills/poteto-mode/playbooks/` and work through that playbook's steps.
 3. Read the leaf principle skills (`.agents/skills/principle-*/SKILL.md`) that poteto-mode names for your task, and the `unslop` and `technical-writing` skills before writing the PR description.
+4. Before each commit, run the `deslop` skill (`.agents/skills/deslop/SKILL.md`) over your diff against `main`.
 
 "Run in poteto mode", `/poteto-mode`, and `$poteto-mode` all mean this. The summary below is a reminder, not a replacement.
 

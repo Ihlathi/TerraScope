@@ -10,20 +10,27 @@ import LoggableType from "../log/LoggableType";
 interface SampleBase {
   readonly key: string;
   readonly timestamp: number;
+}
+
+interface FieldDescription {
   readonly wpilibType: string | null;
   readonly metadata: string;
 }
 
-export type RecordingSample = SampleBase &
-  (
-    | { readonly type: LoggableType.Raw; readonly value: Uint8Array }
-    | { readonly type: LoggableType.Boolean; readonly value: boolean }
-    | { readonly type: LoggableType.Number; readonly value: number }
-    | { readonly type: LoggableType.String; readonly value: string }
-    | { readonly type: LoggableType.BooleanArray; readonly value: boolean[] }
-    | { readonly type: LoggableType.NumberArray; readonly value: number[] }
-    | { readonly type: LoggableType.StringArray; readonly value: string[] }
-  );
+type SampleValue =
+  | { readonly type: LoggableType.Raw; readonly value: Uint8Array }
+  | { readonly type: LoggableType.Boolean; readonly value: boolean }
+  | { readonly type: LoggableType.Number; readonly value: number }
+  | { readonly type: LoggableType.String; readonly value: string }
+  | { readonly type: LoggableType.BooleanArray; readonly value: boolean[] }
+  | { readonly type: LoggableType.NumberArray; readonly value: number[] }
+  | { readonly type: LoggableType.StringArray; readonly value: string[] };
+
+export type RecordingSample = SampleBase & SampleValue & FieldDescription;
+
+export type RecordingWriteSample = SampleBase &
+  SampleValue &
+  (FieldDescription | { readonly wpilibType?: never; readonly metadata?: never });
 
 interface RecordingProgress {
   readonly path: string;
@@ -42,12 +49,12 @@ export type RecordingStatus = RecordingProgress &
 
 export interface RecordingWriter {
   start(): Promise<void>;
-  write(samples: readonly RecordingSample[]): Promise<void>;
+  write(samples: readonly RecordingWriteSample[]): Promise<void>;
   stop(): Promise<void>;
   getStatus(): RecordingStatus;
 }
 
-export function recordingSampleSize(sample: RecordingSample): number {
+export function recordingSampleSize(sample: RecordingWriteSample): number {
   const value = sample.value;
   const valueBytes =
     typeof value === "string"
@@ -57,5 +64,7 @@ export function recordingSampleSize(sample: RecordingSample): number {
       : Array.isArray(value)
       ? value.reduce<number>((size, item) => size + (typeof item === "string" ? item.length * 3 + 4 : 8), 0)
       : 8;
-  return 128 + sample.key.length * 3 + (sample.wpilibType?.length ?? 0) * 3 + sample.metadata.length * 3 + valueBytes;
+  return (
+    128 + sample.key.length * 3 + (sample.wpilibType?.length ?? 0) * 3 + (sample.metadata?.length ?? 0) * 3 + valueBytes
+  );
 }

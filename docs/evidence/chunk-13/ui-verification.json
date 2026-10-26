@@ -1,0 +1,26 @@
+{
+  "baseline": false,
+  "observations": [
+    {
+      "time": 1.5,
+      "tag": "CANVAS",
+      "width": 2,
+      "height": 2,
+      "pixels": [11, 41, 91, 255, 111, 141, 191, 255, 21, 51, 101, 255, 121, 151, 201, 255],
+      "title": "images.db3 — TerraScope"
+    },
+    {
+      "time": 2.5,
+      "tag": "CANVAS",
+      "width": 2,
+      "height": 2,
+      "pixels": [12, 42, 92, 255, 112, 142, 192, 255, 22, 52, 102, 255, 122, 152, 202, 255],
+      "title": "images.db3 — TerraScope"
+    }
+  ],
+  "idle": [],
+  "firstEmptyId": "image-evidence/3",
+  "empty": { "id": "image-evidence/3", "updates": [] },
+  "renamed": [{ "hasPixels": false, "target": null, "title": "ROS camera renamed" }],
+  "pngEncodes": 0
+}

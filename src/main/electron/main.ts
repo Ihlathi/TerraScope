@@ -1323,7 +1323,9 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
       let title = message.data.title;
       if (satelliteUUID in satelliteWindows) {
         satelliteWindows[satelliteUUID].forEach((satellite) => {
-          if (satellite.isVisible()) {
+          if (
+            message.data.satelliteId === undefined ? satellite.isVisible() : satellite.id === message.data.satelliteId
+          ) {
             sendMessage(satellite, "render", { command: command, title: title });
           }
         });
@@ -3368,6 +3370,15 @@ function createSatellite(
   satellite.once("ready-to-show", satellite.show);
   satellite.loadFile(path.join(__dirname, "../www/satellite.html"));
   let firstLoad = true;
+  let rendererReady = false;
+  const refreshImage = () => {
+    if ((configData?.type ?? state?.state.type) !== TabType.Image || !rendererReady || !satellite.isVisible()) return;
+    hubWindows.forEach((hub) => sendMessage(hub, "refresh-satellite", { uuid, satelliteId: satellite.id }));
+  };
+  satellite.on("show", refreshImage);
+  satellite.webContents.on("did-start-loading", () => {
+    rendererReady = false;
+  });
   satellite.webContents.on("dom-ready", () => {
     // Create ports on reload
     const { port1, port2 } = new MessageChannelMain();
@@ -3452,20 +3463,18 @@ function createSatellite(
     port2.start();
     sendMessage(satellite, "set-assets", advantageScopeAssets);
     sendMessage(satellite, "set-battery", powerMonitor.isOnBatteryPower());
-    if (firstLoad) {
-      if (configData !== undefined) {
-        sendMessage(satellite, "set-type", configData.type);
-      } else if (state !== undefined) {
-        sendMessage(satellite, "restore-state", state.state);
-      }
-    } else {
-      let cachedState = stateTracker.getRendererState(satellite);
-      if (cachedState !== undefined) {
-        sendMessage(satellite, "restore-state", stateTracker.getRendererState(satellite));
-      }
+    const cachedState = firstLoad ? undefined : stateTracker.getRendererState(satellite);
+    if (cachedState !== undefined) {
+      sendMessage(satellite, "restore-state", cachedState);
+    } else if (configData !== undefined) {
+      sendMessage(satellite, "set-type", configData.type);
+    } else if (state !== undefined) {
+      sendMessage(satellite, "restore-state", state.state);
     }
     sendAllPreferences();
     firstLoad = false;
+    rendererReady = true;
+    refreshImage();
   });
   satellite.webContents.setWindowOpenHandler((details) => {
     // Open docs URLs in browser

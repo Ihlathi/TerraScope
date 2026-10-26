@@ -72,10 +72,13 @@ export default class ImageController implements TabController {
     const time = window.selection.getRenderTime() ?? window.log.getTimestampRange()[1];
     const topic = this.updateSource();
     const image = this.cache.read(window.log, topic, time, plugins, this.UUID);
-    if (image !== this.lastImage) {
-      this.commandId++;
-      this.lastImage = image;
-    }
+    const sameMessage =
+      image.status !== "frame" &&
+      this.lastImage !== null &&
+      this.lastImage.status === image.status &&
+      this.lastImage.message === image.message;
+    if (image !== this.lastImage && !sameMessage) this.commandId++;
+    this.lastImage = image;
     return { id: this.UUID + "/" + this.commandId, image };
   }
 

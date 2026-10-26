@@ -325,6 +325,9 @@ async function initHub() {
 
 async function handleHubMessage(message: NamedMessage) {
   switch (message.name) {
+    case "clear-satellite":
+      break;
+
     case "show":
       HUB_FRAME.style.opacity = "100%";
       break;

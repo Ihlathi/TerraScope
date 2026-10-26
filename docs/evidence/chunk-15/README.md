@@ -37,11 +37,11 @@ SCENE_PORT=9223 node docs/evidence/chunk-15/verify-urdf.cjs wpilib-main
 
 The verifier generates a WPILOG containing a typed WPILib Pose3d, opens it through the WPILOG reader, and renders the bundled KitBot with URDF set to None. [wpilib-compatibility.json](wpilib-compatibility.json) records identical robot commands and zero changed pixels across the 980 by 484 scene canvas against main `74591d98`. The full-window screenshots retain the different settings controls between branches.
 
-![URDF at cursor 1.5](urdf-1.5.png)
-![URDF at cursor 2.5](urdf-2.5.png)
-![Y_UP DAE upright in Z-up](dae-y-up-upright.png)
-![Existing WPILib robot](wpilib-robot.png)
-![Existing WPILib robot on main](wpilib-robot-main.png)
+![URDF at cursor 1.5](https://raw.githubusercontent.com/Ihlathi/TerraScope/84e0a2148e818a83d4c26e0c1faf19c275ecf5ed/docs/evidence/chunk-15/urdf-1.5.png)
+![URDF at cursor 2.5](https://raw.githubusercontent.com/Ihlathi/TerraScope/84e0a2148e818a83d4c26e0c1faf19c275ecf5ed/docs/evidence/chunk-15/urdf-2.5.png)
+![Y_UP DAE upright in Z-up](https://raw.githubusercontent.com/Ihlathi/TerraScope/84e0a2148e818a83d4c26e0c1faf19c275ecf5ed/docs/evidence/chunk-15/dae-y-up-upright.png)
+![Existing WPILib robot](https://raw.githubusercontent.com/Ihlathi/TerraScope/84e0a2148e818a83d4c26e0c1faf19c275ecf5ed/docs/evidence/chunk-15/wpilib-robot.png)
+![Existing WPILib robot on main](https://raw.githubusercontent.com/Ihlathi/TerraScope/84e0a2148e818a83d4c26e0c1faf19c275ecf5ed/docs/evidence/chunk-15/wpilib-robot-main.png)
 
 ## Checks and workflow
 

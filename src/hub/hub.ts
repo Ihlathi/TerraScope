@@ -745,6 +745,10 @@ async function handleMainMessage(message: NamedMessage) {
       window.tabs.setActiveSatellites(message.data);
       break;
 
+    case "refresh-satellite":
+      window.tabs.refreshSatellite(message.data.uuid, message.data.satelliteId);
+      break;
+
     case "set-active-xr-uuid":
       window.tabs.setActiveXRUUID(message.data);
       break;

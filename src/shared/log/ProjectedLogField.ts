@@ -13,6 +13,8 @@ export function sourceClock(namespace: string, domain: TimestampDomain): Timesta
 }
 
 export default class ProjectedLogField extends LogField {
+  private timestampCache?: { revision: number; offsetSeconds: number; timestamps: number[] };
+
   constructor(
     private source: LogField,
     private sourceDisplayClock: TimestampDomain,
@@ -31,7 +33,16 @@ export default class ProjectedLogField extends LogField {
   }
 
   getTimestamps(): number[] {
-    return this.source.getTimestamps().map((time) => time + this.conversion.offsetSeconds);
+    const revision = this.source.getRevision();
+    const offsetSeconds = this.conversion.offsetSeconds;
+    if (this.timestampCache?.revision !== revision || this.timestampCache.offsetSeconds !== offsetSeconds) {
+      this.timestampCache = {
+        revision,
+        offsetSeconds,
+        timestamps: this.source.getTimestamps().map((time) => time + offsetSeconds)
+      };
+    }
+    return this.timestampCache.timestamps;
   }
 
   getRange(start: number, end: number, uuid?: string, startOffset?: number) {

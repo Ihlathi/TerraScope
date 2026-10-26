@@ -5,7 +5,12 @@
 // license that can be found in the LICENSE file
 // at the root directory of this project.
 
-import { RecordingSample, RecordingStatus, recordingSampleSize } from "../shared/recording/RecordingWriter";
+import {
+  RecordingSample,
+  RecordingStatus,
+  RecordingWriteSample,
+  recordingSampleSize
+} from "../shared/recording/RecordingWriter";
 
 interface RecordingSource {
   startRecording(listener: (sample: RecordingSample) => void): void;
@@ -24,6 +29,7 @@ interface Session {
   phase: "starting" | "recording" | "stopping" | "closing";
   pending: { sample: RecordingSample; bytes: number }[];
   pendingBytes: number;
+  fields: Map<string, Pick<RecordingSample, "type" | "wpilibType" | "metadata">>;
   inFlight: number | null;
   nextBatch: number;
   stopSent: boolean;
@@ -54,6 +60,7 @@ export default class LiveRecording {
       phase: "starting",
       pending: [],
       pendingBytes: 0,
+      fields: new Map(),
       inFlight: null,
       nextBatch: 0,
       stopSent: false,
@@ -159,7 +166,15 @@ export default class LiveRecording {
       while (count < session.pending.length && (count === 0 || bytes < 256 * 1024)) {
         bytes += session.pending[count++].bytes;
       }
-      const samples = session.pending.splice(0, count).map((item) => item.sample);
+      const samples = session.pending.splice(0, count).map(({ sample }): RecordingWriteSample => {
+        const previous = session.fields.get(sample.key);
+        const { wpilibType, metadata, ...value } = sample;
+        if (previous?.type === sample.type && previous.wpilibType === wpilibType && previous.metadata === metadata) {
+          return value;
+        }
+        session.fields.set(sample.key, { type: sample.type, wpilibType, metadata });
+        return sample;
+      });
       session.pendingBytes -= bytes;
       session.inFlight = ++session.nextBatch;
       this.send("recording-batch", { id: session.id, batch: session.inFlight, samples });

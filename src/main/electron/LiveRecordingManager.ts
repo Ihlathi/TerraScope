@@ -7,8 +7,8 @@
 
 import LoggableType from "../../shared/log/LoggableType";
 import {
-  RecordingSample,
   RecordingStatus,
+  RecordingWriteSample,
   RecordingWriter,
   recordingSampleSize
 } from "../../shared/recording/RecordingWriter";
@@ -18,7 +18,7 @@ type HostState =
   | { kind: "selecting" | "cancelled" | "finished" }
   | { kind: "starting" | "recording" | "writing" | "stopping"; writer: RecordingWriter };
 
-function isSample(value: unknown): value is RecordingSample {
+function isSample(value: unknown): value is RecordingWriteSample {
   if (typeof value !== "object" || value === null) return false;
   const sample = value as Record<string, unknown>;
   if (
@@ -26,8 +26,10 @@ function isSample(value: unknown): value is RecordingSample {
     typeof sample.timestamp !== "number" ||
     !Number.isFinite(sample.timestamp) ||
     sample.timestamp < 0 ||
-    (sample.wpilibType !== null && typeof sample.wpilibType !== "string") ||
-    typeof sample.metadata !== "string"
+    !(
+      (sample.wpilibType === undefined && sample.metadata === undefined) ||
+      ((sample.wpilibType === null || typeof sample.wpilibType === "string") && typeof sample.metadata === "string")
+    )
   )
     return false;
   switch (sample.type) {

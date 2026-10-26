@@ -10,7 +10,7 @@ import { FileHandle, open } from "node:fs/promises";
 import path from "node:path";
 import { WPILOGEncoder, WPILOGEncoderRecord } from "../../hub/dataSources/wpilog/WPILOGEncoder";
 import LoggableType from "../log/LoggableType";
-import { RecordingSample, RecordingStatus, RecordingWriter, recordingSampleSize } from "./RecordingWriter";
+import { RecordingStatus, RecordingWriteSample, RecordingWriter, recordingSampleSize } from "./RecordingWriter";
 
 export interface WPILOGRecordingOptions {
   checkFreeSpace?: (directory: string) => Promise<number>;
@@ -106,7 +106,7 @@ export default class WPILOGRecordingWriter implements RecordingWriter {
     });
   }
 
-  write(samples: readonly RecordingSample[]): Promise<void> {
+  write(samples: readonly RecordingWriteSample[]): Promise<void> {
     if (this.status.kind !== "recording") return Promise.reject(new Error("Recording is not active."));
     const estimate = samples.reduce((size, sample) => size + recordingSampleSize(sample), 0);
     if (estimate + this.pendingBytes > this.maxPendingBytes) {
@@ -221,30 +221,32 @@ export default class WPILOGRecordingWriter implements RecordingWriter {
     this.completeBytes = this.status.bytesWritten;
   }
 
-  private encode(sample: RecordingSample): Uint8Array[] {
+  private encode(sample: RecordingWriteSample): Uint8Array[] {
     const timestamp = Math.round(sample.timestamp * 1e6);
     if (!Number.isSafeInteger(timestamp) || timestamp < 0) throw new Error("A sample has an invalid WPILOG timestamp.");
-    const originalType =
-      sample.wpilibType ?? ["raw", "boolean", "double", "string", "boolean[]", "double[]", "string[]"][sample.type];
-    const type = originalType === "int" ? "int64" : originalType === "int[]" ? "int64[]" : originalType;
     let entry = this.entries.get(sample.key);
+    const originalType =
+      sample.wpilibType === undefined
+        ? entry?.type
+        : sample.wpilibType ?? ["raw", "boolean", "double", "string", "boolean[]", "double[]", "string[]"][sample.type];
+    const metadata = sample.metadata ?? entry?.metadata;
+    if (originalType === undefined || metadata === undefined) throw new Error("A recording field has no description.");
+    const type = originalType === "int" ? "int64" : originalType === "int[]" ? "int64[]" : originalType;
     const records: WPILOGEncoderRecord[] = [];
     if (entry === undefined || entry.type !== type) {
-      entry = { id: this.nextEntryId++, type, metadata: sample.metadata };
+      entry = { id: this.nextEntryId++, type, metadata };
       this.entries.set(sample.key, entry);
       records.push(
         WPILOGEncoderRecord.makeControlStart(timestamp, {
           entry: entry.id,
           name: sample.key,
           type,
-          metadata: sample.metadata
+          metadata
         })
       );
-    } else if (entry.metadata !== sample.metadata) {
-      entry.metadata = sample.metadata;
-      records.push(
-        WPILOGEncoderRecord.makeControlSetMetadata(timestamp, { entry: entry.id, metadata: sample.metadata })
-      );
+    } else if (entry.metadata !== metadata) {
+      entry.metadata = metadata;
+      records.push(WPILOGEncoderRecord.makeControlSetMetadata(timestamp, { entry: entry.id, metadata }));
     }
     const id = entry.id;
     switch (sample.type) {

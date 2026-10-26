@@ -9,7 +9,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import Log from "../../shared/log/Log";
 import LoggableType from "../../shared/log/LoggableType";
-import { RecordingSample } from "../../shared/recording/RecordingWriter";
+import { RecordingSample, RecordingWriteSample } from "../../shared/recording/RecordingWriter";
+import LiveRecording from "../LiveRecording";
 import { LiveDataSource, LiveDataSourceStatus } from "./LiveDataSource";
 import LiveSession from "./LiveSession";
 
@@ -173,4 +174,52 @@ test("a source added while recording observes synchronous writes inside connect"
   live.attach(new ImmediateSource(), "second", true);
   assert.deepEqual(numeric(samples), [{ key: "/Live2/signal", timestamp: 10, value: 20 }]);
   live.stopAll();
+});
+
+test("recording batches resend descriptions after source log replacement and clear previous metadata", (t) => {
+  const live = session();
+  const source = new RecordingFixtureSource();
+  live.attach(source, "first");
+  t.after(() => live.stopAll());
+  const batches: { batch: number; samples: RecordingWriteSample[] }[] = [];
+  const recording = new LiveRecording(
+    live,
+    (name, data) => {
+      if (name === "recording-batch") batches.push(data as (typeof batches)[number]);
+    },
+    () => {},
+    undefined,
+    0
+  );
+  const acknowledge = () => recording.handleMessage("recording-ack", { id: 1, batch: batches.at(-1)!.batch });
+  recording.start();
+  recording.handleMessage("recording-ready", { id: 1, path: "replacement.wpilog" });
+  source.emit(1, 10);
+  acknowledge();
+  source.emit(2, 20);
+  acknowledge();
+  const oldLog = source.getSourceLog();
+  const replacement = new Log();
+  replacement.createBlankField("NT:/voltage", LoggableType.Number);
+  replacement.setWpilibType("NT:/voltage", "float");
+  replacement.setMetadataString("NT:/voltage", '{"unit":"V"}');
+  source.replaceLog(replacement);
+  oldLog.putNumber("NT:/voltage", 3, 99);
+  source.emit(3, 30);
+  acknowledge();
+  source.emit(4, 40);
+  acknowledge();
+  source.replaceLog(new Log());
+  source.emit(5, 50);
+  const base = { key: "/Live1/NT:/voltage", type: LoggableType.Number };
+  assert.deepEqual(
+    batches.map(({ samples }) => samples),
+    [
+      [{ ...base, timestamp: 1, value: 10, wpilibType: null, metadata: "" }],
+      [{ ...base, timestamp: 2, value: 20 }],
+      [{ ...base, timestamp: 3, value: 30, wpilibType: "float", metadata: '{"unit":"V"}' }],
+      [{ ...base, timestamp: 4, value: 40 }],
+      [{ ...base, timestamp: 5, value: 50, wpilibType: null, metadata: "" }]
+    ]
+  );
 });

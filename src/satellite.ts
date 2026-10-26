@@ -14,6 +14,7 @@ import ConsoleRenderer from "./shared/renderers/ConsoleRenderer";
 import DocumentationRenderer from "./shared/renderers/DocumentationRenderer";
 import Field2dRenderer from "./shared/renderers/Field2dRenderer";
 import Field3dRenderer from "./shared/renderers/Field3dRenderer";
+import ImageRenderer from "./shared/renderers/ImageRenderer";
 import JoysticksRenderer from "./shared/renderers/JoysticksRenderer";
 import LineGraphRenderer from "./shared/renderers/LineGraphRenderer";
 import MechanismRenderer from "./shared/renderers/MechanismRenderer";
@@ -60,6 +61,10 @@ function updateVisualizer() {
     }
   }
 
+  renderer?.dispose?.();
+  renderer = null;
+  lastCommand = null;
+
   // Create renderer
   let root = document.getElementById("renderer" + type.toString()) as HTMLElement;
   switch (type) {
@@ -83,6 +88,9 @@ function updateVisualizer() {
       break;
     case TabType.Statistics:
       renderer = new StatisticsRenderer(root);
+      break;
+    case TabType.Image:
+      renderer = new ImageRenderer(root);
       break;
     case TabType.Video:
       renderer = new VideoRenderer(root);
@@ -139,6 +147,12 @@ window.addEventListener("message", (event) => {
           type = message.data.type;
           updateVisualizer();
           renderer?.restoreState(message.data.visualizer);
+          break;
+
+        case "clear-renderer":
+          lastCommand = null;
+          renderer?.dispose?.();
+          processAspectRatio(null);
           break;
 
         case "render":
@@ -216,6 +230,7 @@ function processAspectRatio(aspectRatio: number | null) {
 }
 
 window.addEventListener("beforeunload", () => {
+  renderer?.dispose?.();
   if (type === TabType.Table) {
     let tableRenderer = renderer as TableRenderer;
     window.sendMainMessage("add-table-range", {

@@ -1311,6 +1311,12 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
       createSatellite({ parentWindow: window, uuid: message.data.uuid, type: message.data.type });
       break;
 
+    case "clear-satellite":
+      satelliteWindows[message.data.uuid]?.forEach((satellite) => {
+        sendMessage(satellite, "clear-renderer");
+      });
+      break;
+
     case "update-satellite":
       let satelliteUUID = message.data.uuid;
       let command = message.data.command;

@@ -5,8 +5,10 @@
 // license that can be found in the LICENSE file
 // at the root directory of this project.
 
+import type { ImageFieldReader, ImagePixels } from "../log/ImageSensor";
 import type Log from "../log/Log";
 import type { LogTimestamp } from "../log/LogTimestamp";
+import type { SemanticType } from "../log/SemanticType";
 
 export type LogReader = Readonly<{
   id: string;
@@ -24,7 +26,30 @@ export type SchemaDecoder = Readonly<{
   decode: (log: Log, key: string, timestamp: LogTimestamp, value: Uint8Array) => void;
 }>;
 
+export type ImageDecoder = Readonly<{
+  id: string;
+  semantic: typeof SemanticType.Image | typeof SemanticType.CompressedImage;
+  decode: (read: ImageFieldReader) => ImagePixels;
+}>;
+
 export class PluginRegistry {
+  private images = new Map<SemanticType, ImageDecoder>();
+
+  registerImageDecoder(decoder: ImageDecoder): void {
+    const existing = this.images.get(decoder.semantic);
+    if (existing !== undefined)
+      throw new Error(
+        `Image semantic "${decoder.semantic}" is registered by both "${existing.id}" and "${decoder.id}".`
+      );
+    if ([...this.images.values()].some((entry) => entry.id === decoder.id))
+      throw new Error(`Duplicate image decoder id "${decoder.id}".`);
+    this.images.set(decoder.semantic, Object.freeze({ ...decoder }));
+  }
+
+  getImageDecoder(semantic: SemanticType): ImageDecoder | undefined {
+    return this.images.get(semantic);
+  }
+
   private readers = new Map<string, LogReader>();
   private extensions = new Map<string, LogReader>();
   private schemas = new Map<string, SchemaDecoder>();

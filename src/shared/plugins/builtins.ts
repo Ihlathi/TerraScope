@@ -8,6 +8,8 @@
 import { registerTerraLogReader } from "../../examples/terraLogReader";
 import URCLSchema from "../../hub/dataSources/schema/URCLSchema";
 import URCLSchemaLegacy from "../../hub/dataSources/schema/URCLSchemaLegacy";
+import { decodeCompressedImage, decodeRawImage } from "../log/ImageSensor";
+import { SemanticType } from "../log/SemanticType";
 import { PluginRegistry } from "./PluginRegistry";
 
 export const plugins = new PluginRegistry();
@@ -83,3 +85,10 @@ plugins.registerSchema({
 });
 
 registerTerraLogReader(plugins);
+
+plugins.registerImageDecoder({ id: "ros-image", semantic: SemanticType.Image, decode: decodeRawImage });
+plugins.registerImageDecoder({
+  id: "ros-compressed-image",
+  semantic: SemanticType.CompressedImage,
+  decode: decodeCompressedImage
+});

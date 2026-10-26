@@ -9,6 +9,8 @@ import { createUUID } from "../../shared/util";
 
 /** A controller for a single tab. Updates user controls and produces commands to be used by renderers. */
 export default interface TabController {
+  dispose?(): void;
+
   UUID: string;
 
   /** Returns the current state. */

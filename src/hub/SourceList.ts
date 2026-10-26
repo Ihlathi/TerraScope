@@ -59,6 +59,8 @@ export default class SourceList {
   private refreshLastFields: Set<string> = new Set();
   private refreshLastStructTypes: { [key: string]: string | null } = {};
 
+  private abortController = new AbortController();
+
   /**
    * Creates a new source list controller
    *
@@ -174,14 +176,18 @@ export default class SourceList {
     });
 
     // Incoming drag handling
-    window.addEventListener("drag-update", (event) => {
-      let dragData = (event as CustomEvent).detail;
-      if ("sourceListUUID" in dragData.data) {
-        this.handleItemDrag(dragData);
-      } else if ("fields" in dragData.data) {
-        this.handleFieldDrag(dragData);
-      }
-    });
+    window.addEventListener(
+      "drag-update",
+      (event) => {
+        let dragData = (event as CustomEvent).detail;
+        if ("sourceListUUID" in dragData.data) {
+          this.handleItemDrag(dragData);
+        } else if ("fields" in dragData.data) {
+          this.handleFieldDrag(dragData);
+        }
+      },
+      { signal: this.abortController.signal }
+    );
 
     // Entry dragging support
     this.LIST.addEventListener("mousedown", (event) => {
@@ -323,6 +329,9 @@ export default class SourceList {
 
   stop() {
     this.stopped = true;
+    this.abortController.abort();
+    delete SourceList.clearPromptCallbacks[this.UUID];
+    delete SourceList.typePromptCallbacks[this.UUID];
   }
 
   /** Removes all items in the source list. */

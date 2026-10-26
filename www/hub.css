@@ -2079,3 +2079,8 @@ div.points-settings {
     border-left: 1px solid black;
   }
 }
+
+div.image-sources {
+  position: absolute;
+  inset: 0;
+}

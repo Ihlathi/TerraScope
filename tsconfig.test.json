@@ -33,6 +33,8 @@
     "src/shared/recording/RecordingCapture.test.ts",
     "src/hub/LiveRecording.test.ts",
     "src/shared/plugins/PluginRegistry.test.ts",
-    "src/hub/dataSources/nt4/NT4Lifecycle.test.ts"
+    "src/hub/dataSources/nt4/NT4Lifecycle.test.ts",
+    "src/shared/log/ImageSensor.test.ts",
+    "src/shared/renderers/ImageRenderer.test.ts"
   ]
 }

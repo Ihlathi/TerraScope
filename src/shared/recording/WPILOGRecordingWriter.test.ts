@@ -98,10 +98,18 @@ test("file grows during recording and existing WPILOG reader round-trips fields,
     const type = definitions.get(record.getEntry())!.type as keyof typeof decode;
     assert.deepEqual(decode[type](), expected.value);
   });
+  await writer.write(samples.map(({ wpilibType, metadata, ...value }) => value));
   await writer.stop();
+  const afterStop = await records(file);
   assert.deepEqual(
-    (await records(file)).map((record) => record.getTimestamp()),
-    beforeStop.map((record) => record.getTimestamp())
+    afterStop.filter((record) => record.isControl()).map((record) => record.getStartData()),
+    beforeStop.filter((record) => record.isControl()).map((record) => record.getStartData())
+  );
+  assert.deepEqual(
+    afterStop
+      .filter((record) => !record.isControl())
+      .map((record) => [record.getEntry(), record.getTimestamp(), record.getRaw()]),
+    [...values, ...values].map((record) => [record.getEntry(), record.getTimestamp(), record.getRaw()])
   );
   assert.equal(writer.getStatus().kind, "stopped");
 });
@@ -319,4 +327,17 @@ test("a delayed disk check from a stopped recording cannot stop its restarted wr
   await writer.write([sample("restarted", 2, 2)]);
   await writer.stop();
   assert.equal((await records(file)).filter((record) => !record.isControl()).length, 1);
+});
+
+test("a writer requires field descriptions again after restart", async (t) => {
+  const file = await fixture(t);
+  const writer = new WPILOGRecordingWriter(file, undefined, disk);
+  await writer.start();
+  await writer.write([{ ...sample("field", 1, 1), wpilibType: "float", metadata: '{"unit":"V"}' }]);
+  await writer.stop();
+  await writer.start();
+  const { wpilibType, metadata, ...value } = sample("field", 2, 2);
+  await assert.rejects(writer.write([value]), /no description/);
+  await writer.stop();
+  assert.equal((await records(file)).length, 0);
 });

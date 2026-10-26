@@ -12,6 +12,7 @@ import path from "node:path";
 import test from "node:test";
 import { setTimeout as delay } from "node:timers/promises";
 import { WPILOGDecoder, WPILOGDecoderRecord } from "../../hub/dataSources/wpilog/WPILOGDecoder";
+import { WPILOGEncoder, WPILOGEncoderRecord } from "../../hub/dataSources/wpilog/WPILOGEncoder";
 import LoggableType from "../log/LoggableType";
 import { RecordingSample, RecordingStatus } from "./RecordingWriter";
 import WPILOGRecordingWriter from "./WPILOGRecordingWriter";
@@ -116,6 +117,16 @@ test("recording retains repeated, equal-timestamp and out-of-order records and m
     { ...sample("field", 1, 5), metadata: '{"unit":"m"}' }
   ]);
   await writer.stop();
+  const expected = new WPILOGEncoder("TerraScope continuous recording");
+  expected.add(
+    WPILOGEncoderRecord.makeControlStart(2000000, { entry: 1, name: "field", type: "double", metadata: "" })
+  );
+  expected.add(WPILOGEncoderRecord.makeDouble(1, 2000000, 1));
+  expected.add(WPILOGEncoderRecord.makeDouble(1, 3000000, 1));
+  expected.add(WPILOGEncoderRecord.makeDouble(1, 1000000, 4));
+  expected.add(WPILOGEncoderRecord.makeControlSetMetadata(1000000, { entry: 1, metadata: '{"unit":"m"}' }));
+  expected.add(WPILOGEncoderRecord.makeDouble(1, 1000000, 5));
+  assert.deepEqual(new Uint8Array(await readFile(file)), expected.getEncoded());
   const output = await records(file);
   assert.deepEqual(
     output.filter((record) => !record.isControl()).map((record) => [record.getTimestamp(), record.getDouble()]),

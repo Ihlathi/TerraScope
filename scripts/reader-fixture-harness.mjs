@@ -15,6 +15,7 @@ export const fixturePaths = [
   "src/hub/dataSources/json/fixtures/sample.json",
   "src/hub/dataSources/json/fixtures/sample.jsonl",
   "src/hub/dataSources/mcap/fixtures/sample.mcap",
+  "src/hub/dataSources/ros2/fixtures/images.db3",
   "src/hub/dataSources/ros2/fixtures/sample.db3",
   "src/hub/dataSources/ros2/fixtures/spatial-sensors.db3",
   "src/hub/dataSources/ros2/fixtures/transform-tree.db3",

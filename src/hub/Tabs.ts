@@ -14,6 +14,7 @@ import ConsoleRenderer from "../shared/renderers/ConsoleRenderer";
 import DocumentationRenderer from "../shared/renderers/DocumentationRenderer";
 import Field2dRenderer from "../shared/renderers/Field2dRenderer";
 import Field3dRenderer from "../shared/renderers/Field3dRenderer";
+import ImageRenderer from "../shared/renderers/ImageRenderer";
 import JoysticksRenderer from "../shared/renderers/JoysticksRenderer";
 import LineGraphRenderer from "../shared/renderers/LineGraphRenderer";
 import MechanismRenderer from "../shared/renderers/MechanismRenderer";
@@ -31,6 +32,7 @@ import Timeline from "./Timeline";
 import ConsoleController from "./controllers/ConsoleController";
 import Field2dController from "./controllers/Field2dController";
 import Field3dController from "./controllers/Field3dController";
+import ImageController from "./controllers/ImageController";
 import JoysticksController from "./controllers/JoysticksController";
 import LineGraphController from "./controllers/LineGraphController";
 import MechanismController from "./controllers/MechanismController";
@@ -426,6 +428,7 @@ export default class Tabs {
   /** Restores to the provided state. */
   restoreState(state: TabsState) {
     this.tabList.forEach((tab) => {
+      this.disposeTab(tab);
       this.RENDERER_CONTENT.removeChild(tab.rendererElement);
       this.CONTROLS_CONTENT.removeChild(tab.controlsElement);
     });
@@ -544,6 +547,13 @@ export default class Tabs {
         controller = new StatisticsController(controlsElement);
         renderer = new StatisticsRenderer(rendererElement);
         break;
+      case TabType.Image:
+        renderer = new ImageRenderer(rendererElement);
+        controller = new ImageController(controlsElement, () => {
+          renderer.dispose?.();
+          window.sendMainMessage("clear-satellite", { uuid: controller.UUID });
+        });
+        break;
       case TabType.Video:
         controller = new VideoController(controlsElement);
         renderer = new VideoRenderer(rendererElement);
@@ -620,6 +630,11 @@ export default class Tabs {
     }
   }
 
+  private disposeTab(tab: Tabs["tabList"][number]): void {
+    tab.controller.dispose?.();
+    tab.renderer.dispose?.();
+  }
+
   /** Closes the specified tab. */
   close(index: number, force = false) {
     let minIndex = DISTRIBUTION === Distribution.LiteDS ? (this.tabList.length > 1 ? 0 : 1) : 1;
@@ -629,6 +644,7 @@ export default class Tabs {
     if (!force && this.tabList[index].controller.UUID === this.activeXRUUID) {
       window.sendMainMessage("confirm-xr-close", this.activeXRUUID);
     } else {
+      this.disposeTab(this.tabList[index]);
       this.RENDERER_CONTENT.removeChild(this.tabList[index].rendererElement);
       this.CONTROLS_CONTENT.removeChild(this.tabList[index].controlsElement);
       this.tabList.splice(index, 1);

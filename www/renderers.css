@@ -978,3 +978,28 @@ table.metadata-table td.no-data {
   overflow-wrap: anywhere;
   pointer-events: none;
 }
+
+.image-renderer:not([hidden]) {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.image-frame {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.image-frame[hidden] {
+  display: none;
+}
+
+.image-message {
+  text-align: center;
+  padding: 16px;
+}

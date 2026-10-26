@@ -153,3 +153,17 @@ test("maps ROS laser scans and point clouds without admitting them to pose reade
     "sensor_msgs/PointCloud2"
   ]);
 });
+
+test("maps ROS image types without admitting them to pose readers", () => {
+  for (const [name, semantic] of [
+    ["Image", SemanticType.Image],
+    ["CompressedImage", SemanticType.CompressedImage]
+  ] as const) {
+    const names = [`sensor_msgs/msg/${name}`, `sensor_msgs/${name}`];
+    assert.deepEqual(structuredTypesFor([semantic]), names);
+    for (const type of names) {
+      assert.equal(classifyStructuredType(type), semantic);
+      assert.equal(canReadAsPose(type), false);
+    }
+  }
+});

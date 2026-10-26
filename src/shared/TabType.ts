@@ -20,7 +20,8 @@ enum TabType {
   Swerve,
   Mechanism,
   Points,
-  Metadata
+  Metadata,
+  Image
 }
 
 export default TabType;
@@ -43,7 +44,8 @@ export const LITE_COMPATIBLE_TABS =
         TabType.Swerve,
         TabType.Mechanism,
         TabType.Points,
-        TabType.Metadata
+        TabType.Metadata,
+        TabType.Image
       ]
     : // Lite DS
       [TabType.LineGraph, TabType.Table, TabType.Console, TabType.Statistics, TabType.Joysticks];
@@ -64,6 +66,8 @@ export function getDefaultTabTitle(type: TabType): string {
       return "Console";
     case TabType.Statistics:
       return "Statistics";
+    case TabType.Image:
+      return "Image";
     case TabType.Video:
       return "Video";
     case TabType.Joysticks:
@@ -97,6 +101,8 @@ export function getTabIcon(type: TabType): string {
       return "💬";
     case TabType.Statistics:
       return "📊";
+    case TabType.Image:
+      return "🖼";
     case TabType.Video:
       return "🎬";
     case TabType.Joysticks:
@@ -132,6 +138,8 @@ export function getTabAccelerator(type: TabType): string {
           return "C";
         case TabType.Statistics:
           return "S";
+        case TabType.Image:
+          return "A";
         case TabType.Video:
           return "V";
         case TabType.Joysticks:

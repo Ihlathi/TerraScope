@@ -147,7 +147,7 @@ largely irrelevant to the debugging and visualization experience.
 - [ ] Optional and nullable fields. (Missing samples are absent. Empty is only a placeholder for structured children.)
 - [ ] Matrices. (Numeric arrays can be graphed element by element. Matrices are not a type.)
 - [x] Binary data.
-- [ ] Images. (No image sample type. Match video is a separate file, YouTube download, or The Blue Alliance clip.)
+- [x] Images. (ROS 2 Image rgb8, bgr8, and mono8 plus JPEG and PNG CompressedImage samples.)
 - [x] Point clouds. (ROS 2 PointCloud2 messages in MCAP and sqlite3 bags, displayed in the 3D scene.)
 - [ ] User-defined data types. (WPILib structs, Photon structs, protobuf, MessagePack, JSON, and built-in schemas such as URCL. Users cannot register a type.)
 
@@ -171,7 +171,7 @@ largely irrelevant to the debugging and visualization experience.
 - [x] Interpret poses, transforms, vectors, and rotations.
 - [ ] Interpret joint states. (WPILib Mechanism2d ligament angles and lengths. Not general joint-state messages.)
 - [ ] Interpret trajectories and paths. (WPILib Trajectory plus swerve and differential samples on the 3D field.)
-- [ ] Interpret images and spatial sensor measurements. (AprilTag poses, vision targets, ROS 2 laser scans, and point clouds. Images are not interpreted.)
+- [x] Interpret images and spatial sensor measurements. (ROS 2 images, laser scans, and point clouds, plus AprilTag poses and vision targets.)
 - [ ] Support custom semantic type mappings. (Object type is chosen per field in the 2D and 3D tabs. Mappings are not reusable semantic adapters.)
 - [x] Allow users to override incorrect automatic interpretations.
 - [x] Allow equivalent data from different formats to use the same visualizations.
@@ -239,7 +239,7 @@ largely irrelevant to the debugging and visualization experience.
 - [ ] Recording start and end markers. (The timeline spans the logged samples. Start and end are the data range, not labeled markers.)
 - [ ] Visualization of missing data intervals.
 - [ ] Visualization of message frequency changes.
-- [ ] Synchronized playback of telemetry, images, and spatial data. (Graphs, fields, mechanisms, and a separately loaded match video share one timeline. In-log images are not played.)
+- [x] Synchronized playback of telemetry, images, and spatial data. (The Image tab shares the timeline and selects the latest logged image at or before its cursor.)
 - [ ] Multiple simultaneous recordings. (Merge only. Merged logs are not independent timelines.)
 - [ ] Overlay multiple recordings. (Merged fields keep a /LogN prefix and can be graphed together. There is no pose-overlay alignment view.)
 - [ ] Align recordings by timestamp. (Merge shifts logs so their first enabled timestamps match.)
@@ -479,7 +479,7 @@ largely irrelevant to the debugging and visualization experience.
 ## Cameras and Computer Vision
 
 - [ ] Live camera feeds.
-- [ ] Recorded image playback. (Separate match video from a local folder, YouTube, or The Blue Alliance. Not images embedded in the log.)
+- [x] Recorded image playback. (The Image tab displays raw ROS 2 images and JPEG or PNG compressed images embedded in recordings.)
 - [x] Synchronized video playback.
 - [ ] Multiple camera streams. (Each video tab plays one source. Several video tabs can be open on desktop.)
 - [ ] Object detection overlays.

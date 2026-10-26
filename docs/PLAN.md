@@ -111,7 +111,13 @@ The [verification evidence](evidence/chunk-14/README.md) includes the generated 
 
 ## 15. URDF mechanism
 
-Load a URDF (visual meshes and revolute/prismatic joints) and drive it from joint-state samples. Mechanism2d stays. SDF is later.
+**Status: done.**
+
+The 3D scene loads a selected URDF file or a logged `robot_description` string. Visual geometry includes boxes, cylinders, spheres, and local STL and DAE meshes. Relative mesh paths use the URDF file directory, or a separately selected directory for logged descriptions. `package://` paths use a selected folder containing package-name folders. Unresolved resources and unsupported descriptions appear in visible diagnostics.
+
+Named JointState positions drive revolute, continuous, and prismatic joints at the timeline cursor. Revolute and prismatic limits clamp position. Fixed joints compose statically. Link frames supplement the chunk 14 graph so frame-bearing objects follow the same resolved links. Logged TF tracks own overlapping child edges, including unavailable or invalid logged samples. Existing WPILib robot models and Mechanism2d retain their code paths.
+
+The [verification evidence](evidence/chunk-15/README.md) includes the fixture generator, a primitive and mesh robot, a JointState bag, command output, and the app-launch result. SDF, mimic joints, collision geometry, and joint interpolation remain outside this chunk.
 
 ## 16. Continuous recording
 

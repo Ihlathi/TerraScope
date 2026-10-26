@@ -1,0 +1,14 @@
+ts	phase	decision	why	evidence	result
+2026-10-25T00:00:00Z	design	Use one typed robot model and shared frame graph for links and attached objects	Avoid independent renderer and controller transform authorities	src/shared/log/FrameGraph.ts	implementation pending
+2026-10-25T19:37:43+00:00	setup	Fetch latest main and create isolated implementation worktree	Keep chunk 15 based on current main	fb69304b	verified
+2026-10-25T19:37:43+00:00	setup	Use Node 22.23.4 with workspace npm cache	Match CI major version and keep cache inside writable workspace	work/npm-ci.log	installation running
+2026-10-25T19:37:43+00:00	parser	Use focused XML parser after evaluating urdf-loader	Keep parsing offline and serializable without renderer-owned joint transforms	src/shared/urdf/	implementation pending
+2026-10-25T19:37:43+00:00	fixture	Generate URDF meshes and bag with reordered joint names and limit violations	Make fixture rerunnable and exercise name lookup and clamping	scripts/generate-urdf-fixture.py	two runs have identical bag SHA256
+2026-10-26T02:12:29+00:00	audit	Supersede the first row timestamp, which was a placeholder	The design decision is real but midnight was not its observed time	docs/evidence/chunk-15/README.md	timestamp corrected by this row
+2026-10-26T02:12:29+00:00	integration	Separate logged relative-mesh directory from package root	The URDF-relative STL and package DAE live under different roots	src/hub/controllers/Field3dController.ts	implemented
+2026-10-26T02:12:29+00:00	integration	Keep logged TF child-track ownership including unavailable samples	Robot visuals and attached frame-id objects need the same transform authority	src/shared/urdf/URDFLog.test.ts	tests green
+2026-10-26T02:12:29+00:00	review	Skip joint history construction when no robot is selected	Default scene viewing must not index unused JointState data	src/hub/controllers/Field3dController.ts	independent review finding fixed
+2026-10-26T02:12:29+00:00	verification	Replace integration expected values with independent joint math	Using the graph composition helper for expected poses could hide a shared bug	src/shared/urdf/URDFLog.test.ts	tests green
+2026-10-26T02:12:29+00:00	verification	Use Node 22 and supported proxy configuration for installation	Initial install failures came from unwritable caches and downloads bypassing the proxy	docs/evidence/chunk-15/checks.txt	npm ci and all required checks passed
+2026-10-26T02:12:29+00:00	verification	Stop after one app launch with no display available	DISPLAY is unset and Electron failed before window creation; the user forbids display workarounds	docs/evidence/chunk-15/app-launch.txt	visual verification unavailable
+2026-10-26T02:12:29+00:00	audit	Supersede scratch evidence pointers in earlier setup rows with committed output	Reviewers need evidence included in the PR	docs/evidence/chunk-15/checks.txt	command output retained

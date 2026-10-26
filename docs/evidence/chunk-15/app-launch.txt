@@ -1,0 +1,40 @@
+DISPLAY is unset.
+Command: npm start -- --no-sandbox
+
+> advantagescope@27.0.0-alpha-6 start
+> electron bundles/main.js --no-sandbox
+
+[9085:1026/021058.652344:ERROR:dbus/bus.cc:408] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+App threw an error during load
+Error: Failed to get 'userData' path
+    at Object.<anonymous> (/workspace/TerraScope-urdf/bundles/main.js:38752:55)
+    at Module._compile (node:internal/modules/cjs/loader:1714:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1848:10)
+    at Module.load (node:internal/modules/cjs/loader:1448:32)
+    at Module._load (node:internal/modules/cjs/loader:1270:12)
+    at c._load (node:electron/js2c/node_init:2:17993)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:244:24)
+    at cjsLoader (node:internal/modules/esm/translators:313:5)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:202:7)
+[1m[47m[31mA JavaScript error occurred in the main process
+[30mUncaught Exception:
+Error: Failed to get 'userData' path
+    at Object.<anonymous> (/workspace/TerraScope-urdf/bundles/main.js:38752:55)
+    at Module._compile (node:internal/modules/cjs/loader:1714:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1848:10)
+    at Module.load (node:internal/modules/cjs/loader:1448:32)
+    at Module._load (node:internal/modules/cjs/loader:1270:12)
+    at c._load (node:electron/js2c/node_init:2:17993)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:244:24)
+    at cjsLoader (node:internal/modules/esm/translators:313:5)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:202:7)
+[0m/workspace/TerraScope-urdf/node_modules/electron/dist/electron exited with signal SIGTRAP
+npm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
+
+Exit status: 1

@@ -169,7 +169,7 @@ largely irrelevant to the debugging and visualization experience.
 
 - [ ] Recognize common robotics data structures. (WPILib poses, trajectories, Mechanism2d, joysticks, and swerve states drive the specialized tabs.)
 - [x] Interpret poses, transforms, vectors, and rotations.
-- [ ] Interpret joint states. (WPILib Mechanism2d ligament angles and lengths. Not general joint-state messages.)
+- [x] Interpret joint states. (Named ROS JointState positions drive URDF joints at the timeline cursor.)
 - [ ] Interpret trajectories and paths. (WPILib Trajectory plus swerve and differential samples on the 3D field.)
 - [x] Interpret images and spatial sensor measurements. (ROS 2 images, laser scans, and point clouds, plus AprilTag poses and vision targets.)
 - [ ] Support custom semantic type mappings. (Object type is chosen per field in the 2D and 3D tabs. Mappings are not reusable semantic adapters.)
@@ -429,22 +429,22 @@ largely irrelevant to the debugging and visualization experience.
 
 # 11. Robot Models and Mechanisms
 
-- [ ] URDF support.
+- [x] URDF support. (Visual geometry and fixed, revolute, continuous, and prismatic joints.)
 - [ ] SDF support.
-- [ ] Common 3D model formats. (Robot and field models load as glTF/GLB.)
+- [x] Common 3D model formats. (glTF/GLB assets and local STL/DAE URDF visuals.)
 - [x] Custom robot models.
 - [ ] Multiple articulated robots. (Several mechanisms can be combined, and 3D components attach to a robot.)
-- [ ] Robot link visualization. (3D component glTF parts and Mechanism2d ligaments.)
-- [ ] Joint state visualization. (Mechanism2d angles and lengths.)
-- [ ] Revolute joints. (Mechanism2d ligament angles.)
-- [ ] Prismatic joints. (Mechanism2d ligament lengths.)
-- [ ] Continuous joints.
-- [ ] Fixed joints.
-- [ ] Joint limits.
+- [x] Robot link visualization. (URDF visuals resolve through the shared frame graph.)
+- [x] Joint state visualization. (Named JointState positions drive URDF visuals.)
+- [x] Revolute joints.
+- [x] Prismatic joints.
+- [x] Continuous joints.
+- [x] Fixed joints.
+- [x] Joint limits. (Revolute and prismatic positions clamp to URDF limits.)
 - [ ] Joint velocities.
 - [ ] Joint torques.
-- [ ] Forward kinematics.
-- [ ] Kinematic chains. (Mechanism2d is a tree of ligaments. There is no general kinematic solver.)
+- [x] Forward kinematics. (URDF joint origins and local-axis motion compose through link chains.)
+- [x] Kinematic chains. (Connected URDF link trees.)
 - [ ] Desired vs actual joint states. (An extra mechanism or ghost pose can be shown. There is no dedicated joint-error view.)
 - [x] Mechanism animations.
 - [x] Live mechanism visualization.

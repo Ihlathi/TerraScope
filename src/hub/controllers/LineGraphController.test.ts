@@ -108,6 +108,91 @@ test("enum lanes preserve states over time and colors across zoom and layout rel
   }
 });
 
+test("enum lanes reuse unchanged field history and refresh after mutations", (t) => {
+  for (const states of [
+    ["idle", "running", "fault"],
+    [2, -1, 0]
+  ]) {
+    const log = new Log();
+    const put = (time: number, value: string | number) =>
+      typeof value === "string" ? log.putString("state", time, value) : log.putNumber("state", time, value);
+    put(0, states[0]);
+    put(1, states[1]);
+    const field = log.getField("state")!;
+    const getRange = field.getRange.bind(field);
+    let historyReads = 0;
+    t.mock.method(field, "getRange", (...args: Parameters<typeof getRange>) => {
+      if (args[0] === -Infinity && args[1] === Infinity) historyReads++;
+      return getRange(...args);
+    });
+    const graph = controller(log);
+    graph.restoreState({ discreteSources: [source("state", "enum")] });
+    const first = graph.getCommand().discreteFields[0];
+    assert.deepEqual(first.values, states.slice(0, 2).map(String));
+    assert.deepEqual(Object.keys(first.colorMap!).sort(), states.slice(0, 2).map(String).sort());
+    assert.equal(historyReads, 1);
+    assert.deepEqual(graph.getCommand().discreteFields[0], first);
+    assert.deepEqual(graph.getCommand().discreteFields[0], first);
+    assert.equal(historyReads, 1);
+
+    put(2, states[2]);
+    const appended = graph.getCommand().discreteFields[0];
+    assert.deepEqual(appended.values, states.map(String));
+    assert.deepEqual(Object.keys(appended.colorMap!).sort(), states.map(String).sort());
+    for (const value of states.slice(0, 2)) {
+      assert.equal(appended.colorMap![String(value)], first.colorMap![String(value)]);
+    }
+    assert.equal(historyReads, 2);
+    assert.deepEqual(graph.getCommand().discreteFields[0], appended);
+    assert.equal(historyReads, 2);
+
+    put(0, states[2]);
+    const replaced = graph.getCommand().discreteFields[0];
+    assert.deepEqual(replaced.values, [states[2], states[1], states[2]].map(String));
+    assert.equal(replaced.colorMap![String(states[2])], first.colorMap![String(states[0])]);
+    assert.equal(historyReads, 3);
+    field.clearBeforeTime(2.5);
+    const trimmed = graph.getCommand().discreteFields[0];
+    assert.deepEqual(trimmed.values, [String(states[2])]);
+    assert.deepEqual(Object.keys(trimmed.colorMap!), [String(states[2])]);
+    assert.equal(historyReads, 4);
+  }
+});
+
+test("invalid enum history is cached and refreshed when the field becomes valid", (t) => {
+  const log = new Log();
+  log.putNumber("state", 0, 0.25);
+  const field = log.getField("state")!;
+  const getRange = field.getRange.bind(field);
+  let historyReads = 0;
+  t.mock.method(field, "getRange", (...args: Parameters<typeof getRange>) => {
+    if (args[0] === -Infinity && args[1] === Infinity) historyReads++;
+    return getRange(...args);
+  });
+  const graph = controller(log);
+  graph.restoreState({ discreteSources: [source("state", "enum")] });
+  const first = graph.getCommand().discreteFields[0];
+  assert.deepEqual(first.values, ["0.25"]);
+  assert.equal(first.colorMap, undefined);
+  assert.equal(historyReads, 1);
+  assert.deepEqual(graph.getCommand().discreteFields[0], first);
+  assert.equal(historyReads, 1);
+  log.putNumber("state", 0, 2);
+  const valid = graph.getCommand().discreteFields[0];
+  assert.deepEqual(valid.values, ["2"]);
+  assert.deepEqual(Object.keys(valid.colorMap!), ["2"]);
+  assert.equal(historyReads, 2);
+
+  const replacement = new Log();
+  replacement.putString("state", 0, "ready");
+  replacement.putString("state", 1, "waiting");
+  assert.equal(replacement.getField("state")!.getRevision(), field.getRevision());
+  window.log = replacement;
+  const reloaded = graph.getCommand().discreteFields[0];
+  assert.deepEqual(reloaded.values, ["ready", "waiting"]);
+  assert.deepEqual(Object.keys(reloaded.colorMap!), ["ready", "waiting"]);
+});
+
 test("enum lane colors handle arbitrary state names and invalid enum fields retain visible values", () => {
   const log = new Log();
   log.putString("state", 0, "__proto__");

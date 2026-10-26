@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { FrameGraph, composeFramePose, frameGraphForSource, readSourceFrame } from "./FrameGraph";
 import Log from "./Log";
+import LogField from "./LogField";
 import { LOG_CLOCK } from "./LogTimestamp";
 import ProjectedLogField from "./ProjectedLogField";
 
@@ -173,4 +174,241 @@ test("composing a frame pose preserves local object orientation", () => {
     ).translation,
     [-1, 2, 4]
   );
+});
+
+test("unchanged renders reuse the graph without reading transform history", () => {
+  const log = new Log(false);
+  batch(log, "/tf", 1, [{ parent: "map", child: "base", xyz: [1, 0, 0] }]);
+  const graph = frameGraphForSource(log, "/scan");
+  const range = log.getRange.bind(log);
+  let reads = 0;
+  log.getRange = (...args) => {
+    reads++;
+    return range(...args);
+  };
+  for (let i = 0; i < 20; i++) {
+    assert.equal(frameGraphForSource(log, "/scan"), graph);
+    close(resolved(graph, "base", "map", 1).translation, [1, 0, 0]);
+  }
+  assert.equal(reads, 0);
+});
+
+test("live appends reuse the graph and read only new transform messages", () => {
+  const log = new Log(false);
+  batch(log, "/tf_static", 1, [{ parent: "base", child: "laser", xyz: [0, 1, 0] }]);
+  batch(log, "/tf", 1, [{ parent: "map", child: "base", xyz: [1, 0, 0] }]);
+  const graph = frameGraphForSource(log, "/scan");
+  const range = log.getRange.bind(log);
+  const reads: { key: string; start: number }[] = [];
+  log.getRange = (key, start, end, ...rest) => {
+    reads.push({ key, start });
+    return range(key, start, end, ...rest);
+  };
+  batch(log, "/tf", 2, [{ parent: "map", child: "base", xyz: [2, 0, 0] }]);
+  assert.equal(frameGraphForSource(log, "/scan"), graph);
+  assert.ok(reads.length > 0);
+  assert.ok(reads.every(({ key, start }) => (key === "/tf" ? start >= 1 : start === 2)));
+  close(resolved(graph, "laser", "map", 1).translation, [1, 1, 0]);
+  close(resolved(graph, "laser", "map", 2).translation, [2, 1, 0]);
+  batch(log, "/tf_static", 3, [{ parent: "base", child: "laser", xyz: [0, 3, 0] }]);
+  assert.equal(frameGraphForSource(log, "/scan"), graph);
+  close(resolved(graph, "laser", "map", 1).translation, [1, 3, 0]);
+  close(resolved(graph, "laser", "map", 2).translation, [2, 3, 0]);
+  assert.equal(graph.defaultFixedFrame(), "map");
+});
+
+test("appending transforms does not scan accumulated timestamp arrays", (t) => {
+  const log = new Log(false);
+  for (let time = 1; time <= 4096; time++)
+    batch(log, "/tf", time, [{ parent: "map", child: "base", xyz: [time, 0, 0] }]);
+  let visits = 0;
+  for (const key of log.getFieldKeys()) {
+    const data = log.getField(key)!.toSerialized();
+    data.timestamps = new Proxy(data.timestamps, {
+      get(target, property, receiver) {
+        if (typeof property === "string" && /^\d+$/.test(property)) visits++;
+        return Reflect.get(target, property, receiver);
+      }
+    });
+    log.setField(key, LogField.fromSerialized(data));
+  }
+  const graph = frameGraphForSource(log, "/scan");
+  visits = 0;
+  assert.equal(frameGraphForSource(log, "/scan"), graph);
+  assert.equal(visits, 0);
+  batch(log, "/tf", 4097, [{ parent: "map", child: "base", xyz: [4097, 0, 0] }]);
+  visits = 0;
+  frameGraphForSource(log, "/scan");
+  t.diagnostic(`One live append after 4096 samples visited ${visits} timestamps.`);
+  assert.ok(visits < 1000, `An append visited ${visits} timestamps from accumulated history`);
+  assert.equal(frameGraphForSource(log, "/scan"), graph);
+  close(resolved(graph, "base", "map", 4097).translation, [4097, 0, 0]);
+  const projected = new Log(false);
+  const refresh = () =>
+    projected.setProjectedSources([
+      {
+        log,
+        namespace: "/Live0",
+        conversion: {
+          from: { kind: "clock", id: "Live0/log" },
+          to: LOG_CLOCK,
+          offsetSeconds: 10
+        }
+      }
+    ]);
+  refresh();
+  const projectedGraph = frameGraphForSource(projected, "/Live0/scan");
+  batch(log, "/tf", 4098, [{ parent: "map", child: "base", xyz: [4098, 0, 0] }]);
+  refresh();
+  visits = 0;
+  assert.equal(frameGraphForSource(projected, "/Live0/scan"), projectedGraph);
+  t.diagnostic(`One projected live append after 4097 samples visited ${visits} timestamps.`);
+  assert.ok(visits < 1000, `A projected append visited ${visits} timestamps from accumulated history`);
+  close(resolved(projectedGraph, "base", "map", 4108).translation, [4098, 0, 0]);
+});
+
+test("incremental poses match a fresh graph at every boundary across sparse and reordered messages", () => {
+  const log = new Log(false);
+  batch(log, "/tf_static", 10, [{ parent: "base", child: "camera", xyz: [0, 2, 0] }]);
+  let graphAfterFirst = frameGraphForSource(log, "/scan");
+  for (let time = 1; time <= 8; time++) {
+    const transforms: Transform[] = [{ parent: "map", child: "base", xyz: [time, 2, 0], yaw: time / 4 }];
+    if (time % 2) transforms.push({ parent: "base", child: "laser", xyz: [0, time, 1] });
+    if (time % 3 === 0) transforms.reverse();
+    batch(log, "/tf", time, transforms);
+    const updated = frameGraphForSource(log, "/scan");
+    const fresh = new FrameGraph(log, ["/tf_static", "/tf"]);
+    for (const cursor of [-1, 0, ...Array.from({ length: time * 2 + 1 }, (_, i) => i / 2), 100]) {
+      for (const frame of ["laser", "camera", "base", "map", "missing"])
+        for (const fixed of ["map", "camera", "laser", "base", "missing"])
+          assert.deepEqual(updated.resolve(frame, fixed, cursor), fresh.resolve(frame, fixed, cursor));
+    }
+    assert.equal(updated.defaultFixedFrame(), fresh.defaultFixedFrame());
+    if (time > 1) assert.equal(updated, graphAfterFirst);
+    else graphAfterFirst = updated;
+  }
+});
+
+test("late decoded children, field replacement, type changes and log replacement invalidate cached poses", () => {
+  const log = new Log(false);
+  batch(log, "/tf", 1, [{ parent: "map", child: "base", xyz: [1, 0, 0] }]);
+  batch(log, "/tf", 3, [{ parent: "map", child: "base", xyz: [1, 0, 0] }]);
+  let graph = frameGraphForSource(log, "/scan");
+  log.putNumber("/tf/transforms/0/transform/translation/x", 2, 2);
+  let updated = frameGraphForSource(log, "/scan");
+  assert.notEqual(updated, graph);
+  close(resolved(updated, "base", "map", 3).translation, [2, 0, 0]);
+  const replacement = new Log(false);
+  batch(replacement, "/tf", 1, [{ parent: "world", child: "base", xyz: [8, 0, 0] }]);
+  graph = updated;
+  log.setField("/tf/transforms/0/header/frame_id", replacement.getField("/tf/transforms/0/header/frame_id")!);
+  updated = frameGraphForSource(log, "/scan");
+  assert.notEqual(updated, graph);
+  assert.equal(updated.defaultFixedFrame(), "world");
+  close(resolved(updated, "base", "world", 3).translation, [2, 0, 0]);
+  log.setStructuredType("/tf", null);
+  assert.equal(frameGraphForSource(log, "/scan").resolve("base", "world", 3).status, "missing-parent");
+  log.setStructuredType("/tf", "tf2_msgs/TFMessage");
+  close(resolved(frameGraphForSource(log, "/scan"), "base", "world", 3).translation, [2, 0, 0]);
+  const replacedLog = Log.fromSerialized(structuredClone(replacement.toSerialized()));
+  assert.notEqual(frameGraphForSource(replacedLog, "/scan"), updated);
+  close(resolved(frameGraphForSource(replacedLog, "/scan"), "base", "world", 3).translation, [8, 0, 0]);
+});
+
+test("new child fields retroactively complete an existing transform", () => {
+  const source = new Log(false);
+  batch(source, "/tf", 1, [{ parent: "map", child: "base", xyz: [4, 0, 0] }]);
+  const data = structuredClone(source.toSerialized());
+  delete data.fields["/tf/transforms/0/transform/rotation/x"];
+  const log = Log.fromSerialized(data);
+  const graph = frameGraphForSource(log, "/scan");
+  assert.equal(graph.resolve("base", "map", 1).status, "invalid");
+  log.putNumber("/tf/transforms/0/transform/rotation/x", 1, 0);
+  const updated = frameGraphForSource(log, "/scan");
+  assert.notEqual(updated, graph);
+  close(resolved(updated, "base", "map", 1).translation, [4, 0, 0]);
+});
+
+test("topic priority and duplicate-time conflicts survive incremental insertion", () => {
+  const log = new Log(false);
+  batch(log, "/tf", 1, [{ parent: "map", child: "base", xyz: [1, 0, 0] }]);
+  batch(log, "tf", 2, [{ parent: "map", child: "base", xyz: [20, 0, 0] }]);
+  batch(log, "/tf_static", 1, [{ parent: "base", child: "laser", xyz: [0, 1, 0] }]);
+  batch(log, "tf_static", 1, [{ parent: "base", child: "laser", xyz: [0, 2, 0] }]);
+  const graph = frameGraphForSource(log, "/scan");
+  batch(log, "/tf", 2, [{ parent: "map", child: "base", xyz: [2, 0, 0] }]);
+  batch(log, "/tf_static", 2, [{ parent: "base", child: "laser", xyz: [0, 3, 0] }]);
+  assert.equal(frameGraphForSource(log, "/scan"), graph);
+  close(resolved(graph, "laser", "map", 2).translation, [20, 2, 0]);
+  batch(log, "/tf", 3, [
+    { parent: "map", child: "base", xyz: [3, 0, 0] },
+    { parent: "world", child: "base", xyz: [30, 0, 0] }
+  ]);
+  assert.equal(frameGraphForSource(log, "/scan"), graph);
+  assert.equal(graph.resolve("base", "map", 3).status, "invalid");
+});
+
+test("live projection refresh reuses history and invalidates source or clock replacement", () => {
+  const source = new Log(false),
+    projected = new Log(false);
+  batch(source, "/tf", 1, [{ parent: "map", child: "base", xyz: [1, 0, 0] }]);
+  const refresh = (log = source, offsetSeconds = 10) =>
+    projected.setProjectedSources([
+      {
+        log,
+        namespace: "/Live0",
+        conversion: {
+          from: { kind: "clock", id: "Live0/log" },
+          to: LOG_CLOCK,
+          offsetSeconds
+        }
+      }
+    ]);
+  refresh();
+  const graph = frameGraphForSource(projected, "/Live0/scan");
+  refresh();
+  assert.equal(frameGraphForSource(projected, "/Live0/scan"), graph);
+  batch(source, "/tf", 2, [{ parent: "map", child: "base", xyz: [2, 0, 0] }]);
+  refresh();
+  assert.equal(frameGraphForSource(projected, "/Live0/scan"), graph);
+  close(resolved(graph, "base", "map", 12).translation, [2, 0, 0]);
+  refresh(source, 20);
+  const shifted = frameGraphForSource(projected, "/Live0/scan");
+  assert.notEqual(shifted, graph);
+  assert.equal(shifted.resolve("base", "map", 12).status, "unavailable");
+  close(resolved(shifted, "base", "map", 22).translation, [2, 0, 0]);
+  const replacement = new Log(false);
+  batch(replacement, "/tf", 1, [{ parent: "odom", child: "base", xyz: [9, 0, 0] }]);
+  refresh(replacement);
+  const replaced = frameGraphForSource(projected, "/Live0/scan");
+  assert.notEqual(replaced, shifted);
+  assert.equal(replaced.defaultFixedFrame(), "odom");
+  close(resolved(replaced, "base", "odom", 11).translation, [9, 0, 0]);
+});
+
+test("transform field range boundaries preserve held values, future endpoints and cached seeks", () => {
+  const log = new Log(false);
+  for (const time of [1, 3, 5]) log.putNumber("value", time, time * 10);
+  const field = log.getField("value")!;
+  for (const [start, end, expected] of [
+    [-Infinity, Infinity, [1, 3, 5]],
+    [-1, 0, [1]],
+    [0, 2, [1, 3]],
+    [1, 1, [1]],
+    [2, 2, [1, 3]],
+    [3, 3, [3]],
+    [4, 4, [3, 5]],
+    [9, 9, [5]],
+    [2, 4, [1, 3, 5]]
+  ] as const) {
+    assert.deepEqual(field.getRange(start, end).timestamps, expected);
+    assert.deepEqual(field.getRange(start, end, "cursor").timestamps, expected);
+  }
+  for (const time of [5, 1, 4, 2, 3])
+    assert.deepEqual(field.getRange(time, time, "cursor"), field.getRange(time, time));
+  assert.deepEqual(field.getRange(3, 5, undefined, -1).timestamps, [1, 3, 5]);
+  field.clearBeforeTime(3.5);
+  assert.deepEqual(field.getRange(3.5, 3.5, "cursor"), { timestamps: [3.5], values: [30] });
+  const empty = new LogField(field.getType());
+  assert.deepEqual(empty.getRange(0, 0, "cursor"), { timestamps: [], values: [] });
 });

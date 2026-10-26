@@ -16,7 +16,7 @@ export type FrameResolution =
 type FrameFailure = Exclude<FrameResolution, { status: "resolved" }>;
 
 type Edge = { parent: string; pose: Pose3d | null };
-type Track = { static: Edge[]; dynamic: { time: number; edge: Edge }[] };
+type Track = { static: { topic: number; edge: Edge } | null; dynamic: { time: number; topic: number; edge: Edge }[] };
 const identity = (): Pose3d => ({ translation: [0, 0, 0], rotation: [1, 0, 0, 0] });
 
 function multiply(a: Rotation3d, b: Rotation3d): Rotation3d {
@@ -75,11 +75,26 @@ export function transformTopics(log: Log): string[] {
 export class FrameGraph {
   private tracks = new Map<string, Track>();
   private frames = new Set<string>();
+  private topicTimes = new Map<string, number>();
 
   constructor(log: Log, topics: readonly string[]) {
-    for (const topic of topics) {
-      const samples = log.getRange(topic, -Infinity, Infinity);
+    this.append(log, topics);
+  }
+
+  getTopicTime(topic: string): number {
+    return this.topicTimes.get(topic) ?? -Infinity;
+  }
+
+  append(log: Log, topics: readonly string[]) {
+    for (const [topicIndex, topic] of topics.entries()) {
+      const after = this.getTopicTime(topic);
+      const field = log.getField(topic)!;
+      const lastTime = field.getTimestamp(field.getHistoryState().count - 1);
+      if (lastTime === undefined || (this.topicTimes.has(topic) && lastTime <= after)) continue;
+      const samples = log.getRange(topic, after, Infinity);
       for (const time of samples?.timestamps ?? []) {
+        if (this.topicTimes.has(topic) && time <= after) continue;
+        this.topicTimes.set(topic, time);
         const length = valueAt(log, topic + "/transforms/length", time);
         if (typeof length !== "number" || !Number.isSafeInteger(length) || length < 0 || length > 100000) continue;
         for (let i = 0; i < length; i++) {
@@ -112,15 +127,25 @@ export class FrameGraph {
           if (edge.parent) this.frames.add(edge.parent);
           let track = this.tracks.get(childFrame);
           if (!track) {
-            track = { static: [], dynamic: [] };
+            track = { static: null, dynamic: [] };
             this.tracks.set(childFrame, track);
           }
-          if (topic.endsWith("tf_static")) track.static.push(edge);
-          else track.dynamic.push({ time, edge });
+          if (topic.endsWith("tf_static")) {
+            if (track.static === null || topicIndex >= track.static.topic) track.static = { topic: topicIndex, edge };
+          } else {
+            let low = 0,
+              high = track.dynamic.length;
+            while (low < high) {
+              const mid = (low + high) >>> 1;
+              const sample = track.dynamic[mid];
+              if (sample.time < time || (sample.time === time && sample.topic <= topicIndex)) low = mid + 1;
+              else high = mid;
+            }
+            track.dynamic.splice(low, 0, { time, topic: topicIndex, edge });
+          }
         }
       }
     }
-    this.tracks.forEach((track) => track.dynamic.sort((a, b) => a.time - b.time));
   }
 
   defaultFixedFrame(): string {
@@ -132,8 +157,8 @@ export class FrameGraph {
   private edgeAt(frame: string, time: number): Edge | FrameFailure {
     const track = this.tracks.get(frame);
     if (!track) return { status: "missing-parent", frame };
-    if (track.static.length && track.dynamic.length) return { status: "invalid", frame };
-    if (track.static.length) return track.static[track.static.length - 1];
+    if (track.static !== null && track.dynamic.length) return { status: "invalid", frame };
+    if (track.static !== null) return track.static.edge;
     let low = 0,
       high = track.dynamic.length;
     while (low < high) {
@@ -192,8 +217,11 @@ export class FrameGraph {
   }
 }
 
-type FieldVersion = { key: string; field: LogField; revision: number; type: string | null };
-const graphCache = new WeakMap<Log, Map<string, { fields: FieldVersion[]; graph: FrameGraph }>>();
+type FieldVersion = ReturnType<LogField["getHistoryState"]> & { field: LogField; type: string | null };
+const graphCache = new WeakMap<
+  Log,
+  Map<string, { topics: string[]; fields: Map<string, FieldVersion>; graph: FrameGraph }>
+>();
 
 export function frameGraphForSource(log: Log, sourceKey: string): FrameGraph {
   const allTopics = transformTopics(log);
@@ -210,31 +238,43 @@ export function frameGraphForSource(log: Log, sourceKey: string): FrameGraph {
     sourceScope ??
     "";
   const topics = allTopics.filter((topic) => topic.replace(/(?:^|\/)tf(?:_static)?$/, "") === namespace);
-  const fields = log
-    .getFieldKeys()
-    .filter((key) => topics.some((topic) => key === topic || key.startsWith(topic + "/")))
-    .map((key) => {
-      const field = log.getField(key)!;
-      return { key, field, revision: field.getRevision(), type: field.structuredType };
-    });
+  const fields = new Map(
+    log
+      .getFieldKeys()
+      .filter((key) => topics.some((topic) => key === topic || key.startsWith(topic + "/")))
+      .map((key) => {
+        const field = log.getField(key)!;
+        return [key, { field, ...field.getHistoryState(), type: field.structuredType }] as const;
+      })
+  );
   let cache = graphCache.get(log);
   if (!cache) {
     cache = new Map();
     graphCache.set(log, cache);
   }
   const cached = cache.get(namespace);
-  if (
-    cached &&
-    fields.length === cached.fields.length &&
-    fields.every((entry, i) => {
-      const old = cached.fields[i];
-      return (
-        entry.key === old.key && entry.field === old.field && entry.revision === old.revision && entry.type === old.type
-      );
-    })
-  )
-    return cached.graph;
-  const graph = new FrameGraph(log, topics);
-  cache.set(namespace, { fields, graph });
+  const sameTopics =
+    cached && topics.length === cached.topics.length && topics.every((topic, i) => topic === cached.topics[i]);
+  let unchanged = sameTopics && fields.size === cached.fields.size;
+  let appendOnly = sameTopics && [...cached.fields.keys()].every((key) => fields.has(key));
+  for (const [key, entry] of fields) {
+    const old = cached?.fields.get(key);
+    const sameField =
+      old && entry.source === old.source && entry.offsetSeconds === old.offsetSeconds && entry.type === old.type;
+    if (sameField && entry.revision === old.revision) continue;
+    unchanged = false;
+    if (!appendOnly) continue;
+    if (old && (!sameField || entry.nonAppendRevision !== old.nonAppendRevision || entry.count < old.count)) {
+      appendOnly = false;
+      continue;
+    }
+    const firstNewTime = entry.field.getTimestamp(old?.count ?? 0);
+    const topic = topics.find((topic) => key === topic || key.startsWith(topic + "/"))!;
+    if (firstNewTime !== undefined && firstNewTime <= cached!.graph.getTopicTime(topic)) appendOnly = false;
+  }
+  if (unchanged) return cached!.graph;
+  const graph = appendOnly ? cached!.graph : new FrameGraph(log, topics);
+  if (appendOnly) graph.append(log, topics);
+  cache.set(namespace, { topics, fields, graph });
   return graph;
 }

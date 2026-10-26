@@ -9,6 +9,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import descriptor from "protobufjs/ext/descriptor";
 import Log from "./Log";
+import LogField from "./LogField";
+import LoggableType from "./LoggableType";
 import {
   ConvertedTimestamp,
   DomainTimestamp,
@@ -17,6 +19,7 @@ import {
   TimestampDomain,
   convertTimestamp
 } from "./LogTimestamp";
+import ProjectedLogField, { sourceClock } from "./ProjectedLogField";
 
 const sensor: TimestampDomain = { kind: "clock", id: "camera" };
 function stamp(display: number, seconds = display + 100, domain = sensor): ConvertedTimestamp {
@@ -202,4 +205,79 @@ test("provenance uses the same samples as range queries after an exact-cutoff tr
   assert.deepEqual(sources(log), [stamp(1).source, stamp(2).source, stamp(3).source]);
   assert.deepEqual(log.getNumber("value", 2.5, Infinity), { timestamps: [2, 3], values: [2, 3] });
   assert.deepEqual(log.getTimestampSources("value", 2.5, Infinity), [stamp(2).source, stamp(3).source]);
+});
+
+test("projected fields preserve timestamps, values, ranges and source clocks", () => {
+  const source = new LogField(LoggableType.Number);
+  source.putNumber(stamp(1), 10);
+  source.putNumber(stamp(2), 20);
+  source.putNumber(stamp(3), 30);
+  const projected = new ProjectedLogField(source, LOG_CLOCK, "/Live1", {
+    from: sourceClock("/Live1", LOG_CLOCK),
+    to: RECEIVE_CLOCK,
+    offsetSeconds: 10
+  });
+  assert.deepEqual(projected.getTimestamps(), [11, 12, 13]);
+  assert.deepEqual(projected.getNumber(-Infinity, Infinity), { timestamps: [11, 12, 13], values: [10, 20, 30] });
+  assert.deepEqual(projected.getNumber(11.5, 12), { timestamps: [11, 12], values: [10, 20] });
+  assert.deepEqual(projected.getTimestampSources(-Infinity, Infinity), [
+    { seconds: 101, domain: { kind: "clock", id: "Live1/camera" } },
+    { seconds: 102, domain: { kind: "clock", id: "Live1/camera" } },
+    { seconds: 103, domain: { kind: "clock", id: "Live1/camera" } }
+  ]);
+  const serialized = projected.toSerialized();
+  assert.deepEqual(serialized.timestamps, [11, 12, 13]);
+  assert.deepEqual(serialized.values, [10, 20, 30]);
+  assert.deepEqual(source.getTimestamps(), [1, 2, 3]);
+});
+
+test("projected timestamps remap only when the source revision or mapping changes", () => {
+  class CountedField extends LogField {
+    timestampReads = 0;
+    getTimestamps(): number[] {
+      this.timestampReads++;
+      return super.getTimestamps();
+    }
+  }
+  const source = new CountedField(LoggableType.Number);
+  const conversion = { from: sourceClock("/Live1", LOG_CLOCK), to: RECEIVE_CLOCK, offsetSeconds: 10 };
+  const projected = new ProjectedLogField(source, LOG_CLOCK, "/Live1", conversion);
+  const empty = projected.getTimestamps();
+  assert.deepEqual(empty, []);
+  assert.strictEqual(projected.getTimestamps(), empty);
+  assert.equal(source.timestampReads, 1);
+
+  source.putNumber(1, 10);
+  source.putNumber(2, 20);
+  const initial = projected.getTimestamps();
+  assert.deepEqual(initial, [11, 12]);
+  assert.notStrictEqual(initial, empty);
+  assert.strictEqual(projected.getTimestamps(), initial);
+  assert.equal(source.timestampReads, 2);
+
+  source.putNumber(3, 30);
+  const appended = projected.getTimestamps();
+  assert.deepEqual(appended, [11, 12, 13]);
+  assert.notStrictEqual(appended, initial);
+  assert.strictEqual(projected.getTimestamps(), appended);
+  assert.deepEqual(projected.getNumber(-Infinity, Infinity), { timestamps: [11, 12, 13], values: [10, 20, 30] });
+  assert.equal(source.timestampReads, 3);
+
+  const revision = source.getRevision();
+  conversion.offsetSeconds = -5;
+  const remapped = projected.getTimestamps();
+  assert.equal(source.getRevision(), revision);
+  assert.deepEqual(remapped, [-4, -3, -2]);
+  assert.notStrictEqual(remapped, appended);
+  assert.strictEqual(projected.getTimestamps(), remapped);
+  assert.deepEqual(projected.getNumber(-Infinity, Infinity), { timestamps: [-4, -3, -2], values: [10, 20, 30] });
+  assert.equal(source.timestampReads, 4);
+
+  source.clearBeforeTime(1.5);
+  const trimmed = projected.getTimestamps();
+  assert.deepEqual(trimmed, [-3.5, -3, -2]);
+  assert.equal(trimmed.length, remapped.length);
+  assert.notStrictEqual(trimmed, remapped);
+  assert.strictEqual(projected.getTimestamps(), trimmed);
+  assert.equal(source.timestampReads, 5);
 });

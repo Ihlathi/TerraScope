@@ -23,6 +23,10 @@ import {
 /** A full log field that contains data. */
 export default class LogField {
   private revision = 0;
+  private rewriteRevision = 0;
+  private removedCount = 0;
+  private trimRevision = 0;
+  private trimmedBefore: number | null = null;
   private type: LoggableType;
   private data: LogValueSetAny = { timestamps: [], values: [] };
   private sourceTimestamps: (DomainTimestamp | null)[] | undefined;
@@ -49,6 +53,32 @@ export default class LogField {
 
   getRevision(): number {
     return this.revision;
+  }
+
+  getHistoryState(): {
+    source: LogField;
+    offsetSeconds: number;
+    revision: number;
+    rewriteRevision: number;
+    count: number;
+    removedCount: number;
+    trimRevision: number;
+    trimmedBefore: number | null;
+  } {
+    return {
+      source: this,
+      offsetSeconds: 0,
+      revision: this.revision,
+      rewriteRevision: this.rewriteRevision,
+      count: this.data.timestamps.length,
+      removedCount: this.removedCount,
+      trimRevision: this.trimRevision,
+      trimmedBefore: this.trimmedBefore
+    };
+  }
+
+  getTimestamp(index: number): number | undefined {
+    return this.data.timestamps[index];
   }
 
   /** Returns the constant field type. */
@@ -78,7 +108,10 @@ export default class LogField {
 
   /** Clears all data before the provided timestamp. */
   clearBeforeTime(clearTimestamp: number) {
+    if (this.data.timestamps.length === 0 || !(this.data.timestamps[0] < clearTimestamp)) return;
     this.revision++;
+    this.trimmedBefore = clearTimestamp;
+    this.trimRevision++;
     for (let i = 0; i < this.data.timestamps.length; i++) {
       // If there is more than 1 timestamps and if it occurs before the given timestamp, remove it
       if (this.data.timestamps.length >= 2 && this.data.timestamps[i + 1] < clearTimestamp) {
@@ -86,6 +119,7 @@ export default class LogField {
         continue;
       }
 
+      this.removedCount += i;
       this.data.timestamps.splice(0, i);
       this.data.values.splice(0, i);
       this.sourceTimestamps?.splice(0, i);
@@ -104,43 +138,33 @@ export default class LogField {
       cacheIndex = this.getRangeCache[uuid];
     }
 
-    let startValueIndex = -1;
-    if (
-      cacheIndex !== null &&
-      cacheIndex < this.data.timestamps.length &&
-      !(this.data.timestamps[cacheIndex] > start)
-    ) {
-      // Search from previous location
-      let rawIndex = this.data.timestamps.slice(cacheIndex).findIndex((x) => x > start);
-      if (rawIndex !== -1) startValueIndex = rawIndex + cacheIndex;
-    }
-    if (startValueIndex === -1) {
-      // Search from start
-      startValueIndex = this.data.timestamps.findIndex((x) => x > start);
-    }
-    if (startValueIndex === -1) {
-      startValueIndex = this.data.timestamps.length - 1;
-    } else if (startValueIndex !== 0) {
-      startValueIndex -= 1;
-    }
+    const findIndex = (timestamp: number, inclusive: boolean, low: number): number => {
+      let high = this.data.timestamps.length;
+      while (low < high) {
+        const mid = (low + high) >>> 1;
+        if (inclusive ? this.data.timestamps[mid] >= timestamp : this.data.timestamps[mid] > timestamp) high = mid;
+        else low = mid + 1;
+      }
+      return low;
+    };
+    const cachedIndex = cacheIndex ?? -1;
+    const canUseCache = cachedIndex >= 0 && cachedIndex < this.data.timestamps.length;
+    let startValueIndex = findIndex(
+      start,
+      false,
+      canUseCache && this.data.timestamps[cachedIndex] <= start ? cachedIndex : 0
+    );
+    startValueIndex = startValueIndex === 0 ? 0 : startValueIndex - 1;
+    if (this.data.timestamps.length === 0) startValueIndex = -1;
     if (startOffset !== undefined && startOffset >= -startValueIndex) {
       startValueIndex += startOffset;
     }
-
-    let endValueIndex = -1;
-    if (cacheIndex !== null && cacheIndex < this.data.timestamps.length && !(this.data.timestamps[cacheIndex] >= end)) {
-      // Search from previous location
-      let rawIndex = this.data.timestamps.slice(cacheIndex).findIndex((x) => x >= end);
-      if (rawIndex !== -1) endValueIndex = rawIndex + cacheIndex;
-    }
-    if (endValueIndex === -1) {
-      // Search from start
-      endValueIndex = this.data.timestamps.findIndex((x) => x >= end);
-    }
-    const endIndex =
-      endValueIndex === -1 || endValueIndex === this.data.timestamps.length - 1
-        ? this.data.timestamps.length
-        : endValueIndex + 1;
+    const endValueIndex = findIndex(
+      end,
+      true,
+      canUseCache && this.data.timestamps[cachedIndex] < end ? cachedIndex : 0
+    );
+    const endIndex = Math.min(endValueIndex + 1, this.data.timestamps.length);
 
     if (start === end && uuid !== undefined) {
       this.getRangeCache[uuid] = startValueIndex;
@@ -205,6 +229,9 @@ export default class LogField {
     const source = timestampSource(time);
     if (value === null) return;
     this.revision++;
+    if (this.data.timestamps.length > 0 && timestamp <= this.data.timestamps[this.data.timestamps.length - 1]) {
+      this.rewriteRevision++;
+    }
     this.onSample?.(time, value);
     if (source !== null && this.sourceTimestamps === undefined) {
       this.sourceTimestamps = this.data.timestamps.map(() => null);

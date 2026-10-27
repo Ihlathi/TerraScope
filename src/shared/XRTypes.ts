@@ -7,7 +7,7 @@
 
 import { AdvantageScopeAssets } from "./AdvantageScopeAssets";
 import { Translation3d } from "./geometry";
-import { Field3dRendererCommand } from "./renderers/Field3dRenderer";
+import { Field3dRendererCommand, Field3dRendererURDFModel } from "./renderers/Field3dRenderer";
 
 export type XRSettings = {
   calibration: XRCalibrationMode;
@@ -31,6 +31,7 @@ export enum XRStreamingMode {
 export type XRPacket =
   | { type: "settings"; time: number; value: XRSettings }
   | { type: "command"; time: number; value: Field3dRendererCommand }
+  | { type: "urdfModel"; time: number; value: Field3dRendererURDFModel | null }
   | { type: "assets"; time: number; value: AdvantageScopeAssets };
 
 export type XRFrameState = {

@@ -12,14 +12,16 @@ import { networkInterfaces } from "os";
 import path from "path";
 import { WebSocketServer } from "ws";
 import { AdvantageScopeAssets } from "../../shared/AdvantageScopeAssets";
-import { Field3dRendererCommand } from "../../shared/renderers/Field3dRenderer";
+import { Field3dRendererCommand, Field3dRendererURDFModel } from "../../shared/renderers/Field3dRenderer";
 import { XRPacket, XRSettings } from "../../shared/XRTypes";
 import { XR_SERVER_PORT, XR_URL_PREFIX } from "./ElectronConstants";
+import XRURDFModel from "./XRURDFModel";
 
 export namespace XRServer {
   let httpServer: http.Server | null = null;
   let wsServer: WebSocketServer | null = null;
   let xrSettings: XRSettings | null = null;
+  const urdfModel = new XRURDFModel();
   let periodicInterval: NodeJS.Timeout | null = null;
   const msgpackEncoder = new Encoder();
   export let assetsSupplier: () => AdvantageScopeAssets;
@@ -145,6 +147,9 @@ export namespace XRServer {
 
     // Create WebSocket server
     wsServer = new WebSocketServer({ server: httpServer, path: "/ws" });
+    wsServer.on("connection", (client) => {
+      client.send(msgpackEncoder.encode(urdfModel.snapshot()));
+    });
     periodicInterval = setInterval(() => {
       // Send current settings
       if (xrSettings !== null) {
@@ -176,6 +181,7 @@ export namespace XRServer {
     httpServer?.close();
     wsServer?.close();
     xrSettings = null;
+    urdfModel.clear();
     if (periodicInterval !== null) {
       clearInterval(periodicInterval);
       periodicInterval = null;
@@ -195,6 +201,13 @@ export namespace XRServer {
     wsServer?.clients.forEach((client) => {
       client.send(message);
     });
+  }
+
+  export function setURDFModel(model: Field3dRendererURDFModel | null) {
+    const packet = urdfModel.update(model);
+    if (packet === null) return;
+    const message = msgpackEncoder.encode(packet);
+    wsServer?.clients.forEach((client) => client.send(message));
   }
 
   export function setHubCommand(command: Field3dRendererCommand) {

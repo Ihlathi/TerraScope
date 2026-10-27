@@ -17,7 +17,8 @@ import { checkArrayType, clampValue } from "../util";
 import {
   Field3dRendererCommand,
   Field3dRendererCommand_AnyObj,
-  Field3dRendererCommand_RobotObj
+  Field3dRendererCommand_RobotObj,
+  Field3dRendererURDFModel
 } from "./Field3dRenderer";
 import TabRenderer from "./TabRenderer";
 import makeAxesField from "./field3d/AxesField";
@@ -32,6 +33,7 @@ import HeatmapManager from "./field3d/objectManagers/HeatmapManager";
 import PointsManager from "./field3d/objectManagers/PointsManager";
 import RobotManager from "./field3d/objectManagers/RobotManager";
 import TrajectoryManager from "./field3d/objectManagers/TrajectoryManager";
+import URDFManager from "./field3d/objectManagers/URDFManager";
 
 export const FTC_GRID_COLOR = "#888";
 
@@ -137,6 +139,7 @@ export default class Field3dRendererImpl implements TabRenderer {
   private lastDevicePixelRatio: number | null = null;
   private lastIsDark: boolean | null = null;
   private lastCommandString: string = "";
+  private urdfModel: Field3dRendererURDFModel | null = null;
   private lastAssets: AdvantageScopeAssets | null = null;
   private lastFieldId: string = "";
   private lastIsFTC: boolean | null = null;
@@ -352,7 +355,11 @@ export default class Field3dRendererImpl implements TabRenderer {
     this.shouldRender = true;
   }
 
-  stop() {}
+  stop() {
+    this.urdfModel = null;
+    this.objectManagers.forEach((entry) => entry.manager.dispose());
+    this.objectManagers = [];
+  }
 
   /** Resets the camera position and controls target. */
   private resetCamera(command: Field3dRendererCommand, isFTC: boolean, animate = true) {
@@ -499,6 +506,9 @@ export default class Field3dRendererImpl implements TabRenderer {
       case "gamePiece":
         manager = new GamePieceManager(...args, this.fieldPieces);
         break;
+      case "urdf":
+        manager = new URDFManager(...args);
+        break;
       case "points":
         manager = new PointsManager(...args);
         break;
@@ -541,8 +551,20 @@ export default class Field3dRendererImpl implements TabRenderer {
     return manager;
   }
 
+  getURDFDiagnostics(): string[] {
+    return this.objectManagers.flatMap((entry) =>
+      entry.manager instanceof URDFManager ? entry.manager.getDiagnostics() : []
+    );
+  }
+
   getAspectRatio(): number | null {
     return this.aspectRatio;
+  }
+
+  setURDFModel(model: Field3dRendererURDFModel | null): void {
+    if (this.urdfModel?.id === model?.id) return;
+    this.urdfModel = model;
+    this.lastCommandString = "";
   }
 
   render(command: Field3dRendererCommand): void {
@@ -911,6 +933,7 @@ export default class Field3dRendererImpl implements TabRenderer {
       if (entry.type === "heatmap") {
         (entry.manager as HeatmapManager).setIsRedAlliance(command.isRedAlliance);
       }
+      if (entry.type === "urdf") (entry.manager as URDFManager).setModel(this.urdfModel);
       entry.manager.setObjectData(object);
     });
     this.objectManagers.forEach((entry) => {

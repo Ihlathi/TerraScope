@@ -274,6 +274,32 @@
               />
             </div>
           </div>
+          <div class="title"><div class="full">URDF robot</div></div>
+          <div class="urdf-controls">
+            <select class="urdf-description" title="URDF file or logged robot_description">
+              <option value="">None</option>
+            </select>
+            <button class="urdf-load" type="button">Load URDF...</button>
+            <label
+              >Joint states
+              <select class="urdf-joints" title="JointState topic">
+                <option value="">Automatic</option>
+              </select></label
+            >
+            <button class="urdf-packages" type="button" title="Folder containing package-name folders">
+              Package root...
+            </button>
+            <div class="urdf-package-name"></div>
+            <button
+              class="urdf-resources"
+              type="button"
+              title="Base directory for relative meshes in logged descriptions"
+            >
+              Logged mesh directory...
+            </button>
+            <div class="urdf-resource-name"></div>
+            <div class="urdf-status" role="status"></div>
+          </div>
           <div class="custom-environment">
             <div class="custom-row">
               <span>Length (m)</span>

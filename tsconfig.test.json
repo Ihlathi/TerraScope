@@ -38,6 +38,9 @@
     "src/shared/renderers/ImageRenderer.test.ts",
     "src/hub/controllers/ImageController.test.ts",
     "src/hub/ImageSatellitePublisher.test.ts",
-    "src/main/ImageSatelliteRouting.test.ts"
+    "src/main/ImageSatelliteRouting.test.ts",
+    "src/shared/urdf/URDF.test.ts",
+    "src/shared/urdf/URDFLog.test.ts",
+    "src/main/electron/URDFSources.test.ts"
   ]
 }

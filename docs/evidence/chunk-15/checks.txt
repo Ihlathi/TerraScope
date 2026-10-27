@@ -1,4 +1,4 @@
-PR #23 second fix-up rebased on main 93ccdfd7
+PR #23 second fix-up rebased on main eacf546d
 
 
 $ node --version
@@ -7,7 +7,7 @@ v22.23.4
 Exit status: 0
 
 $ npm ci
-(node:19351) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:23403) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 npm warn skipping integrity check for git dependency ssh://git@github.com/jwbonner/youtube-dl-exec.git
 npm warn skipping integrity check for git dependency ssh://git@github.com/jwbonner/heatmap.js.git
@@ -17,55 +17,55 @@ npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and cont
 > advantagescope@27.0.0-alpha-6 postinstall
 > cd docs && npm install && cd .. && node getLicenses.mjs && node tesseractLangDownload.mjs && node bundleLiteAssets.mjs && npm run download-owlet
 
-(node:19937) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:23990) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 up to date in 1s
-(node:19949) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24002) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 Saved 746 licenses
-(node:19961) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24014) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:19973) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24026) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 Lite assets are already up-to-date. Skipping download.
-(node:19981) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24034) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 > advantagescope@27.0.0-alpha-6 download-owlet
 > rolldown -c --configRunOwletDownload && node runOwletDownload.js
 
-(node:19994) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24047) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
  WARN  Option configRunOwletDownload is unrecognized. We will ignore this option.
 
 <DIR>/runOwletDownload.js  chunk │ size: 12.02 kB
 
-✔ rolldown v1.0.2 Finished in 9.59 s
+✔ rolldown v1.0.2 Finished in 8.04 s
 Downloading owlet...
-(node:20046) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24066) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 Finished downloading for linux-armv7l
-Finished downloading for mac-arm64
-Finished downloading for linux-arm64
-Finished downloading for mac-x64
 Finished downloading for linux-x64
+Finished downloading for linux-arm64
 Finished downloading for win-x64
+Finished downloading for mac-x64
 Finished downloading for win-arm64
+Finished downloading for mac-arm64
 
-added 742 packages in 2m
+added 742 packages in 1m
 
 Exit status: 0
 
 $ npm run wasm:compile
-(node:20058) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24078) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 > advantagescope@27.0.0-alpha-6 wasm:compile
 > node wasmCompile.mjs
 
-(node:20071) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24091) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 
@@ -73,16 +73,16 @@ $ npm run wasm:compile
 Exit status: 0
 
 $ npm run compile
-(node:20177) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24197) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 > advantagescope@27.0.0-alpha-6 compile
 > rolldown -c
 
-(node:20190) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24210) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
-<DIR>/record.js  chunk │ size: 2,014.81 kB
-<DIR>/main.js  chunk │ size: 1,916.34 kB
+<DIR>/record.js  chunk │ size: 2,014.97 kB
+<DIR>/main.js  chunk │ size: 1,916.56 kB
 <DIR>/preload.js  chunk │ size: 0.64 kB
 <DIR>/chunk/WPILOGShared.js         chunk │ size:     0.48 kB
 <DIR>/chunk/buildConstants.js       chunk │ size:     0.77 kB
@@ -125,7 +125,7 @@ $ npm run compile
 <DIR>/chunk/Log.js                  chunk │ size:    98.39 kB
 <DIR>/chunk/ROS2Decoder.js          chunk │ size:   220.91 kB
 <DIR>/chunk/RobotState.js           chunk │ size:   288.30 kB
-<DIR>/hub.js                        chunk │ size:   428.22 kB
+<DIR>/hub.js                        chunk │ size:   428.62 kB
 <DIR>/chunk/VideoRenderer.js        chunk │ size:   534.16 kB
 <DIR>/unitConversion.js             chunk │ size: 1,040.25 kB
 <DIR>/licenses.js                   chunk │ size: 1,405.91 kB
@@ -133,1282 +133,1312 @@ $ npm run compile
 <DIR>/chunk/Field3dRendererImpl.js  chunk │ size: 1,670.45 kB
 <DIR>/xrClient.js  chunk │ size: 1,213.96 kB
 
-✔ rolldown v1.0.2 Finished in 50.68 s
+✔ rolldown v1.0.2 Finished in 46.74 s
 
 Exit status: 0
 
 $ npm test
-(node:20219) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24255) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 > advantagescope@27.0.0-alpha-6 test
 > tsc -p tsconfig.test.json && node --test build/unit-test/main/electron/URDFSources.test.js build/unit-test/shared/urdf/URDF.test.js build/unit-test/shared/urdf/URDFLog.test.js build/unit-test/hub/controllers/ImageController.test.js build/unit-test/hub/ImageSatellitePublisher.test.js build/unit-test/main/ImageSatelliteRouting.test.js build/unit-test/shared/log/ImageSensor.test.js build/unit-test/shared/renderers/ImageRenderer.test.js build/unit-test/hub/dataSources/nt4/NT4Lifecycle.test.js build/unit-test/cli/record.test.js build/unit-test/shared/log/FrameGraph.test.js build/unit-test/hub/dataSources/ros2/FrameGraphReaders.test.js build/unit-test/shared/plugins/PluginRegistry.test.js build/unit-test/hub/LiveRecording.test.js build/unit-test/shared/recording/RecordingCapture.test.js build/unit-test/shared/recording/WPILOGRecordingWriter.test.js build/unit-test/hub/dataSources/LiveRecording.test.js build/unit-test/shared/log/SpatialSensor.test.js build/unit-test/hub/dataSources/ros2/SpatialSensorReaders.test.js build/unit-test/hub/dataSources/LiveSession.test.js build/unit-test/hub/dataSources/ros2/ROS2BagDecoder.test.js build/unit-test/hub/dataSources/mcap/MCAPDecoder.test.js build/unit-test/hub/dataSources/csv/CSVDecoder.test.js build/unit-test/hub/dataSources/json/JSONDecoder.test.js build/unit-test/hub/dataSources/foxglove/FoxgloveSession.test.js build/unit-test/shared/live/LiveFrameTransport.test.js build/unit-test/shared/log/LogTimestamp.test.js build/unit-test/hub/dataSources/nt4/NT4Timestamp.test.js && node --experimental-strip-types --experimental-detect-module --test src/shared/log/SemanticType.test.ts src/shared/CustomEnvironment.test.ts && tsc -p tsconfig.graph-test.json && rolldown src/hub/controllers/LineGraphController.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/LineGraphController.test.cjs && node build/unit-test/LineGraphController.test.cjs && node --test scripts/reader-fixtures.test.mjs && rolldown src/hub/controllers/Field3dController.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/Field3dController.test.cjs && node build/unit-test/Field3dController.test.cjs && rolldown src/shared/renderers/field3d/objectManagers/URDFManager.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/URDFManager.test.cjs && node build/unit-test/URDFManager.test.cjs && rolldown src/shared/renderers/URDFTransport.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/URDFTransport.test.cjs && node build/unit-test/URDFTransport.test.cjs && rolldown src/main/electron/XRURDFModel.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/XRURDFModel.test.cjs && node build/unit-test/XRURDFModel.test.cjs
 
-(node:20240) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24276) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 TAP version 13
-# (node:20247) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24283) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: CLI duration records actual NT4 values, metadata, schemas and repeated samples through the existing reader
 ok 1 - CLI duration records actual NT4 values, metadata, schemas and repeated samples through the existing reader
   ---
-  duration_ms: 707.814978
+  duration_ms: 688.802575
   type: 'test'
   ...
 # Subtest: CLI SIGINT drains accepted samples and closes a readable recording
 ok 2 - CLI SIGINT drains accepted samples and closes a readable recording
   ---
-  duration_ms: 1180.864074
+  duration_ms: 1160.399097
   type: 'test'
   ...
 # Subtest: CLI connection failure exits nonzero with the address and a clear message
 ok 3 - CLI connection failure exits nonzero with the address and a clear message
   ---
-  duration_ms: 349.518653
+  duration_ms: 313.163844
   type: 'test'
   ...
 # Subtest: CLI connection timeout closes an unfinished WebSocket handshake
 ok 4 - CLI connection timeout closes an unfinished WebSocket handshake
   ---
-  duration_ms: 314.567113
+  duration_ms: 303.112951
   type: 'test'
   ...
 # Subtest: CLI reconnect timeout reports a lost connection and retains recorded data
 ok 5 - CLI reconnect timeout reports a lost connection and retains recorded data
   ---
-  duration_ms: 1473.747913
+  duration_ms: 1451.54269
   type: 'test'
   ...
 # Subtest: CLI SIGINT during a delayed HTTP probe never starts a late WebSocket
 ok 6 - CLI SIGINT during a delayed HTTP probe never starts a late WebSocket
   ---
-  duration_ms: 187.620481
+  duration_ms: 168.281468
   type: 'test'
   ...
 # Subtest: CLI low disk failure reports nonzero and leaves an existing destination intact
 ok 7 - CLI low disk failure reports nonzero and leaves an existing destination intact
   ---
-  duration_ms: 214.740927
+  duration_ms: 144.421619
   type: 'test'
   ...
 # Subtest: CLI rejects invalid duration before touching the output
 ok 8 - CLI rejects invalid duration before touching the output
   ---
-  duration_ms: 168.331621
+  duration_ms: 137.268278
   type: 'test'
   ...
-# (node:20396) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24398) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: unchanged image commands send pixels once and a new id sends the new frame
 ok 9 - unchanged image commands send pixels once and a new id sends the new frame
   ---
-  duration_ms: 1.365056
+  duration_ms: 1.70042
   type: 'test'
   ...
 # Subtest: renaming a satellite updates its title without resending pixels
 ok 10 - renaming a satellite updates its title without resending pixels
   ---
-  duration_ms: 1.079065
+  duration_ms: 0.157778
   type: 'test'
   ...
 # Subtest: ready, second, and reloaded windows receive targeted frames without resetting broadcasts
 ok 11 - ready, second, and reloaded windows receive targeted frames without resetting broadcasts
   ---
-  duration_ms: 0.25208
+  duration_ms: 1.014788
   type: 'test'
   ...
 # Subtest: clearing a source or closing its last window permits fresh delivery
 ok 12 - clearing a source or closing its last window permits fresh delivery
   ---
-  duration_ms: 0.149024
+  duration_ms: 0.251509
   type: 'test'
   ...
 # Subtest: delivery state is independent for each image tab
 ok 13 - delivery state is independent for each image tab
   ---
-  duration_ms: 0.198959
+  duration_ms: 0.2127
   type: 'test'
   ...
-# (node:20404) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24406) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: stop drains accepted samples after acknowledgments and detaches the live source
 ok 14 - stop drains accepted samples after acknowledgments and detaches the live source
   ---
-  duration_ms: 1.890417
+  duration_ms: 1.803135
   type: 'test'
   ...
 # Subtest: restart ignores an old generation's acknowledgments and terminal status
 ok 15 - restart ignores an old generation's acknowledgments and terminal status
   ---
-  duration_ms: 0.191439
+  duration_ms: 0.35159
   type: 'test'
   ...
 # Subtest: a stalled writer stops capture at the pending byte limit and preserves its accepted samples
 ok 16 - a stalled writer stops capture at the pending byte limit and preserves its accepted samples
   ---
-  duration_ms: 0.429988
+  duration_ms: 0.356617
   type: 'test'
   ...
 # Subtest: stop during the save dialog completes and ignores a late ready message
 ok 17 - stop during the save dialog completes and ignores a late ready message
   ---
-  duration_ms: 0.144858
+  duration_ms: 0.137607
   type: 'test'
   ...
 # Subtest: main cancellation before the save dialog returns never creates a writer
 ok 18 - main cancellation before the save dialog returns never creates a writer
   ---
-  duration_ms: 0.343237
+  duration_ms: 0.333242
   type: 'test'
   ...
 # Subtest: main acknowledges a batch only after the writer has accepted it
 ok 19 - main acknowledges a batch only after the writer has accepted it
   ---
-  duration_ms: 0.447784
+  duration_ms: 0.443438
   type: 'test'
   ...
 # Subtest: reload shutdown drains a write and reports one terminal failure
 ok 20 - reload shutdown drains a write and reports one terminal failure
   ---
-  duration_ms: 0.394694
+  duration_ms: 0.36517
   type: 'test'
   ...
 # Subtest: automatic writer shutdown detaches capture and does not flush pending samples after an acknowledgment
 ok 21 - automatic writer shutdown detaches capture and does not flush pending samples after an acknowledgment
   ---
-  duration_ms: 0.182555
+  duration_ms: 0.222004
   type: 'test'
   ...
 # Subtest: automatic low-disk shutdown preserves its reason when writes or batches arrive during close
 ok 22 - automatic low-disk shutdown preserves its reason when writes or batches arrive during close
   ---
-  duration_ms: 19.475611
+  duration_ms: 0.39882
   type: 'test'
   ...
-# (node:20412) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# Subtest: unchanged fields send their description once, changes stay ordered, and restart re-seeds it
+ok 23 - unchanged fields send their description once, changes stay ordered, and restart re-seeds it
+  ---
+  duration_ms: 0.798683
+  type: 'test'
+  ...
+# Subtest: live IPC batches write the same WPILOG bytes as full samples across changes and restart
+ok 24 - live IPC batches write the same WPILOG bytes as full samples across changes and restart
+  ---
+  duration_ms: 17.405799
+  type: 'test'
+  ...
+# Subtest: main rejects partial field descriptions at the IPC boundary
+ok 25 - main rejects partial field descriptions at the IPC boundary
+  ---
+  duration_ms: 0.454103
+  type: 'test'
+  ...
+# (node:24418) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: controller keeps empty and repeated decoder errors stable across cursor and field revisions
-ok 23 - controller keeps empty and repeated decoder errors stable across cursor and field revisions
+ok 26 - controller keeps empty and repeated decoder errors stable across cursor and field revisions
   ---
-  duration_ms: 62.674843
+  duration_ms: 63.459227
   type: 'test'
   ...
 # Subtest: controller source reset and layout UUID replacement invalidate old commands
-ok 24 - controller source reset and layout UUID replacement invalidate old commands
+ok 27 - controller source reset and layout UUID replacement invalidate old commands
   ---
-  duration_ms: 13.354333
+  duration_ms: 12.394403
   type: 'test'
   ...
 # Subtest: cached frames keep ids, cursor changes replace frames, and same-timestamp revisions repaint
-ok 25 - cached frames keep ids, cursor changes replace frames, and same-timestamp revisions repaint
+ok 28 - cached frames keep ids, cursor changes replace frames, and same-timestamp revisions repaint
   ---
-  duration_ms: 19.151203
+  duration_ms: 22.092357
   type: 'test'
   ...
 # Subtest: source and log changes replace equal empty states and clear the old renderer
-ok 26 - source and log changes replace equal empty states and clear the old renderer
+ok 29 - source and log changes replace equal empty states and clear the old renderer
   ---
-  duration_ms: 11.02865
+  duration_ms: 11.982482
   type: 'test'
   ...
 # Subtest: frame and message transitions always replace the command
-ok 27 - frame and message transitions always replace the command
+ok 30 - frame and message transitions always replace the command
   ---
-  duration_ms: 12.638734
+  duration_ms: 13.286396
   type: 'test'
   ...
-# (node:20420) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24426) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: records both namespaces before display callbacks and retains samples after memory discard
-ok 28 - records both namespaces before display callbacks and retains samples after memory discard
+ok 31 - records both namespaces before display callbacks and retains samples after memory discard
   ---
-  duration_ms: 2.318311
+  duration_ms: 2.695179
   type: 'test'
   ...
 # Subtest: recording follows log replacements and ignores writes from a disconnected source's old log
-ok 29 - recording follows log replacements and ignores writes from a disconnected source's old log
+ok 32 - recording follows log replacements and ignores writes from a disconnected source's old log
   ---
-  duration_ms: 0.720566
+  duration_ms: 0.482827
   type: 'test'
   ...
 # Subtest: stop and restart exclude stopped samples and seed schemas without exporting display history
-ok 30 - stop and restart exclude stopped samples and seed schemas without exporting display history
+ok 33 - stop and restart exclude stopped samples and seed schemas without exporting display history
   ---
-  duration_ms: 1.335201
+  duration_ms: 1.359678
   type: 'test'
   ...
 # Subtest: adding a source during recording preserves existing recording paths and captures its first samples
-ok 31 - adding a source during recording preserves existing recording paths and captures its first samples
+ok 34 - adding a source during recording preserves existing recording paths and captures its first samples
   ---
-  duration_ms: 0.293953
+  duration_ms: 0.304118
   type: 'test'
   ...
 # Subtest: a source added while recording observes synchronous writes inside connect
-ok 32 - a source added while recording observes synchronous writes inside connect
+ok 35 - a source added while recording observes synchronous writes inside connect
   ---
-  duration_ms: 0.379131
+  duration_ms: 0.377118
   type: 'test'
   ...
-# (node:20428) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# Subtest: recording batches resend descriptions after source log replacement and clear previous metadata
+ok 36 - recording batches resend descriptions after source log replacement and clear previous metadata
+  ---
+  duration_ms: 1.199657
+  type: 'test'
+  ...
+# (node:24434) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: two sources with the same topic have independent namespaces and explicit clock provenance
-ok 33 - two sources with the same topic have independent namespaces and explicit clock provenance
+ok 37 - two sources with the same topic have independent namespaces and explicit clock provenance
   ---
-  duration_ms: 3.304647
+  duration_ms: 4.12369
   type: 'test'
   ...
 # Subtest: one disconnect cannot stop the other source's timeline or discard its history
-ok 34 - one disconnect cannot stop the other source's timeline or discard its history
+ok 38 - one disconnect cannot stop the other source's timeline or discard its history
   ---
-  duration_ms: 0.671331
+  duration_ms: 0.705101
   type: 'test'
   ...
 # Subtest: retained timeline suppliers survive disconnects, reconnects and stopping the session
-ok 35 - retained timeline suppliers survive disconnects, reconnects and stopping the session
+ok 39 - retained timeline suppliers survive disconnects, reconnects and stopping the session
   ---
-  duration_ms: 0.477349
+  duration_ms: 0.470488
   type: 'test'
   ...
 # Subtest: reconnect replaces only its namespace and invalidates equal-count timestamp caches
-ok 36 - reconnect replaces only its namespace and invalidates equal-count timestamp caches
+ok 40 - reconnect replaces only its namespace and invalidates equal-count timestamp caches
   ---
-  duration_ms: 0.927337
+  duration_ms: 0.548386
   type: 'test'
   ...
 # Subtest: removal ignores late callbacks and reuses only the freed namespace
-ok 37 - removal ignores late callbacks and reuses only the freed namespace
+ok 41 - removal ignores late callbacks and reuses only the freed namespace
   ---
-  duration_ms: 0.787626
+  duration_ms: 0.622487
   type: 'test'
   ...
 # Subtest: legacy replacement keeps original keys, clock and source log across reconnect
-ok 38 - legacy replacement keeps original keys, clock and source log across reconnect
+ok 42 - legacy replacement keeps original keys, clock and source log across reconnect
   ---
-  duration_ms: 0.190717
+  duration_ms: 0.1724
   type: 'test'
   ...
 # Subtest: adding a connection preserves existing history and maps subscriptions only to their owner
-ok 39 - adding a connection preserves existing history and maps subscriptions only to their owner
+ok 43 - adding a connection preserves existing history and maps subscriptions only to their owner
   ---
-  duration_ms: 0.330037
+  duration_ms: 0.362646
   type: 'test'
   ...
 # Subtest: grouped subscriptions preserve source key syntax without requiring a parent field
-ok 40 - grouped subscriptions preserve source key syntax without requiring a parent field
+ok 44 - grouped subscriptions preserve source key syntax without requiring a parent field
   ---
-  duration_ms: 0.240132
+  duration_ms: 0.20595
   type: 'test'
   ...
 # Subtest: initial announcements and unavailable clock sync cannot freeze the display conversion
-ok 41 - initial announcements and unavailable clock sync cannot freeze the display conversion
+ok 45 - initial announcements and unavailable clock sync cannot freeze the display conversion
   ---
-  duration_ms: 0.513253
+  duration_ms: 0.379321
   type: 'test'
   ...
 # Subtest: Foxglove numeric timestamps and generated children retain their source identity
-ok 42 - Foxglove numeric timestamps and generated children retain their source identity
+ok 46 - Foxglove numeric timestamps and generated children retain their source identity
   ---
-  duration_ms: 0.864311
+  duration_ms: 0.77026
   type: 'test'
   ...
 # Subtest: live projection rejects a mislabeled source or display conversion before changing data
-ok 43 - live projection rejects a mislabeled source or display conversion before changing data
+ok 47 - live projection rejects a mislabeled source or display conversion before changing data
   ---
-  duration_ms: 0.249967
+  duration_ms: 0.280272
   type: 'test'
   ...
-# (node:20436) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24442) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: comma-separated table and list imports are unchanged
-ok 44 - comma-separated table and list imports are unchanged
+ok 48 - comma-separated table and list imports are unchanged
   ---
-  duration_ms: 2.865625
+  duration_ms: 2.518822
   type: 'test'
   ...
 # Subtest: tab-separated fixture uses the same timestamp and columns
-ok 45 - tab-separated fixture uses the same timestamp and columns
+ok 49 - tab-separated fixture uses the same timestamp and columns
   ---
-  duration_ms: 0.700255
+  duration_ms: 0.634805
   type: 'test'
   ...
-# (node:20444) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24450) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: address uses the typed host and default port
-ok 46 - address uses the typed host and default port
+ok 50 - address uses the typed host and default port
   ---
-  duration_ms: 0.689858
+  duration_ms: 2.130428
   type: 'test'
   ...
 # Subtest: subscribe is sent after serverInfo for each advertised channel
-ok 47 - subscribe is sent after serverInfo for each advertised channel
+ok 51 - subscribe is sent after serverInfo for each advertised channel
   ---
-  duration_ms: 0.980076
+  duration_ms: 3.993223
   type: 'test'
   ...
 # Subtest: JSON samples become log fields and other encodings stay raw
-ok 48 - JSON samples become log fields and other encodings stay raw
+ok 52 - JSON samples become log fields and other encodings stay raw
   ---
-  duration_ms: 1.45415
+  duration_ms: 3.713833
   type: 'test'
   ...
 # Subtest: existing live modes keep their names
-ok 49 - existing live modes keep their names
+ok 53 - existing live modes keep their names
   ---
-  duration_ms: 0.128264
+  duration_ms: 0.248524
   type: 'test'
   ...
 # Subtest: fixture server delivers a JSON sample
-ok 50 - fixture server delivers a JSON sample
+ok 54 - fixture server delivers a JSON sample
   ---
-  duration_ms: 57.375876
+  duration_ms: 57.439506
   type: 'test'
   ...
-# (node:20452) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24458) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: JSON array of timestamped objects becomes log fields
-ok 51 - JSON array of timestamped objects becomes log fields
+ok 55 - JSON array of timestamped objects becomes log fields
   ---
-  duration_ms: 3.592811
+  duration_ms: 2.786926
   type: 'test'
   ...
 # Subtest: JSONL records use the same timestamp and fields
-ok 52 - JSONL records use the same timestamp and fields
+ok 56 - JSONL records use the same timestamp and fields
   ---
-  duration_ms: 0.726744
+  duration_ms: 0.533924
   type: 'test'
   ...
-# (node:20460) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24466) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: reads declared MCAP channels and schemas into log fields
-ok 53 - reads declared MCAP channels and schemas into log fields
+ok 57 - reads declared MCAP channels and schemas into log fields
   ---
-  duration_ms: 7.45117
+  duration_ms: 5.490637
   type: 'test'
   ...
 # Subtest: rejects a buffer that is not an MCAP file
-ok 54 - rejects a buffer that is not an MCAP file
+ok 58 - rejects a buffer that is not an MCAP file
   ---
-  duration_ms: 0.433463
+  duration_ms: 0.263356
   type: 'test'
   ...
-# (node:20468) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24474) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # [NT4] Connected with protocol "v4.1.networktables.first.wpi.edu"
 # [NT4] Connected with protocol "rtt.networktables.first.wpi.edu"
 # Subtest: native NT4 disconnect hook can stop both main and RTT sockets once
-ok 55 - native NT4 disconnect hook can stop both main and RTT sockets once
+ok 59 - native NT4 disconnect hook can stop both main and RTT sockets once
   ---
-  duration_ms: 36.785795
+  duration_ms: 32.53731
   type: 'test'
   ...
 # [NT4] Connected with protocol "v4.1.networktables.first.wpi.edu"
 # [NT4] Connected with protocol "rtt.networktables.first.wpi.edu"
 # Subtest: browser-compatible NT4 disconnect hook can stop both main and RTT sockets once
-ok 56 - browser-compatible NT4 disconnect hook can stop both main and RTT sockets once
+ok 60 - browser-compatible NT4 disconnect hook can stop both main and RTT sockets once
   ---
-  duration_ms: 10.347582
+  duration_ms: 9.765987
   type: 'test'
   ...
-# (node:20476) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24482) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: NetworkTables explicitly converts receive time to its latency-adjusted server cursor
-ok 57 - NetworkTables explicitly converts receive time to its latency-adjusted server cursor
+ok 61 - NetworkTables explicitly converts receive time to its latency-adjusted server cursor
   ---
-  duration_ms: 1.243403
+  duration_ms: 1.085595
   type: 'test'
   ...
 # Subtest: NetworkTables server samples retain server time without cursor latency subtraction
-ok 58 - NetworkTables server samples retain server time without cursor latency subtraction
+ok 62 - NetworkTables server samples retain server time without cursor latency subtraction
   ---
-  duration_ms: 0.993637
+  duration_ms: 0.802719
   type: 'test'
   ...
-# (node:20484) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24490) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: ROS 2 bag resolves static and dynamic transforms around a constant child-frame scan
-ok 59 - ROS 2 bag resolves static and dynamic transforms around a constant child-frame scan
+ok 63 - ROS 2 bag resolves static and dynamic transforms around a constant child-frame scan
   ---
-  duration_ms: 43.822631
+  duration_ms: 34.625383
   type: 'test'
   ...
 # Subtest: MCAP resolves the same transform-tree CDR through the shared decoder
-ok 60 - MCAP resolves the same transform-tree CDR through the shared decoder
+ok 64 - MCAP resolves the same transform-tree CDR through the shared decoder
   ---
-  duration_ms: 12.560966
+  duration_ms: 12.209598
   type: 'test'
   ...
-# (node:20492) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24498) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: reads sqlite3 ROS 2 topics, CDR fields, types, and recording timestamps
-ok 61 - reads sqlite3 ROS 2 topics, CDR fields, types, and recording timestamps
+ok 65 - reads sqlite3 ROS 2 topics, CDR fields, types, and recording timestamps
   ---
-  duration_ms: 33.973759
+  duration_ms: 33.589433
   type: 'test'
   ...
 # Subtest: opens older sqlite3 bags without embedded definitions using common ROS 2 types
-ok 62 - opens older sqlite3 bags without embedded definitions using common ROS 2 types
+ok 66 - opens older sqlite3 bags without embedded definitions using common ROS 2 types
   ---
-  duration_ms: 7.273793
+  duration_ms: 7.043668
   type: 'test'
   ...
 # Subtest: prefers embedded definitions to the common type catalog
-ok 63 - prefers embedded definitions to the common type catalog
+ok 67 - prefers embedded definitions to the common type catalog
   ---
-  duration_ms: 3.670658
+  duration_ms: 6.571246
   type: 'test'
   ...
 # Subtest: converts sqlite integer nanoseconds without first rounding them to a number
-ok 64 - converts sqlite integer nanoseconds without first rounding them to a number
+ok 68 - converts sqlite integer nanoseconds without first rounding them to a number
   ---
-  duration_ms: 3.660873
+  duration_ms: 3.686221
   type: 'test'
   ...
 # Subtest: rejects invalid databases, missing topics, and truncated CDR
-ok 65 - rejects invalid databases, missing topics, and truncated CDR
+ok 69 - rejects invalid databases, missing topics, and truncated CDR
   ---
-  duration_ms: 6.410833
+  duration_ms: 6.466288
   type: 'test'
   ...
 # Subtest: uses the same ROS 2 CDR path when a message comes from MCAP
-ok 66 - uses the same ROS 2 CDR path when a message comes from MCAP
+ok 70 - uses the same ROS 2 CDR path when a message comes from MCAP
   ---
-  duration_ms: 5.499001
+  duration_ms: 5.653955
   type: 'test'
   ...
-# (node:20500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24506) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: ROS 2 sqlite3 fixture feeds laser scans and clouds through the shared decoder
-ok 67 - ROS 2 sqlite3 fixture feeds laser scans and clouds through the shared decoder
+ok 71 - ROS 2 sqlite3 fixture feeds laser scans and clouds through the shared decoder
   ---
-  duration_ms: 59.621051
+  duration_ms: 53.466483
   type: 'test'
   ...
 # Subtest: MCAP feeds the same scan and cloud CDR through the shared decoder
-ok 68 - MCAP feeds the same scan and cloud CDR through the shared decoder
+ok 72 - MCAP feeds the same scan and cloud CDR through the shared decoder
   ---
-  duration_ms: 13.597696
+  duration_ms: 15.170055
   type: 'test'
   ...
-# (node:20508) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24514) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: Lite accepts satellite clears without an unknown-message warning
-ok 69 - Lite accepts satellite clears without an unknown-message warning
+ok 73 - Lite accepts satellite clears without an unknown-message warning
   ---
-  duration_ms: 159.952907
+  duration_ms: 173.649698
   type: 'test'
   ...
 # Subtest: satellite requests its frame only after both renderer readiness and visibility
-ok 70 - satellite requests its frame only after both renderer readiness and visibility
+ok 74 - satellite requests its frame only after both renderer readiness and visibility
   ---
-  duration_ms: 352.725027
+  duration_ms: 399.082969
   type: 'test'
   ...
 # Subtest: a second window, reload, and hide/show each request the current frame for that window
-ok 71 - a second window, reload, and hide/show each request the current frame for that window
+ok 75 - a second window, reload, and hide/show each request the current frame for that window
   ---
-  duration_ms: 97.056144
+  duration_ms: 113.360034
   type: 'test'
   ...
 # Subtest: main sends targeted pixels only to their destination and accepts title-only updates
-ok 72 - main sends targeted pixels only to their destination and accepts title-only updates
+ok 76 - main sends targeted pixels only to their destination and accepts title-only updates
   ---
-  duration_ms: 82.040141
+  duration_ms: 80.552779
   type: 'test'
   ...
 # Subtest: reload before the first state save still initializes the image renderer
-ok 73 - reload before the first state save still initializes the image renderer
+ok 77 - reload before the first state save still initializes the image renderer
   ---
-  duration_ms: 67.100014
+  duration_ms: 77.273019
   type: 'test'
   ...
 # Subtest: 3D satellite initialization, reload, and show request the current model resource
-ok 74 - 3D satellite initialization, reload, and show request the current model resource
+ok 78 - 3D satellite initialization, reload, and show request the current model resource
   ---
-  duration_ms: 64.961833
+  duration_ms: 66.311962
   type: 'test'
   ...
 # Subtest: main forwards one-time 3D resources, preserves absent resources, and forwards explicit clears
-ok 75 - main forwards one-time 3D resources, preserves absent resources, and forwards explicit clears
+ok 79 - main forwards one-time 3D resources, preserves absent resources, and forwards explicit clears
   ---
-  duration_ms: 69.78433
+  duration_ms: 66.712206
   type: 'test'
   ...
-# (node:20516) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24522) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: layout-supplied URLs cannot read a file or persist a source
-ok 76 - layout-supplied URLs cannot read a file or persist a source
+ok 80 - layout-supplied URLs cannot read a file or persist a source
   ---
-  duration_ms: 3.70573
+  duration_ms: 3.575484
   type: 'test'
   ...
 # Subtest: corrupt and wrong-shaped registries do not prevent picking and saving a robot
-ok 77 - corrupt and wrong-shaped registries do not prevent picking and saving a robot
+ok 81 - corrupt and wrong-shaped registries do not prevent picking and saving a robot
   ---
-  duration_ms: 11.916726
+  duration_ms: 14.027736
   type: 'test'
   ...
 # Subtest: restore requires an own registry ID and matching kind
-ok 78 - restore requires an own registry ID and matching kind
+ok 82 - restore requires an own registry ID and matching kind
   ---
-  duration_ms: 0.974227
+  duration_ms: 0.864672
   type: 'test'
   ...
 # Subtest: picked robot sources require a regular URDF file no larger than 10 MiB
-ok 79 - picked robot sources require a regular URDF file no larger than 10 MiB
+ok 83 - picked robot sources require a regular URDF file no larger than 10 MiB
   ---
-  duration_ms: 3.051295
+  duration_ms: 3.129813
   type: 'test'
   ...
 # Subtest: package and mesh directories restore only after user selection
-ok 80 - package and mesh directories restore only after user selection
+ok 84 - package and mesh directories restore only after user selection
   ---
-  duration_ms: 1.669514
+  duration_ms: 2.083587
   type: 'test'
   ...
 # Subtest: corrupt registries do not prevent picking package or mesh directories
-ok 81 - corrupt registries do not prevent picking package or mesh directories
+ok 85 - corrupt registries do not prevent picking package or mesh directories
   ---
-  duration_ms: 2.213984
+  duration_ms: 2.139573
   type: 'test'
   ...
 # Subtest: a picked FIFO with a URDF extension is rejected without blocking
-ok 82 - a picked FIFO with a URDF extension is rejected without blocking
+ok 86 - a picked FIFO with a URDF extension is rejected without blocking
   ---
-  duration_ms: 4.592416
+  duration_ms: 4.612476
   type: 'test'
   ...
-# (node:20529) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24535) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: TCP delivers opaque frames across split headers, bodies, heartbeats and coalesced packets
-ok 83 - TCP delivers opaque frames across split headers, bodies, heartbeats and coalesced packets
+ok 87 - TCP delivers opaque frames across split headers, bodies, heartbeats and coalesced packets
   ---
-  duration_ms: 81.534631
+  duration_ms: 80.590044
   type: 'test'
   ...
 # Subtest: TCP payloads decode with the unchanged RLOG decoder and writes reach the peer
-ok 84 - TCP payloads decode with the unchanged RLOG decoder and writes reach the peer
+ok 88 - TCP payloads decode with the unchanged RLOG decoder and writes reach the peer
   ---
-  duration_ms: 33.763789
+  duration_ms: 32.062024
   type: 'test'
   ...
 # Subtest: TCP stop and restart discard partial frames and suppress the old connection's close
-ok 85 - TCP stop and restart discard partial frames and suppress the old connection's close
+ok 89 - TCP stop and restart discard partial frames and suppress the old connection's close
   ---
-  duration_ms: 54.813206
+  duration_ms: 53.850046
   type: 'test'
   ...
 # Subtest: TCP frame rejection stops delivery of the rest of a packet
-ok 86 - TCP frame rejection stops delivery of the rest of a packet
+ok 90 - TCP frame rejection stops delivery of the rest of a packet
   ---
-  duration_ms: 22.513933
+  duration_ms: 22.367655
   type: 'test'
   ...
 # Subtest: TCP data timeout disconnects even while outbound heartbeats keep the socket busy
-ok 87 - TCP data timeout disconnects even while outbound heartbeats keep the socket busy
+ok 91 - TCP data timeout disconnects even while outbound heartbeats keep the socket busy
   ---
-  duration_ms: 138.397879
+  duration_ms: 134.445377
   type: 'test'
   ...
 # Subtest: TCP rejects a negative length without hanging or delivering bytes
-ok 88 - TCP rejects a negative length without hanging or delivering bytes
+ok 92 - TCP rejects a negative length without hanging or delivering bytes
   ---
-  duration_ms: 22.921466
+  duration_ms: 22.807507
   type: 'test'
   ...
 # Subtest: TCP connection errors notify once despite the following close event
-ok 89 - TCP connection errors notify once despite the following close event
+ok 93 - TCP connection errors notify once despite the following close event
   ---
-  duration_ms: 32.524427
+  duration_ms: 31.623824
   type: 'test'
   ...
 # Subtest: WebSocket preserves text, binary, subprotocol and outbound writes
-ok 90 - WebSocket preserves text, binary, subprotocol and outbound writes
+ok 94 - WebSocket preserves text, binary, subprotocol and outbound writes
   ---
-  duration_ms: 48.260483
+  duration_ms: 40.820499
   type: 'test'
   ...
 # Subtest: WebSocket restart suppresses old callbacks and a rejected frame closes once
-ok 91 - WebSocket restart suppresses old callbacks and a rejected frame closes once
+ok 95 - WebSocket restart suppresses old callbacks and a rejected frame closes once
   ---
-  duration_ms: 34.511563
+  duration_ms: 35.925771
   type: 'test'
   ...
 # Subtest: Foxglove session decodes negotiated telemetry through the frame transport
-ok 92 - Foxglove session decodes negotiated telemetry through the frame transport
+ok 96 - Foxglove session decodes negotiated telemetry through the frame transport
   ---
-  duration_ms: 13.998402
+  duration_ms: 12.219543
   type: 'test'
   ...
-# (node:20537) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24543) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: compose rotated chains and resolve between sibling or inverse reference frames
-ok 93 - compose rotated chains and resolve between sibling or inverse reference frames
+ok 97 - compose rotated chains and resolve between sibling or inverse reference frames
   ---
-  duration_ms: 4.001696
+  duration_ms: 3.59252
   type: 'test'
   ...
 # Subtest: static is bag-wide while dynamic uses latest logged display time without future samples
-ok 94 - static is bag-wide while dynamic uses latest logged display time without future samples
+ok 98 - static is bag-wide while dynamic uses latest logged display time without future samples
   ---
-  duration_ms: 1.461601
+  duration_ms: 1.517665
   type: 'test'
   ...
 # Subtest: sparse TF messages and reordered array slots retain independent edge histories
-ok 95 - sparse TF messages and reordered array slots retain independent edge histories
+ok 99 - sparse TF messages and reordered array slots retain independent edge histories
   ---
-  duration_ms: 0.492061
+  duration_ms: 0.481725
   type: 'test'
   ...
 # Subtest: missing parent, empty frame, cycle, and invalid transforms report failure
-ok 96 - missing parent, empty frame, cycle, and invalid transforms report failure
+ok 100 - missing parent, empty frame, cycle, and invalid transforms report failure
   ---
-  duration_ms: 0.514935
+  duration_ms: 0.425641
   type: 'test'
   ...
 # Subtest: static/dynamic conflicting authorities fail rather than choose silently
-ok 97 - static/dynamic conflicting authorities fail rather than choose silently
+ok 101 - static/dynamic conflicting authorities fail rather than choose silently
   ---
-  duration_ms: 0.27871
+  duration_ms: 0.273231
   type: 'test'
   ...
 # Subtest: source frames follow the sample, while absent metadata leaves legacy objects unframed
-ok 98 - source frames follow the sample, while absent metadata leaves legacy objects unframed
+ok 102 - source frames follow the sample, while absent metadata leaves legacy objects unframed
   ---
-  duration_ms: 2.162637
+  duration_ms: 0.192931
   type: 'test'
   ...
 # Subtest: independent recordings and live sources never share same-named frames
-ok 99 - independent recordings and live sources never share same-named frames
+ok 103 - independent recordings and live sources never share same-named frames
   ---
-  duration_ms: 4.211543
+  duration_ms: 1.197834
   type: 'test'
   ...
 # Subtest: cached graph observes appends, out-of-order inserts, same-time corrections and trimming
-ok 100 - cached graph observes appends, out-of-order inserts, same-time corrections and trimming
+ok 104 - cached graph observes appends, out-of-order inserts, same-time corrections and trimming
   ---
-  duration_ms: 1.0089
+  duration_ms: 0.864481
   type: 'test'
   ...
 # Subtest: projected log fields expose source mutations to cached graph
-ok 101 - projected log fields expose source mutations to cached graph
+ok 105 - projected log fields expose source mutations to cached graph
   ---
-  duration_ms: 2.912737
+  duration_ms: 0.773655
   type: 'test'
   ...
 # Subtest: composing a frame pose preserves local object orientation
-ok 102 - composing a frame pose preserves local object orientation
+ok 106 - composing a frame pose preserves local object orientation
   ---
-  duration_ms: 0.443178
+  duration_ms: 0.37901
   type: 'test'
   ...
-# (node:20545) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24551) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: real ROS 2 image fixture decodes channel order, padded rows, mono, JPEG, and PNG pixels
-ok 103 - real ROS 2 image fixture decodes channel order, padded rows, mono, JPEG, and PNG pixels
+ok 107 - real ROS 2 image fixture decodes channel order, padded rows, mono, JPEG, and PNG pixels
   ---
-  duration_ms: 51.255279
+  duration_ms: 46.348748
   type: 'test'
   ...
 # Subtest: selects latest at or before cursor, at, between, before, and after every fixture topic
-ok 104 - selects latest at or before cursor, at, between, before, and after every fixture topic
+ok 108 - selects latest at or before cursor, at, between, before, and after every fixture topic
   ---
-  duration_ms: 14.358414
+  duration_ms: 5.801187
   type: 'test'
   ...
 # Subtest: compressed format uses the real bytes and accepts ROS compound format strings
-ok 105 - compressed format uses the real bytes and accepts ROS compound format strings
+ok 109 - compressed format uses the real bytes and accepts ROS compound format strings
   ---
-  duration_ms: 3.010564
+  duration_ms: 2.423991
   type: 'test'
   ...
 # Subtest: registered codecs run only for selected frames and cache at most three decoded frames
-ok 106 - registered codecs run only for selected frames and cache at most three decoded frames
+ok 110 - registered codecs run only for selected frames and cache at most three decoded frames
   ---
-  duration_ms: 2.454056
+  duration_ms: 2.418322
   type: 'test'
   ...
 # Subtest: corrupt unselected compressed frames stay undecoded
-ok 107 - corrupt unselected compressed frames stay undecoded
+ok 111 - corrupt unselected compressed frames stay undecoded
   ---
-  duration_ms: 2.011589
+  duration_ms: 2.48346
   type: 'test'
   ...
 # Subtest: malformed raw images return visible diagnostics
-ok 108 - malformed raw images return visible diagnostics
+ok 112 - malformed raw images return visible diagnostics
   ---
-  duration_ms: 11.127609
+  duration_ms: 10.912314
   type: 'test'
   ...
 # Subtest: registry rejects duplicate decoder ids and semantic registrations
-ok 109 - registry rejects duplicate decoder ids and semantic registrations
+ok 113 - registry rejects duplicate decoder ids and semantic registrations
   ---
-  duration_ms: 0.30549
+  duration_ms: 0.253602
   type: 'test'
   ...
 # Subtest: missing endianness defaults to little-endian while explicit big-endian remains unsupported
-ok 110 - missing endianness defaults to little-endian while explicit big-endian remains unsupported
+ok 114 - missing endianness defaults to little-endian while explicit big-endian remains unsupported
   ---
-  duration_ms: 0.315045
+  duration_ms: 0.229285
   type: 'test'
   ...
-# (node:20553) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24559) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: legacy numeric timestamps and serialized logs keep the same display coordinates
-ok 111 - legacy numeric timestamps and serialized logs keep the same display coordinates
+ok 115 - legacy numeric timestamps and serialized logs keep the same display coordinates
   ---
-  duration_ms: 2.739546
+  duration_ms: 2.078661
   type: 'test'
   ...
 # Subtest: receive, log and named clock timestamps retain their domain
-ok 112 - receive, log and named clock timestamps retain their domain
+ok 116 - receive, log and named clock timestamps retain their domain
   ---
-  duration_ms: 0.502687
+  duration_ms: 0.483688
   type: 'test'
   ...
 # Subtest: display clock ownership does not depend on mutable caller objects
-ok 113 - display clock ownership does not depend on mutable caller objects
+ok 117 - display clock ownership does not depend on mutable caller objects
   ---
-  duration_ms: 0.204468
+  duration_ms: 0.240302
   type: 'test'
   ...
 # Subtest: unrelated clocks require an explicit conversion before insertion
-ok 114 - unrelated clocks require an explicit conversion before insertion
+ok 118 - unrelated clocks require an explicit conversion before insertion
   ---
-  duration_ms: 0.908989
+  duration_ms: 0.771071
   type: 'test'
   ...
 # Subtest: timestamp provenance follows insertion, duplicate replacement, both compression directions and trimming
-ok 115 - timestamp provenance follows insertion, duplicate replacement, both compression directions and trimming
+ok 119 - timestamp provenance follows insertion, duplicate replacement, both compression directions and trimming
   ---
-  duration_ms: 0.731121
+  duration_ms: 0.681406
   type: 'test'
   ...
 # Subtest: structured children and queued schema decodes keep their original timestamp
-ok 116 - structured children and queued schema decodes keep their original timestamp
+ok 120 - structured children and queued schema decodes keep their original timestamp
   ---
-  duration_ms: 2.33744
+  duration_ms: 1.785499
   type: 'test'
   ...
 # Subtest: merge alignment shifts display coordinates while retaining explicit originals
-ok 117 - merge alignment shifts display coordinates while retaining explicit originals
-  ---
-  duration_ms: 0.789559
-  type: 'test'
-  ...
-# Subtest: queued decodes retain their insertion timestamp when the caller changes its stamp
-ok 118 - queued decodes retain their insertion timestamp when the caller changes its stamp
-  ---
-  duration_ms: 9.365053
-  type: 'test'
-  ...
-# Subtest: provenance uses the same samples as range queries after an exact-cutoff trim
-ok 119 - provenance uses the same samples as range queries after an exact-cutoff trim
-  ---
-  duration_ms: 0.742879
-  type: 'test'
-  ...
-# Subtest: projected fields preserve timestamps, values, ranges and source clocks
-ok 120 - projected fields preserve timestamps, values, ranges and source clocks
-  ---
-  duration_ms: 0.568726
-  type: 'test'
-  ...
-# Subtest: projected timestamps remap only when the source revision or mapping changes
-ok 121 - projected timestamps remap only when the source revision or mapping changes
-  ---
-  duration_ms: 0.402977
-  type: 'test'
-  ...
-# (node:20561) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
-# (Use `node --trace-warnings ...` to show where the warning was created)
-# Subtest: converts laser bearings into XY points in meters
-ok 122 - converts laser bearings into XY points in meters
-  ---
-  duration_ms: 1.000617
-  type: 'test'
-  ...
-# Subtest: laser scans retain inclusive range limits and omit invalid returns
-ok 123 - laser scans retain inclusive range limits and omit invalid returns
-  ---
-  duration_ms: 0.59142
-  type: 'test'
-  ...
-# Subtest: point clouds honor offsets, organized row padding, byte offsets, scalar widths, and byte order
-ok 124 - point clouds honor offsets, organized row padding, byte offsets, scalar widths, and byte order
-  ---
-  duration_ms: 0.797411
-  type: 'test'
-  ...
-# Subtest: point clouds omit nonfinite coordinates and reject incomplete or invalid layouts
-ok 125 - point clouds omit nonfinite coordinates and reject incomplete or invalid layouts
-  ---
-  duration_ms: 0.647175
-  type: 'test'
-  ...
-# Subtest: fixed-stride downsampling bounds scan and cloud points without changing bearings
-ok 126 - fixed-stride downsampling bounds scan and cloud points without changing bearings
-  ---
-  duration_ms: 10.663008
-  type: 'test'
-  ...
-# Subtest: cursor reads select one complete scan, clear empty samples, and never select a future sample
-ok 127 - cursor reads select one complete scan, clear empty samples, and never select a future sample
-  ---
-  duration_ms: 2.927148
-  type: 'test'
-  ...
-# Subtest: cloud reads find named axes and use the current field descriptor count
-ok 128 - cloud reads find named axes and use the current field descriptor count
-  ---
-  duration_ms: 0.957602
-  type: 'test'
-  ...
-# (node:20569) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
-# (Use `node --trace-warnings ...` to show where the warning was created)
-# Subtest: reader lookup uses registered extensions for paths and bare extensions
-ok 129 - reader lookup uses registered extensions for paths and bare extensions
-  ---
-  duration_ms: 1.161569
-  type: 'test'
-  ...
-# Subtest: two readers cannot claim the same extension and both ids appear in the error
-ok 130 - two readers cannot claim the same extension and both ids appear in the error
-  ---
-  duration_ms: 0.456147
-  type: 'test'
-  ...
-# Subtest: open dialog filters contain every registered extension
-ok 131 - open dialog filters contain every registered extension
-  ---
-  duration_ms: 0.320713
-  type: 'test'
-  ...
-# Subtest: duplicate extension rejection does not register part of a reader
-ok 132 - duplicate extension rejection does not register part of a reader
-  ---
-  duration_ms: 0.878853
-  type: 'test'
-  ...
-# Subtest: every existing custom schema exposes a decode entry point
-ok 133 - every existing custom schema exposes a decode entry point
-  ---
-  duration_ms: 0.149835
-  type: 'test'
-  ...
-# (node:20577) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
-# (Use `node --trace-warnings ...` to show where the warning was created)
-# Subtest: capture preserves repeated, backdated and replaced samples before in-memory compression and trimming
-ok 134 - capture preserves repeated, backdated and replaced samples before in-memory compression and trimming
-  ---
-  duration_ms: 2.089948
-  type: 'test'
-  ...
-# Subtest: capture owns mutable values and includes array children, field metadata and original clock seconds
-ok 135 - capture owns mutable values and includes array children, field metadata and original clock seconds
-  ---
-  duration_ms: 0.653724
-  type: 'test'
-  ...
-# Subtest: capture rejects type conflicts exactly as the live log does
-ok 136 - capture rejects type conflicts exactly as the live log does
-  ---
-  duration_ms: 0.225149
-  type: 'test'
-  ...
-# Subtest: capture also follows writes to fields restored from worker serialization
-ok 137 - capture also follows writes to fields restored from worker serialization
-  ---
-  duration_ms: 0.354303
-  type: 'test'
-  ...
-# (node:20585) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
-# (Use `node --trace-warnings ...` to show where the warning was created)
-# Subtest: file grows during recording and existing WPILOG reader round-trips fields, exact timestamps and values
-ok 138 - file grows during recording and existing WPILOG reader round-trips fields, exact timestamps and values
-  ---
-  duration_ms: 15.870169
-  type: 'test'
-  ...
-# Subtest: recording retains repeated, equal-timestamp and out-of-order records and metadata changes
-ok 139 - recording retains repeated, equal-timestamp and out-of-order records and metadata changes
-  ---
-  duration_ms: 4.176029
-  type: 'test'
-  ...
-# Subtest: stop drains accepted writes, rejects later samples, and restart resets file and entries
-ok 140 - stop drains accepted writes, rejects later samples, and restart resets file and entries
-  ---
-  duration_ms: 4.54187
-  type: 'test'
-  ...
-# Subtest: low disk before start leaves an existing destination untouched
-ok 141 - low disk before start leaves an existing destination untouched
-  ---
-  duration_ms: 5.044367
-  type: 'test'
-  ...
-# Subtest: low disk during idle recording closes a readable file and emits the visible reason
-ok 142 - low disk during idle recording closes a readable file and emits the visible reason
-  ---
-  duration_ms: 7.495208
-  type: 'test'
-  ...
-# Subtest: low disk before a batch stops without writing partial records
-ok 143 - low disk before a batch stops without writing partial records
-  ---
-  duration_ms: 5.089014
-  type: 'test'
-  ...
-# Subtest: bounded pending bytes stop a recording visibly instead of retaining an unbounded session
-ok 144 - bounded pending bytes stop a recording visibly instead of retaining an unbounded session
-  ---
-  duration_ms: 2.039261
-  type: 'test'
-  ...
-# Subtest: stop during start does not create an orphan open writer
-ok 145 - stop during start does not create an orphan open writer
-  ---
-  duration_ms: 1.213197
-  type: 'test'
-  ...
-# Subtest: redeclared types and newly added fields always use distinct WPILOG entries
-ok 146 - redeclared types and newly added fields always use distinct WPILOG entries
-  ---
-  duration_ms: 5.744081
-  type: 'test'
-  ...
-# Subtest: NetworkTables integer aliases use standard WPILOG integer types
-ok 147 - NetworkTables integer aliases use standard WPILOG integer types
-  ---
-  duration_ms: 2.579875
-  type: 'test'
-  ...
-# Subtest: a delayed disk check from a stopped recording cannot stop its restarted writer
-ok 148 - a delayed disk check from a stopped recording cannot stop its restarted writer
-  ---
-  duration_ms: 31.201047
-  type: 'test'
-  ...
-# (node:20597) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
-# (Use `node --trace-warnings ...` to show where the warning was created)
-# Subtest: renderer draws pixels and exposes aspect ratio synchronously without encoding PNG
-ok 149 - renderer draws pixels and exposes aspect ratio synchronously without encoding PNG
-  ---
-  duration_ms: 1.454731
-  type: 'test'
-  ...
-# Subtest: empty and error commands release the previous canvas and show their diagnostic
-ok 150 - empty and error commands release the previous canvas and show their diagnostic
-  ---
-  duration_ms: 1.481641
-  type: 'test'
-  ...
-# Subtest: topic reset and tab disposal release canvas storage and permit the current command again
-ok 151 - topic reset and tab disposal release canvas storage and permit the current command again
-  ---
-  duration_ms: 0.255886
-  type: 'test'
-  ...
-# Subtest: image payload survives message-port transport into a satellite canvas
-ok 152 - image payload survives message-port transport into a satellite canvas
-  ---
-  duration_ms: 3.942387
-  type: 'test'
-  ...
-# Subtest: hub and satellite templates provide an accessible image canvas
-ok 153 - hub and satellite templates provide an accessible image canvas
-  ---
-  duration_ms: 0.816409
-  type: 'test'
-  ...
-# (node:20605) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
-# (Use `node --trace-warnings ...` to show where the warning was created)
-# Subtest: parse visual primitives, mesh scale, materials, origins and a connected joint tree
-ok 154 - parse visual primitives, mesh scale, materials, origins and a connected joint tree
-  ---
-  duration_ms: 7.773416
-  type: 'test'
-  ...
-# Subtest: parse default joint axis, default visual origin and inline color
-ok 155 - parse default joint axis, default visual origin and inline color
-  ---
-  duration_ms: 0.94261
-  type: 'test'
-  ...
-# Subtest: reject malformed XML and invalid numeric values
-ok 156 - reject malformed XML and invalid numeric values
-  ---
-  duration_ms: 4.815052
-  type: 'test'
-  ...
-# Subtest: reject duplicate links, duplicate joints, missing references, cycles, multiple parents and disconnected trees
-ok 157 - reject duplicate links, duplicate joints, missing references, cycles, multiple parents and disconnected trees
-  ---
-  duration_ms: 3.431258
-  type: 'test'
-  ...
-# Subtest: fixed joints preserve the static origin independently of a supplied position
-ok 158 - fixed joints preserve the static origin independently of a supplied position
-  ---
-  duration_ms: 0.271309
-  type: 'test'
-  ...
-# Subtest: revolute joints compose local-axis rotation after origin and respect both limits
-ok 159 - revolute joints compose local-axis rotation after origin and respect both limits
-  ---
-  duration_ms: 0.300793
-  type: 'test'
-  ...
-# Subtest: continuous joints rotate beyond a full revolution without limits
-ok 160 - continuous joints rotate beyond a full revolution without limits
-  ---
-  duration_ms: 0.502497
-  type: 'test'
-  ...
-# Subtest: prismatic joints translate in the rotated local axis and respect both limits
-ok 161 - prismatic joints translate in the rotated local axis and respect both limits
-  ---
-  duration_ms: 0.238149
-  type: 'test'
-  ...
-# Subtest: joint names select positions, absent positions default to zero, and fixed links compose
-ok 162 - joint names select positions, absent positions default to zero, and fixed links compose
-  ---
-  duration_ms: 1.803717
-  type: 'test'
-  ...
-# Subtest: resolve relative STL and DAE files against the URDF file
-ok 163 - resolve relative STL and DAE files against the URDF file
-  ---
-  duration_ms: 1.250173
-  type: 'test'
-  ...
-# Subtest: resolve package paths against a user-selected parent root and report every unresolved case
-ok 164 - resolve package paths against a user-selected parent root and report every unresolved case
-  ---
-  duration_ms: 0.456677
-  type: 'test'
-  ...
-# Subtest: mimic joints apply multipliers and offsets through chains regardless of joint order
-ok 165 - mimic joints apply multipliers and offsets through chains regardless of joint order
-  ---
-  duration_ms: 0.395235
-  type: 'test'
-  ...
-# Subtest: mimic defaults copy their source and bounded mimics respect their own limits
-ok 166 - mimic defaults copy their source and bounded mimics respect their own limits
-  ---
-  duration_ms: 3.116623
-  type: 'test'
-  ...
-# Subtest: reject missing mimic targets, mimic cycles and non-finite mimic coefficients
-ok 167 - reject missing mimic targets, mimic cycles and non-finite mimic coefficients
-  ---
-  duration_ms: 3.194972
-  type: 'test'
-  ...
-# Subtest: planar and floating joints keep their origin as fixed joints with a diagnostic
-ok 168 - planar and floating joints keep their origin as fixed joints with a diagnostic
-  ---
-  duration_ms: 1.02298
-  type: 'test'
-  ...
-# Subtest: unsupported visual geometry is skipped with a diagnostic and supported visuals survive
-ok 169 - unsupported visual geometry is skipped with a diagnostic and supported visuals survive
-  ---
-  duration_ms: 0.568386
-  type: 'test'
-  ...
-# Subtest: named materials retain their identity and resolve across links including inline definitions
-ok 170 - named materials retain their identity and resolve across links including inline definitions
-  ---
-  duration_ms: 0.423447
-  type: 'test'
-  ...
-# (node:20613) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
-# (Use `node --trace-warnings ...` to show where the warning was created)
-# Subtest: fixture bag drives named joints, limits, and attached frame-id geometry at the cursor
-ok 171 - fixture bag drives named joints, limits, and attached frame-id geometry at the cursor
-  ---
-  duration_ms: 44.852247
-  type: 'test'
-  ...
-# Subtest: logged TF owns matching child edges including before its first sample
-ok 172 - logged TF owns matching child edges including before its first sample
+ok 121 - merge alignment shifts display coordinates while retaining explicit originals
   ---
   duration_ms: 0.788097
   type: 'test'
   ...
-# Subtest: JointState samples retain partial joint updates and observe same-time corrections
-ok 173 - JointState samples retain partial joint updates and observe same-time corrections
+# Subtest: queued decodes retain their insertion timestamp when the caller changes its stamp
+ok 122 - queued decodes retain their insertion timestamp when the caller changes its stamp
   ---
-  duration_ms: 0.999866
+  duration_ms: 7.931374
+  type: 'test'
+  ...
+# Subtest: provenance uses the same samples as range queries after an exact-cutoff trim
+ok 123 - provenance uses the same samples as range queries after an exact-cutoff trim
+  ---
+  duration_ms: 0.380783
+  type: 'test'
+  ...
+# Subtest: projected fields preserve timestamps, values, ranges and source clocks
+ok 124 - projected fields preserve timestamps, values, ranges and source clocks
+  ---
+  duration_ms: 0.621947
+  type: 'test'
+  ...
+# Subtest: projected timestamps remap only when the source revision or mapping changes
+ok 125 - projected timestamps remap only when the source revision or mapping changes
+  ---
+  duration_ms: 0.342185
+  type: 'test'
+  ...
+# (node:24567) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: converts laser bearings into XY points in meters
+ok 126 - converts laser bearings into XY points in meters
+  ---
+  duration_ms: 0.80346
+  type: 'test'
+  ...
+# Subtest: laser scans retain inclusive range limits and omit invalid returns
+ok 127 - laser scans retain inclusive range limits and omit invalid returns
+  ---
+  duration_ms: 0.583749
+  type: 'test'
+  ...
+# Subtest: point clouds honor offsets, organized row padding, byte offsets, scalar widths, and byte order
+ok 128 - point clouds honor offsets, organized row padding, byte offsets, scalar widths, and byte order
+  ---
+  duration_ms: 0.542717
+  type: 'test'
+  ...
+# Subtest: point clouds omit nonfinite coordinates and reject incomplete or invalid layouts
+ok 129 - point clouds omit nonfinite coordinates and reject incomplete or invalid layouts
+  ---
+  duration_ms: 0.280783
+  type: 'test'
+  ...
+# Subtest: fixed-stride downsampling bounds scan and cloud points without changing bearings
+ok 130 - fixed-stride downsampling bounds scan and cloud points without changing bearings
+  ---
+  duration_ms: 8.653883
+  type: 'test'
+  ...
+# Subtest: cursor reads select one complete scan, clear empty samples, and never select a future sample
+ok 131 - cursor reads select one complete scan, clear empty samples, and never select a future sample
+  ---
+  duration_ms: 1.89277
+  type: 'test'
+  ...
+# Subtest: cloud reads find named axes and use the current field descriptor count
+ok 132 - cloud reads find named axes and use the current field descriptor count
+  ---
+  duration_ms: 0.678943
+  type: 'test'
+  ...
+# (node:24575) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: reader lookup uses registered extensions for paths and bare extensions
+ok 133 - reader lookup uses registered extensions for paths and bare extensions
+  ---
+  duration_ms: 0.831993
+  type: 'test'
+  ...
+# Subtest: two readers cannot claim the same extension and both ids appear in the error
+ok 134 - two readers cannot claim the same extension and both ids appear in the error
+  ---
+  duration_ms: 0.348785
+  type: 'test'
+  ...
+# Subtest: open dialog filters contain every registered extension
+ok 135 - open dialog filters contain every registered extension
+  ---
+  duration_ms: 0.322836
+  type: 'test'
+  ...
+# Subtest: duplicate extension rejection does not register part of a reader
+ok 136 - duplicate extension rejection does not register part of a reader
+  ---
+  duration_ms: 0.556759
+  type: 'test'
+  ...
+# Subtest: every existing custom schema exposes a decode entry point
+ok 137 - every existing custom schema exposes a decode entry point
+  ---
+  duration_ms: 0.153662
+  type: 'test'
+  ...
+# (node:24583) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: capture preserves repeated, backdated and replaced samples before in-memory compression and trimming
+ok 138 - capture preserves repeated, backdated and replaced samples before in-memory compression and trimming
+  ---
+  duration_ms: 2.298872
+  type: 'test'
+  ...
+# Subtest: capture owns mutable values and includes array children, field metadata and original clock seconds
+ok 139 - capture owns mutable values and includes array children, field metadata and original clock seconds
+  ---
+  duration_ms: 0.880005
+  type: 'test'
+  ...
+# Subtest: capture rejects type conflicts exactly as the live log does
+ok 140 - capture rejects type conflicts exactly as the live log does
+  ---
+  duration_ms: 0.190747
+  type: 'test'
+  ...
+# Subtest: capture also follows writes to fields restored from worker serialization
+ok 141 - capture also follows writes to fields restored from worker serialization
+  ---
+  duration_ms: 0.41852
+  type: 'test'
+  ...
+# (node:24591) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: file grows during recording and existing WPILOG reader round-trips fields, exact timestamps and values
+ok 142 - file grows during recording and existing WPILOG reader round-trips fields, exact timestamps and values
+  ---
+  duration_ms: 13.118957
+  type: 'test'
+  ...
+# Subtest: recording retains repeated, equal-timestamp and out-of-order records and metadata changes
+ok 143 - recording retains repeated, equal-timestamp and out-of-order records and metadata changes
+  ---
+  duration_ms: 3.314181
+  type: 'test'
+  ...
+# Subtest: stop drains accepted writes, rejects later samples, and restart resets file and entries
+ok 144 - stop drains accepted writes, rejects later samples, and restart resets file and entries
+  ---
+  duration_ms: 3.070264
+  type: 'test'
+  ...
+# Subtest: low disk before start leaves an existing destination untouched
+ok 145 - low disk before start leaves an existing destination untouched
+  ---
+  duration_ms: 4.870966
+  type: 'test'
+  ...
+# Subtest: low disk during idle recording closes a readable file and emits the visible reason
+ok 146 - low disk during idle recording closes a readable file and emits the visible reason
+  ---
+  duration_ms: 8.264927
+  type: 'test'
+  ...
+# Subtest: low disk before a batch stops without writing partial records
+ok 147 - low disk before a batch stops without writing partial records
+  ---
+  duration_ms: 2.056887
+  type: 'test'
+  ...
+# Subtest: bounded pending bytes stop a recording visibly instead of retaining an unbounded session
+ok 148 - bounded pending bytes stop a recording visibly instead of retaining an unbounded session
+  ---
+  duration_ms: 3.435644
+  type: 'test'
+  ...
+# Subtest: stop during start does not create an orphan open writer
+ok 149 - stop during start does not create an orphan open writer
+  ---
+  duration_ms: 1.977969
+  type: 'test'
+  ...
+# Subtest: redeclared types and newly added fields always use distinct WPILOG entries
+ok 150 - redeclared types and newly added fields always use distinct WPILOG entries
+  ---
+  duration_ms: 2.130458
+  type: 'test'
+  ...
+# Subtest: NetworkTables integer aliases use standard WPILOG integer types
+ok 151 - NetworkTables integer aliases use standard WPILOG integer types
+  ---
+  duration_ms: 3.861386
+  type: 'test'
+  ...
+# Subtest: a delayed disk check from a stopped recording cannot stop its restarted writer
+ok 152 - a delayed disk check from a stopped recording cannot stop its restarted writer
+  ---
+  duration_ms: 27.705278
+  type: 'test'
+  ...
+# Subtest: a writer requires field descriptions again after restart
+ok 153 - a writer requires field descriptions again after restart
+  ---
+  duration_ms: 9.255459
+  type: 'test'
+  ...
+# (node:24603) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: renderer draws pixels and exposes aspect ratio synchronously without encoding PNG
+ok 154 - renderer draws pixels and exposes aspect ratio synchronously without encoding PNG
+  ---
+  duration_ms: 1.377885
+  type: 'test'
+  ...
+# Subtest: empty and error commands release the previous canvas and show their diagnostic
+ok 155 - empty and error commands release the previous canvas and show their diagnostic
+  ---
+  duration_ms: 1.100357
+  type: 'test'
+  ...
+# Subtest: topic reset and tab disposal release canvas storage and permit the current command again
+ok 156 - topic reset and tab disposal release canvas storage and permit the current command again
+  ---
+  duration_ms: 0.479922
+  type: 'test'
+  ...
+# Subtest: image payload survives message-port transport into a satellite canvas
+ok 157 - image payload survives message-port transport into a satellite canvas
+  ---
+  duration_ms: 3.485008
+  type: 'test'
+  ...
+# Subtest: hub and satellite templates provide an accessible image canvas
+ok 158 - hub and satellite templates provide an accessible image canvas
+  ---
+  duration_ms: 0.488266
+  type: 'test'
+  ...
+# (node:24611) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: parse visual primitives, mesh scale, materials, origins and a connected joint tree
+ok 159 - parse visual primitives, mesh scale, materials, origins and a connected joint tree
+  ---
+  duration_ms: 5.898311
+  type: 'test'
+  ...
+# Subtest: parse default joint axis, default visual origin and inline color
+ok 160 - parse default joint axis, default visual origin and inline color
+  ---
+  duration_ms: 0.733394
+  type: 'test'
+  ...
+# Subtest: reject malformed XML and invalid numeric values
+ok 161 - reject malformed XML and invalid numeric values
+  ---
+  duration_ms: 5.799603
+  type: 'test'
+  ...
+# Subtest: reject duplicate links, duplicate joints, missing references, cycles, multiple parents and disconnected trees
+ok 162 - reject duplicate links, duplicate joints, missing references, cycles, multiple parents and disconnected trees
+  ---
+  duration_ms: 7.068524
+  type: 'test'
+  ...
+# Subtest: fixed joints preserve the static origin independently of a supplied position
+ok 163 - fixed joints preserve the static origin independently of a supplied position
+  ---
+  duration_ms: 0.158028
+  type: 'test'
+  ...
+# Subtest: revolute joints compose local-axis rotation after origin and respect both limits
+ok 164 - revolute joints compose local-axis rotation after origin and respect both limits
+  ---
+  duration_ms: 0.319881
+  type: 'test'
+  ...
+# Subtest: continuous joints rotate beyond a full revolution without limits
+ok 165 - continuous joints rotate beyond a full revolution without limits
+  ---
+  duration_ms: 0.194002
+  type: 'test'
+  ...
+# Subtest: prismatic joints translate in the rotated local axis and respect both limits
+ok 166 - prismatic joints translate in the rotated local axis and respect both limits
+  ---
+  duration_ms: 0.215164
+  type: 'test'
+  ...
+# Subtest: joint names select positions, absent positions default to zero, and fixed links compose
+ok 167 - joint names select positions, absent positions default to zero, and fixed links compose
+  ---
+  duration_ms: 1.682464
+  type: 'test'
+  ...
+# Subtest: resolve relative STL and DAE files against the URDF file
+ok 168 - resolve relative STL and DAE files against the URDF file
+  ---
+  duration_ms: 0.59807
+  type: 'test'
+  ...
+# Subtest: resolve package paths against a user-selected parent root and report every unresolved case
+ok 169 - resolve package paths against a user-selected parent root and report every unresolved case
+  ---
+  duration_ms: 0.410638
+  type: 'test'
+  ...
+# Subtest: mimic joints apply multipliers and offsets through chains regardless of joint order
+ok 170 - mimic joints apply multipliers and offsets through chains regardless of joint order
+  ---
+  duration_ms: 0.380734
+  type: 'test'
+  ...
+# Subtest: mimic defaults copy their source and bounded mimics respect their own limits
+ok 171 - mimic defaults copy their source and bounded mimics respect their own limits
+  ---
+  duration_ms: 0.470198
+  type: 'test'
+  ...
+# Subtest: reject missing mimic targets, mimic cycles and non-finite mimic coefficients
+ok 172 - reject missing mimic targets, mimic cycles and non-finite mimic coefficients
+  ---
+  duration_ms: 2.149036
+  type: 'test'
+  ...
+# Subtest: planar and floating joints keep their origin as fixed joints with a diagnostic
+ok 173 - planar and floating joints keep their origin as fixed joints with a diagnostic
+  ---
+  duration_ms: 1.044323
+  type: 'test'
+  ...
+# Subtest: unsupported visual geometry is skipped with a diagnostic and supported visuals survive
+ok 174 - unsupported visual geometry is skipped with a diagnostic and supported visuals survive
+  ---
+  duration_ms: 0.525852
+  type: 'test'
+  ...
+# Subtest: named materials retain their identity and resolve across links including inline definitions
+ok 175 - named materials retain their identity and resolve across links including inline definitions
+  ---
+  duration_ms: 0.344669
+  type: 'test'
+  ...
+# (node:24619) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: fixture bag drives named joints, limits, and attached frame-id geometry at the cursor
+ok 176 - fixture bag drives named joints, limits, and attached frame-id geometry at the cursor
+  ---
+  duration_ms: 36.295763
+  type: 'test'
+  ...
+# Subtest: logged TF owns matching child edges including before its first sample
+ok 177 - logged TF owns matching child edges including before its first sample
+  ---
+  duration_ms: 2.685665
+  type: 'test'
+  ...
+# Subtest: JointState samples retain partial joint updates and observe same-time corrections
+ok 178 - JointState samples retain partial joint updates and observe same-time corrections
+  ---
+  duration_ms: 0.79
   type: 'test'
   ...
 # Subtest: URDF edges stay in the selected recording and topic namespace
-ok 174 - URDF edges stay in the selected recording and topic namespace
+ok 179 - URDF edges stay in the selected recording and topic namespace
   ---
-  duration_ms: 0.275525
+  duration_ms: 0.155895
   type: 'test'
   ...
 # Subtest: automatic fixed frame ignores shadowed URDF parents
-ok 175 - automatic fixed frame ignores shadowed URDF parents
+ok 180 - automatic fixed frame ignores shadowed URDF parents
   ---
-  duration_ms: 0.61803
+  duration_ms: 0.352041
   type: 'test'
   ...
 # Subtest: appended JointState revisions do not read or process earlier samples
-ok 176 - appended JointState revisions do not read or process earlier samples
+ok 181 - appended JointState revisions do not read or process earlier samples
   ---
-  duration_ms: 5.142684
+  duration_ms: 2.777132
   type: 'test'
   ...
 # Subtest: JointState caches observe earlier corrections, late fields, and live trimming
-ok 177 - JointState caches observe earlier corrections, late fields, and live trimming
+ok 182 - JointState caches observe earlier corrections, late fields, and live trimming
   ---
-  duration_ms: 0.692843
+  duration_ms: 0.581997
   type: 'test'
   ...
 # Subtest: replacing JointState field identity invalidates cached samples
-ok 178 - replacing JointState field identity invalidates cached samples
+ok 183 - replacing JointState field identity invalidates cached samples
   ---
-  duration_ms: 0.297037
+  duration_ms: 0.193431
   type: 'test'
   ...
 # Subtest: late appended child values update following JointState samples without inventing parent samples
-ok 179 - late appended child values update following JointState samples without inventing parent samples
+ok 184 - late appended child values update following JointState samples without inventing parent samples
   ---
-  duration_ms: 0.711532
+  duration_ms: 0.355496
   type: 'test'
   ...
 # Subtest: projected live JointStates append without rescanning and retain correction and clock invalidation
-ok 180 - projected live JointStates append without rescanning and retain correction and clock invalidation
+ok 185 - projected live JointStates append without rescanning and retain correction and clock invalidation
   ---
-  duration_ms: 2.265862
+  duration_ms: 1.675032
   type: 'test'
   ...
 # Subtest: live no-op discards keep revisions and trimming followed by append reads only the boundary and suffix
-ok 181 - live no-op discards keep revisions and trimming followed by append reads only the boundary and suffix
+ok 186 - live no-op discards keep revisions and trimming followed by append reads only the boundary and suffix
   ---
-  duration_ms: 0.937562
+  duration_ms: 0.696349
   type: 'test'
   ...
 # Subtest: trimming retains held partial joint positions despite compressed child histories
-ok 182 - trimming retains held partial joint positions despite compressed child histories
+ok 187 - trimming retains held partial joint positions despite compressed child histories
   ---
-  duration_ms: 0.661055
+  duration_ms: 0.37897
   type: 'test'
   ...
 # Subtest: JointState diagnostics stop at the cursor and summarize a bounded recent set
-ok 183 - JointState diagnostics stop at the cursor and summarize a bounded recent set
+ok 188 - JointState diagnostics stop at the cursor and summarize a bounded recent set
   ---
-  duration_ms: 2.667688
+  duration_ms: 1.574932
   type: 'test'
   ...
 # Subtest: projected live trimming and appending do not rebuild retained JointState history
-ok 184 - projected live trimming and appending do not rebuild retained JointState history
+ok 189 - projected live trimming and appending do not rebuild retained JointState history
   ---
-  duration_ms: 0.708667
+  duration_ms: 0.451139
   type: 'test'
   ...
-1..184
-# tests 184
+1..189
+# tests 189
 # suites 0
-# pass 184
+# pass 189
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 11506.271902
-(node:20621) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# duration_ms 11039.448073
+(node:24627) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 TAP version 13
-# (node:20628) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24634) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
-# (node:20628) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/TerraScope/src/shared/CustomEnvironment.test.ts is not specified and it doesn't parse as CommonJS.
+# (node:24634) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/TerraScope/src/shared/CustomEnvironment.test.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to /workspace/TerraScope/package.json.
 # Subtest: size and origin define the rectangle from the minimum corner
 ok 1 - size and origin define the rectangle from the minimum corner
   ---
-  duration_ms: 2.021224
+  duration_ms: 1.403413
   type: 'test'
   ...
 # Subtest: center frame puts the rectangle center at the origin the 2D view uses
 ok 2 - center frame puts the rectangle center at the origin the 2D view uses
   ---
-  duration_ms: 0.501085
+  duration_ms: 0.191298
   type: 'test'
   ...
 # Subtest: an origin at the center leaves world (0, 0) in the middle
 ok 3 - an origin at the center leaves world (0, 0) in the middle
   ---
-  duration_ms: 0.246872
+  duration_ms: 0.13272
   type: 'test'
   ...
 # Subtest: rejects a non-positive or non-finite size
 ok 4 - rejects a non-positive or non-finite size
   ---
-  duration_ms: 0.244659
+  duration_ms: 0.15958
   type: 'test'
   ...
 # Subtest: pixel and inch size follow length and width, not a bundled field
 ok 5 - pixel and inch size follow length and width, not a bundled field
   ---
-  duration_ms: 0.482897
+  duration_ms: 0.31894
   type: 'test'
   ...
-# (node:20636) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24642) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
-# (node:20636) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/TerraScope/src/shared/log/SemanticType.test.ts is not specified and it doesn't parse as CommonJS.
+# (node:24642) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/TerraScope/src/shared/log/SemanticType.test.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to /workspace/TerraScope/package.json.
 # Subtest: maps WPILib geometry structs onto semantic kinds
 ok 6 - maps WPILib geometry structs onto semantic kinds
   ---
-  duration_ms: 0.756209
+  duration_ms: 0.679283
   type: 'test'
   ...
 # Subtest: maps AdvantageKit mechanism and Choreo trajectory structs
 ok 7 - maps AdvantageKit mechanism and Choreo trajectory structs
   ---
-  duration_ms: 0.104127
+  duration_ms: 0.110196
   type: 'test'
   ...
 # Subtest: returns null for unmapped types
 ok 8 - returns null for unmapped types
   ---
-  duration_ms: 0.083636
+  duration_ms: 0.082093
   type: 'test'
   ...
 # Subtest: pose source lists stay the field-tab sets
 ok 9 - pose source lists stay the field-tab sets
   ---
-  duration_ms: 0.679764
+  duration_ms: 0.67032
   type: 'test'
   ...
 # Subtest: trajectory, rotation, mechanism, and numeric lists
 ok 10 - trajectory, rotation, mechanism, and numeric lists
   ---
-  duration_ms: 0.247683
+  duration_ms: 0.327664
   type: 'test'
   ...
 # Subtest: pose reader accepts mapped spatial types and rejects mechanism joints
 ok 11 - pose reader accepts mapped spatial types and rejects mechanism joints
   ---
-  duration_ms: 0.111147
+  duration_ms: 0.118518
   type: 'test'
   ...
 # Subtest: maps ROS laser scans and point clouds without admitting them to pose readers
 ok 12 - maps ROS laser scans and point clouds without admitting them to pose readers
   ---
-  duration_ms: 0.175514
+  duration_ms: 0.179791
   type: 'test'
   ...
 # Subtest: maps ROS image types without admitting them to pose readers
 ok 13 - maps ROS image types without admitting them to pose readers
   ---
-  duration_ms: 0.170677
+  duration_ms: 0.183817
   type: 'test'
   ...
 1..13
@@ -1419,61 +1449,61 @@ ok 13 - maps ROS image types without admitting them to pose readers
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 245.557838
-(node:20652) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# duration_ms 246.983661
+(node:24658) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 <DIR>/LineGraphController.test.cjs  chunk │ size: 672.56 kB
 
-✔ rolldown v1.0.2 Finished in 140.45 ms
-(node:20670) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+✔ rolldown v1.0.2 Finished in 103.97 ms
+(node:24676) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 TAP version 13
 # Subtest: detects bounded string and integer enum domains in first occurrence order
 ok 1 - detects bounded string and integer enum domains in first occurrence order
   ---
-  duration_ms: 1.300889
+  duration_ms: 1.60039
   type: 'test'
   ...
 # Subtest: enum lanes preserve states over time and colors across zoom and layout reload
 ok 2 - enum lanes preserve states over time and colors across zoom and layout reload
   ---
-  duration_ms: 2.990463
+  duration_ms: 2.739315
   type: 'test'
   ...
 # Subtest: enum lanes reuse unchanged field history and refresh after mutations
 ok 3 - enum lanes reuse unchanged field history and refresh after mutations
   ---
-  duration_ms: 1.773941
+  duration_ms: 1.85944
   type: 'test'
   ...
 # Subtest: invalid enum history is cached and refreshed when the field becomes valid
 ok 4 - invalid enum history is cached and refreshed when the field becomes valid
   ---
-  duration_ms: 1.043932
+  duration_ms: 0.778583
   type: 'test'
   ...
 # Subtest: enum lane colors handle arbitrary state names and invalid enum fields retain visible values
 ok 5 - enum lane colors handle arbitrary state names and invalid enum fields retain visible values
   ---
-  duration_ms: 0.273733
+  duration_ms: 0.308975
   type: 'test'
   ...
 # Subtest: a declared source unit survives a saved layout and drives numeric conversion
 ok 6 - a declared source unit survives a saved layout and drives numeric conversion
   ---
-  duration_ms: 1.285466
+  duration_ms: 1.431696
   type: 'test'
   ...
 # Subtest: metadata units take precedence and absent or invalid declarations keep legacy numeric output
 ok 7 - metadata units take precedence and absent or invalid declarations keep legacy numeric output
   ---
-  duration_ms: 1.385867
+  duration_ms: 1.215921
   type: 'test'
   ...
 # Subtest: legacy discrete and numeric source types retain their defaults and output
 ok 8 - legacy discrete and numeric source types retain their defaults and output
   ---
-  duration_ms: 0.309897
+  duration_ms: 0.273101
   type: 'test'
   ...
 1..8
@@ -1484,115 +1514,115 @@ ok 8 - legacy discrete and numeric source types retain their defaults and output
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 20.279679
-(node:20678) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# duration_ms 19.265413
+(node:24684) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 TAP version 13
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in src/hub/dataSources/csv/fixtures/sample.tsv
 ok 1 - registered reader preserves fields in src/hub/dataSources/csv/fixtures/sample.tsv
   ---
-  duration_ms: 105.877333
+  duration_ms: 85.390406
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.json
 ok 2 - registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.json
   ---
-  duration_ms: 81.407523
+  duration_ms: 68.273838
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.jsonl
 ok 3 - registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.jsonl
   ---
-  duration_ms: 72.130832
+  duration_ms: 66.94752
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in src/hub/dataSources/mcap/fixtures/sample.mcap
 ok 4 - registered reader preserves fields in src/hub/dataSources/mcap/fixtures/sample.mcap
   ---
-  duration_ms: 110.225541
+  duration_ms: 111.8253
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/images.db3
 ok 5 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/images.db3
   ---
-  duration_ms: 174.105284
+  duration_ms: 151.844614
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/sample.db3
 ok 6 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/sample.db3
   ---
-  duration_ms: 156.475655
+  duration_ms: 163.371797
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/spatial-sensors.db3
 ok 7 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/spatial-sensors.db3
   ---
-  duration_ms: 160.829697
+  duration_ms: 149.061713
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/transform-tree.db3
 ok 8 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/transform-tree.db3
   ---
-  duration_ms: 152.457268
+  duration_ms: 157.051684
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/urdf/robot.db3
 ok 9 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/urdf/robot.db3
   ---
-  duration_ms: 146.575271
+  duration_ms: 161.702144
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: registered reader preserves fields in docs/evidence/chunk-11/generic-telemetry.csv
 ok 10 - registered reader preserves fields in docs/evidence/chunk-11/generic-telemetry.csv
   ---
-  duration_ms: 96.260271
+  duration_ms: 86.036894
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
-# (node:20685) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/TerraScope/build/reader-fixtures/wpilogIndexer.js is not specified and it doesn't parse as CommonJS.
+# (node:24691) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/TerraScope/build/reader-fixtures/wpilogIndexer.js is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to /workspace/TerraScope/package.json.
 # Subtest: registered reader preserves fields in docs/evidence/chunk-16/two-sources.wpilog
 ok 11 - registered reader preserves fields in docs/evidence/chunk-16/two-sources.wpilog
   ---
-  duration_ms: 144.92129
+  duration_ms: 154.36281
   type: 'test'
   ...
 # Subtest: the regression baseline covers every existing reader fixture
 ok 12 - the regression baseline covers every existing reader fixture
   ---
-  duration_ms: 6.416343
+  duration_ms: 6.811629
   type: 'test'
   ...
-# (node:20685) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (node:24691) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: the public API example reader opens numeric samples
 ok 13 - the public API example reader opens numeric samples
   ---
-  duration_ms: 70.580759
+  duration_ms: 96.890083
   type: 'test'
   ...
 1..13
@@ -1603,49 +1633,49 @@ ok 13 - the public API example reader opens numeric samples
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 2172.384094
-(node:20719) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# duration_ms 2070.734371
+(node:24725) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 <DIR>/Field3dController.test.cjs  chunk │ size: 8,994.67 kB
 
-✔ rolldown v1.0.2 Finished in 1.15 s
-(node:20737) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+✔ rolldown v1.0.2 Finished in 1.04 s
+(node:24743) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 TAP version 13
 # Subtest: URDF options reuse discovered topics until fields refresh or the log changes
 ok 1 - URDF options reuse discovered topics until fields refresh or the log changes
   ---
-  duration_ms: 2.723281
+  duration_ms: 2.509278
   type: 'test'
   ...
 # Subtest: None excludes URDF descriptions and JointState subscriptions
 ok 2 - None excludes URDF descriptions and JointState subscriptions
   ---
-  duration_ms: 0.39223
+  duration_ms: 0.386362
   type: 'test'
   ...
 # Subtest: layouts store local source references and reload them through the desktop boundary
 ok 3 - layouts store local source references and reload them through the desktop boundary
   ---
-  duration_ms: 0.53786
+  duration_ms: 0.726303
   type: 'test'
   ...
 # Subtest: layout-supplied XML and file URLs never load or migrate local sources
 ok 4 - layout-supplied XML and file URLs never load or migrate local sources
   ---
-  duration_ms: 0.274453
+  duration_ms: 0.251218
   type: 'test'
   ...
 # Subtest: disposing a tab removes its URDF event listener before any later picked event
 ok 5 - disposing a tab removes its URDF event listener before any later picked event
   ---
-  duration_ms: 198.702171
+  duration_ms: 198.218727
   type: 'test'
   ...
 # Subtest: per-frame commands retain only the model id and source changes replace the separate resource
 ok 6 - per-frame commands retain only the model id and source changes replace the separate resource
   ---
-  duration_ms: 5.89715
+  duration_ms: 6.63392
   type: 'test'
   ...
 1..6
@@ -1656,13 +1686,13 @@ ok 6 - per-frame commands retain only the model id and source changes replace th
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 235.736551
-(node:20745) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# duration_ms 226.895308
+(node:24751) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 <DIR>/URDFManager.test.cjs  chunk │ size: 792.65 kB
 
-✔ rolldown v1.0.2 Finished in 120.22 ms
-(node:20763) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+✔ rolldown v1.0.2 Finished in 97.25 ms
+(node:24769) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 THREE.ColladaLoader: File version 1.4.1
 THREE.ColladaLoader: File version 1.4.1
@@ -1671,25 +1701,25 @@ TAP version 13
 # Subtest: named materials share one instance across links and are disposed once
 ok 1 - named materials share one instance across links and are disposed once
   ---
-  duration_ms: 8.403545
+  duration_ms: 9.878274
   type: 'test'
   ...
 # Subtest: cloned satellite commands update link poses without rebuilding visual resources
 ok 2 - cloned satellite commands update link poses without rebuilding visual resources
   ---
-  duration_ms: 2.62314
+  duration_ms: 3.740522
   type: 'test'
   ...
 # Subtest: COLLADA Y-up and Z-up authored vertical axes both render vertically in URDF Z-up
 ok 3 - COLLADA Y-up and Z-up authored vertical axes both render vertically in URDF Z-up
   ---
-  duration_ms: 8.158718
+  duration_ms: 8.058114
   type: 'test'
   ...
 # Subtest: X_UP COLLADA is skipped with a visible diagnostic while other visuals remain
 ok 4 - X_UP COLLADA is skipped with a visible diagnostic while other visuals remain
   ---
-  duration_ms: 1.550094
+  duration_ms: 2.057127
   type: 'test'
   ...
 1..4
@@ -1700,37 +1730,37 @@ ok 4 - X_UP COLLADA is skipped with a visible diagnostic while other visuals rem
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 28.920092
-(node:20771) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# duration_ms 33.55081
+(node:24777) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 <DIR>/URDFTransport.test.cjs  chunk │ size: 9,979.75 kB
 
-✔ rolldown v1.0.2 Finished in 1.16 s
-(node:20789) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+✔ rolldown v1.0.2 Finished in 1.03 s
+(node:24795) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 TAP version 13
 # Subtest: renderer change detection serializes only pose commands and applies model updates once
 ok 1 - renderer change detection serializes only pose commands and applies model updates once
   ---
-  duration_ms: 4.991346
+  duration_ms: 5.295414
   type: 'test'
   ...
 # Subtest: satellites clone model resources only on changes and replay them to new or reloaded windows
 ok 2 - satellites clone model resources only on changes and replay them to new or reloaded windows
   ---
-  duration_ms: 1.986221
+  duration_ms: 1.577986
   type: 'test'
   ...
 # Subtest: stopping a 3D renderer releases the current model and all visual managers
 ok 3 - stopping a 3D renderer releases the current model and all visual managers
   ---
-  duration_ms: 1.008548
+  duration_ms: 0.837781
   type: 'test'
   ...
 # Subtest: a cleared 3D satellite recreates its renderer and keeps diagnostics on the next command
 ok 4 - a cleared 3D satellite recreates its renderer and keeps diagnostics on the next command
   ---
-  duration_ms: 93.656016
+  duration_ms: 80.0889
   type: 'test'
   ...
 1..4
@@ -1741,19 +1771,19 @@ ok 4 - a cleared 3D satellite recreates its renderer and keeps diagnostics on th
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 130.800154
-(node:20797) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# duration_ms 111.69975
+(node:24803) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 <DIR>/XRURDFModel.test.cjs  chunk │ size: 298.30 kB
 
-✔ rolldown v1.0.2 Finished in 46.98 ms
-(node:20815) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+✔ rolldown v1.0.2 Finished in 40.54 ms
+(node:24821) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 TAP version 13
 # Subtest: XR sends each URDF model change once and replays only the current resource on connection
 ok 1 - XR sends each URDF model change once and replays only the current resource on connection
   ---
-  duration_ms: 6.838798
+  duration_ms: 5.475124
   type: 'test'
   ...
 1..1
@@ -1764,96 +1794,96 @@ ok 1 - XR sends each URDF model change once and replays only the current resourc
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 14.108096
+# duration_ms 11.439966
 
 Exit status: 0
 
 $ node build/unit-test/shared/urdf/URDFLog.test.js
-(node:20823) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24829) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 TAP version 13
 # Subtest: fixture bag drives named joints, limits, and attached frame-id geometry at the cursor
 ok 1 - fixture bag drives named joints, limits, and attached frame-id geometry at the cursor
   ---
-  duration_ms: 51.281725
+  duration_ms: 39.067339
   type: 'test'
   ...
 # Subtest: logged TF owns matching child edges including before its first sample
 ok 2 - logged TF owns matching child edges including before its first sample
   ---
-  duration_ms: 0.623259
+  duration_ms: 0.423227
   type: 'test'
   ...
 # Subtest: JointState samples retain partial joint updates and observe same-time corrections
 ok 3 - JointState samples retain partial joint updates and observe same-time corrections
   ---
-  duration_ms: 0.780695
+  duration_ms: 0.600515
   type: 'test'
   ...
 # Subtest: URDF edges stay in the selected recording and topic namespace
 ok 4 - URDF edges stay in the selected recording and topic namespace
   ---
-  duration_ms: 0.236846
+  duration_ms: 0.148774
   type: 'test'
   ...
 # Subtest: automatic fixed frame ignores shadowed URDF parents
 ok 5 - automatic fixed frame ignores shadowed URDF parents
   ---
-  duration_ms: 0.539773
+  duration_ms: 0.372511
   type: 'test'
   ...
 # Subtest: appended JointState revisions do not read or process earlier samples
 ok 6 - appended JointState revisions do not read or process earlier samples
   ---
-  duration_ms: 4.830083
+  duration_ms: 3.074459
   type: 'test'
   ...
 # Subtest: JointState caches observe earlier corrections, late fields, and live trimming
 ok 7 - JointState caches observe earlier corrections, late fields, and live trimming
   ---
-  duration_ms: 0.666995
+  duration_ms: 0.427343
   type: 'test'
   ...
 # Subtest: replacing JointState field identity invalidates cached samples
 ok 8 - replacing JointState field identity invalidates cached samples
   ---
-  duration_ms: 0.275535
+  duration_ms: 0.1997
   type: 'test'
   ...
 # Subtest: late appended child values update following JointState samples without inventing parent samples
 ok 9 - late appended child values update following JointState samples without inventing parent samples
   ---
-  duration_ms: 0.553764
+  duration_ms: 0.422997
   type: 'test'
   ...
 # Subtest: projected live JointStates append without rescanning and retain correction and clock invalidation
 ok 10 - projected live JointStates append without rescanning and retain correction and clock invalidation
   ---
-  duration_ms: 2.045731
+  duration_ms: 1.391506
   type: 'test'
   ...
 # Subtest: live no-op discards keep revisions and trimming followed by append reads only the boundary and suffix
 ok 11 - live no-op discards keep revisions and trimming followed by append reads only the boundary and suffix
   ---
-  duration_ms: 0.900055
+  duration_ms: 0.650199
   type: 'test'
   ...
 # Subtest: trimming retains held partial joint positions despite compressed child histories
 ok 12 - trimming retains held partial joint positions despite compressed child histories
   ---
-  duration_ms: 0.529407
+  duration_ms: 0.389917
   type: 'test'
   ...
 # Subtest: JointState diagnostics stop at the cursor and summarize a bounded recent set
 ok 13 - JointState diagnostics stop at the cursor and summarize a bounded recent set
   ---
-  duration_ms: 2.296027
+  duration_ms: 1.392407
   type: 'test'
   ...
 # Subtest: projected live trimming and appending do not rebuild retained JointState history
 ok 14 - projected live trimming and appending do not rebuild retained JointState history
   ---
-  duration_ms: 0.518701
+  duration_ms: 0.370638
   type: 'test'
   ...
 1..14
@@ -1864,12 +1894,12 @@ ok 14 - projected live trimming and appending do not rebuild retained JointState
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 110.027169
+# duration_ms 90.185274
 
 Exit status: 0
 
 $ npm run check-format
-(node:20831) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24837) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
 > advantagescope@27.0.0-alpha-6 check-format
@@ -1878,8 +1908,40 @@ $ npm run check-format
 No default format specified. Using {"prepend":"/*","append":"*/"} as backup
 [32m✔[0m All files have licenses.
 Command succeeded
-(node:20852) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(node:24858) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
+Checking formatting...
+All matched files use Prettier code style!
+
+Exit status: 0
+
+$ node docs/evidence/chunk-15/verify-urdf.cjs urdf
+PASS: URDF bag renders at 1.5 and 2.5, rewind restores links, Y_UP DAE is upright with +90 degree X rotation.
+
+Exit status: 0
+
+$ node docs/evidence/chunk-15/verify-urdf-satellite.cjs
+PASS: real 3D satellite reload receives one robot resource, at least 30 model-free pose commands, and renders the robot.
+
+Exit status: 0
+
+$ node docs/evidence/chunk-15/verify-urdf.cjs wpilib
+PASS: existing WPILib robot canvas is unchanged, with zero changed pixels.
+PASS: actual WPILOG reader renders existing KitBot; URDF is None.
+
+Exit status: 0
+
+Registration comparison against current main
+PASS: every current-main test path and reader fixture baseline remains registered; all URDF regression tests are registered.
+
+$ npm run check-format
+
+> advantagescope@27.0.0-alpha-6 check-format
+> license-check-and-add check -f file-header-config.json && prettier --check .
+
+No default format specified. Using {"prepend":"/*","append":"*/"} as backup
+[32m✔[0m All files have licenses.
+Command succeeded
 Checking formatting...
 All matched files use Prettier code style!
 

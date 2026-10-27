@@ -59,15 +59,17 @@ async function connect(page) {
       await hub.evaluate("!!window.tabs.tabList[0].controller.getURDFModel()"),
       "Run the URDF verifier before this satellite check"
     );
+    const existingPages = new Set((await pages()).map((page) => page.id));
     await hub.evaluate("window.tabs.newSatellite()");
     let page;
     for (let i = 0; i < 100; i++) {
-      page = (await pages()).find((page) => page.url.endsWith("/satellite.html"));
+      page = (await pages()).find((page) => page.url.endsWith("/satellite.html") && !existingPages.has(page.id));
       if (page) break;
       await wait(100);
     }
     assert(page, "3D satellite window opened");
     satellite = await connect(page);
+    await satellite.call("Page.enable");
     await satellite.call("Page.addScriptToEvaluateOnNewDocument", {
       source: `
       window.urdfTransportEvidence = {frames:0,resources:0,modelId:null,modelInFrame:false,links:0};
@@ -89,7 +91,7 @@ async function connect(page) {
       if (state?.frames >= 30) break;
       await wait(100);
     }
-    assert(state?.frames >= 30, "At least 30 actual satellite frames received");
+    assert(state?.frames >= 30, "At least 30 actual satellite frames received: " + JSON.stringify(state));
     assert.equal(state.resources, 1, "Reload receives robot resource exactly once");
     assert.equal(state.modelId, state.frameId);
     assert(state.links > 0);

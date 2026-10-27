@@ -94,6 +94,7 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       tabs: [
         {
           type: 3,
+          controllerUUID: "61db089b-ccef-4f20-9692-4a10cda00015",
           title,
           controller: {
             game: "custom",
@@ -274,6 +275,28 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       const canvas = await call("Page.captureScreenshot", { format: "png", clip: rect });
       fs.writeFileSync(path.join(output, mode + "-canvas.png"), Buffer.from(canvas.data, "base64"));
       fs.writeFileSync(path.join(output, mode + "-observations.json"), JSON.stringify(result, null, 2) + "\n");
+      if (mode === "wpilib") {
+        const { PNG } = require("pngjs");
+        const baseline = PNG.sync.read(fs.readFileSync(path.join(output, "wpilib-main-canvas.png")));
+        const actual = PNG.sync.read(fs.readFileSync(path.join(output, "wpilib-canvas.png")));
+        assert.equal(actual.width, baseline.width);
+        assert.equal(actual.height, baseline.height);
+        assert(actual.data.equals(baseline.data), "Existing WPILib robot canvas is unchanged");
+        fs.writeFileSync(
+          path.join(output, "wpilib-second-fixup-comparison.json"),
+          JSON.stringify(
+            {
+              changedPixels: 0,
+              width: actual.width,
+              height: actual.height,
+              baseline: "committed main canvas snapshot"
+            },
+            null,
+            2
+          ) + "\n"
+        );
+        console.log("PASS: existing WPILib robot canvas is unchanged, with zero changed pixels.");
+      }
       if (mode === "wpilib-main") {
         const current = JSON.parse(fs.readFileSync(path.join(output, "wpilib-observations.json")));
         assert.deepEqual(result.command, current.command, "WPILib render commands match main exactly");

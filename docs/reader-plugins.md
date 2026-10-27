@@ -1,9 +1,10 @@
 # Add a log reader
 
 Use the TerraLog example in `src/examples/` as the template for a reader compiled into TerraScope.
+The example is compiled and exercised by tests. It is not registered or bundled in the shipped app.
 Its `.terralog` files contain one numeric sample per line, with tabs between the timestamp in seconds, field name, and value.
 
-1. Copy `src/examples/terraLogReader.ts` and `src/examples/terraLogWorker.ts` into a reader directory under `src/hub/dataSources/` or `src/examples/`.
+1. Copy `src/examples/terraLogReader.ts` and `src/examples/terraLogWorker.ts` into a reader directory under `src/hub/dataSources/`. Adjust their relative imports for the new location.
 2. Give the registration a unique `id`, a `displayName`, and one or more `extensions` without leading dots.
 3. Set `worker` to the compiled worker filename. Name its source file `*Worker.ts` so the build discovers it.
 4. Replace the worker's parser with your decoder. Write samples through `Log.put*`.
@@ -18,7 +19,7 @@ Return an `initial` response containing `log.toSerialized()` and `isPartial: fal
 Return `failed` if the file cannot be decoded.
 The existing WPILOG worker demonstrates lazy loading through `parseField` requests.
 
-To try the example, save this content as `example.terralog`, with literal tabs between columns.
+To try the example in the app, first copy and register it with the steps above. Keep its extension and parser, then save this content as `example.terralog`, with literal tabs between columns.
 
 ```text
 0	/Example/Speed	1

@@ -5,7 +5,6 @@
 // license that can be found in the LICENSE file
 // at the root directory of this project.
 
-import { registerTerraLogReader } from "../../examples/terraLogReader";
 import URCLSchema from "../../hub/dataSources/schema/URCLSchema";
 import URCLSchemaLegacy from "../../hub/dataSources/schema/URCLSchemaLegacy";
 import { decodeCompressedImage, decodeRawImage } from "../log/ImageSensor";
@@ -83,8 +82,6 @@ plugins.registerSchema({
   displayName: "URCL revision 3 periodic frames",
   decode: URCLSchema.parseURCLr3
 });
-
-registerTerraLogReader(plugins);
 
 plugins.registerImageDecoder({ id: "ros-image", semantic: SemanticType.Image, decode: decodeRawImage });
 plugins.registerImageDecoder({

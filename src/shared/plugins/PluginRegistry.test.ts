@@ -7,6 +7,7 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
+import { registerTerraLogReader } from "../../examples/terraLogReader";
 import { plugins } from "./builtins";
 import { PluginRegistry } from "./PluginRegistry";
 
@@ -49,6 +50,60 @@ test("open dialog filters contain every registered extension", () => {
     assert.ok(filters.some((filter) => filter.name === reader.displayName));
     for (const extension of reader.extensions) assert.ok(extensions.has(extension));
   }
+});
+
+test("production readers and open dialog filters exclude the TerraLog example", () => {
+  assert.equal(plugins.getReader("terralog"), undefined);
+  assert.equal(plugins.getReader("/logs/sample.TERRALOG"), undefined);
+  assert.ok(plugins.getReaders().every((reader) => reader.id !== "example-terralog"));
+  assert.ok(plugins.getReaders().every((reader) => reader.displayName !== "TerraLog example"));
+  assert.ok(plugins.getReaders().every((reader) => !reader.extensions.includes("terralog")));
+  assert.deepEqual(plugins.getFileFilters(), [
+    {
+      name: "Log files",
+      extensions: [
+        "wpilog",
+        "wpilogxz",
+        "hoot",
+        "revlog",
+        "rlog",
+        "log",
+        "csv",
+        "tsv",
+        "json",
+        "jsonl",
+        "mcap",
+        "db3",
+        "dslog",
+        "dsevents"
+      ]
+    },
+    { name: "WPILib robot log", extensions: ["wpilog"] },
+    { name: "Compressed WPILib robot log", extensions: ["wpilogxz"] },
+    { name: "Hoot robot log", extensions: ["hoot"] },
+    { name: "REV Robotics CAN log", extensions: ["revlog"] },
+    { name: "Robot log", extensions: ["rlog"] },
+    { name: "Road Runner log", extensions: ["log"] },
+    { name: "Comma-separated values", extensions: ["csv"] },
+    { name: "Tab-separated values", extensions: ["tsv"] },
+    { name: "JSON log", extensions: ["json"] },
+    { name: "JSON Lines log", extensions: ["jsonl"] },
+    { name: "MCAP log", extensions: ["mcap"] },
+    { name: "ROS 2 sqlite3 bag", extensions: ["db3"] },
+    { name: "NI Driver Station log", extensions: ["dslog", "dsevents"] }
+  ]);
+});
+
+test("the TerraLog example can be registered explicitly", () => {
+  const registry = new PluginRegistry();
+  registerTerraLogReader(registry);
+  assert.deepEqual(registry.getReader("sample.terralog"), {
+    id: "example-terralog",
+    displayName: "TerraLog example",
+    extensions: ["terralog"],
+    worker: "terraLogWorker.js",
+    preparation: "none"
+  });
 });
 
 test("duplicate extension rejection does not register part of a reader", () => {

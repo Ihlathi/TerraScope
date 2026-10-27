@@ -53,12 +53,12 @@ The satellite verifier opens and reloads a real 3D satellite. It observes at lea
 
 The WPILib verifier generates a WPILOG with a typed Pose3d, opens it through the real reader, and renders the existing KitBot with URDF None. The retained main comparison in `wpilib-compatibility.json` records identical robot commands and zero changed pixels against main `74591d98`. This round also compares the recaptured canvas against the pre-fix canvas to verify the existing model is unchanged after these fixes.
 
-![URDF at cursor 1.5](https://raw.githubusercontent.com/Ihlathi/TerraScope/eca85386c43384b5ee448b74836c23ddd1494736/docs/evidence/chunk-15/urdf-1.5.png)
-![URDF at cursor 2.5](https://raw.githubusercontent.com/Ihlathi/TerraScope/eca85386c43384b5ee448b74836c23ddd1494736/docs/evidence/chunk-15/urdf-2.5.png)
-![Y_UP DAE upright](https://raw.githubusercontent.com/Ihlathi/TerraScope/eca85386c43384b5ee448b74836c23ddd1494736/docs/evidence/chunk-15/dae-y-up-upright.png)
-![Existing WPILib robot](https://raw.githubusercontent.com/Ihlathi/TerraScope/eca85386c43384b5ee448b74836c23ddd1494736/docs/evidence/chunk-15/wpilib-robot.png)
+![URDF at cursor 1.5](https://raw.githubusercontent.com/Ihlathi/TerraScope/a7e3470c650f952cbb1d2d82fb5a847dd073c8b1/docs/evidence/chunk-15/urdf-1.5.png)
+![URDF at cursor 2.5](https://raw.githubusercontent.com/Ihlathi/TerraScope/a7e3470c650f952cbb1d2d82fb5a847dd073c8b1/docs/evidence/chunk-15/urdf-2.5.png)
+![Y_UP DAE upright](https://raw.githubusercontent.com/Ihlathi/TerraScope/a7e3470c650f952cbb1d2d82fb5a847dd073c8b1/docs/evidence/chunk-15/dae-y-up-upright.png)
+![Existing WPILib robot](https://raw.githubusercontent.com/Ihlathi/TerraScope/a7e3470c650f952cbb1d2d82fb5a847dd073c8b1/docs/evidence/chunk-15/wpilib-robot.png)
 
-![URDF in a real satellite](https://raw.githubusercontent.com/Ihlathi/TerraScope/eca85386c43384b5ee448b74836c23ddd1494736/docs/evidence/chunk-15/urdf-satellite.png)
+![URDF in a real satellite](https://raw.githubusercontent.com/Ihlathi/TerraScope/a7e3470c650f952cbb1d2d82fb5a847dd073c8b1/docs/evidence/chunk-15/urdf-satellite.png)
 
 ## Checks and workflow
 

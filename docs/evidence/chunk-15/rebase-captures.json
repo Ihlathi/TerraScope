@@ -1,0 +1,11 @@
+{
+  "rebasedOnto": "c6b835820f47924a6492bc1f67584a90bccac1e9",
+  "capturedAt": "2026-10-27T06:05:30.348870+00:00",
+  "screenshots": {
+    "urdf-1.5.png": "053c16a40ce4977ede4d13364ed43bd76731b9327c2c17687f83a8eca9a1c534",
+    "urdf-2.5.png": "a18a3aec2f99a4f61b78ccfc65a17bae164998222503df9ef1d35e27bcc84b75",
+    "dae-y-up-upright.png": "d8cca15a94b5a96365b30aef379b008e445ed3c33197d40b42012f3587d5a9cd",
+    "urdf-satellite.png": "18e7bbb36fd0822a155e6fb0a65cb1496521fc4c22a6be2c0a27fc8a979e427d",
+    "wpilib-robot.png": "f83a4f52b061657d5441d6781badd9bc8874d22be0df10e46f9c70c41acff871"
+  }
+}

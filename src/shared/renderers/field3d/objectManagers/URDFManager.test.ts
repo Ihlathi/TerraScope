@@ -11,6 +11,7 @@ import fs from "node:fs";
 import { test } from "node:test";
 import * as THREE from "three";
 import { parseURDF } from "../../../urdf/URDF";
+import { createUUID } from "../../../util";
 import type { Field3dRendererCommand_URDFObj, Field3dRendererURDFModel } from "../../Field3dRenderer";
 import URDFManager from "./URDFManager";
 
@@ -20,7 +21,7 @@ function scene(xml: string) {
   const manager = new URDFManager(root, new THREE.Color("white"), 30, "standard", false, () => {});
   const robot = parseURDF(xml);
   const model: Field3dRendererURDFModel = {
-    id: robot.id,
+    id: createUUID(),
     robot,
     baseUrl: "file:///robot/robot.urdf",
     packageRootUrl: null
@@ -77,8 +78,9 @@ test("cloned satellite commands update link poses without rebuilding visual reso
   const next = parseURDF(
     '<robot name="two"><link name="a"><visual><geometry><sphere radius="1"/></geometry></visual></link></robot>'
   );
-  manager.setModel({ ...model, id: next.id, robot: next });
-  manager.setObjectData({ ...cloned, modelId: next.id });
+  const nextId = createUUID();
+  manager.setModel({ ...model, id: nextId, robot: next });
+  manager.setObjectData({ ...cloned, modelId: nextId });
   assert.notEqual(meshes(root)[0], before);
   manager.dispose();
 });

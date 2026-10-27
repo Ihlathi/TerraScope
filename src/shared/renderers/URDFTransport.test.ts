@@ -12,6 +12,7 @@ import { runInNewContext } from "node:vm";
 import ts from "typescript";
 import Field3dSatellitePublisher, { Field3dSatelliteUpdate } from "../../hub/Field3dSatellitePublisher";
 import { parseURDF } from "../urdf/URDF";
+import { createUUID } from "../util";
 import Field3dRenderer, { Field3dRendererCommand, Field3dRendererURDFModel } from "./Field3dRenderer";
 import Field3dRendererImpl from "./Field3dRendererImpl";
 
@@ -19,7 +20,7 @@ function fixture() {
   const robot = parseURDF(
     '<robot name="transport"><link name="base"><visual><geometry><box size="1 1 1"/></geometry></visual></link></robot>'
   );
-  const model: Field3dRendererURDFModel = { id: robot.id, robot, baseUrl: null, packageRootUrl: null };
+  const model: Field3dRendererURDFModel = { id: createUUID(), robot, baseUrl: null, packageRootUrl: null };
   const command: Field3dRendererCommand = {
     field: "custom",
     isRedAlliance: false,

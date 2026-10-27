@@ -330,8 +330,8 @@ test("trimming retains held partial joint positions despite compressed child his
   sample(1, "a", 10);
   sample(2, "b", 20);
   sample(3, "b", 20);
-  assert.equal(log.getField(keys[1])!.getTimestampCount(), 2);
-  assert.equal(log.getField(keys[2])!.getTimestampCount(), 2);
+  assert.equal(log.getField(keys[1])!.getHistoryState().count, 2);
+  assert.equal(log.getField(keys[2])!.getHistoryState().count, 2);
   assert.deepEqual(
     [...readURDFJointPositions(log, [keys[0]], 3).positions],
     [

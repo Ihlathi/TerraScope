@@ -7,7 +7,7 @@
 
 import { DOMParser, type Element } from "@xmldom/xmldom";
 import type { Pose3d, Rotation3d, Translation3d } from "../geometry";
-import { composeFramePose } from "../log/FrameGraph";
+import { composeFramePose, type SupplementalFrameEdge } from "../log/FrameGraph";
 
 export type URDFGeometry =
   | { type: "box"; size: Translation3d }
@@ -35,14 +35,12 @@ export type URDFJoint = JointBase &
     | { type: "revolute" | "prismatic"; axis: Translation3d; lower: number; upper: number }
   );
 export type URDFRobot = {
-  id: string;
   name: string;
   links: URDFLink[];
   joints: URDFJoint[];
   rootLinks: string[];
   diagnostics: string[];
 };
-export type URDFEdge = { child: string; parent: string; pose: Pose3d };
 
 function children(element: Element, tag?: string): Element[] {
   const result: Element[] = [];
@@ -252,7 +250,7 @@ export function parseURDF(xml: string): URDFRobot {
   }
   const rootLinks = links.filter((link) => !parents.has(link.name)).map((link) => link.name);
   if (rootLinks.length !== 1) throw new Error("URDF must contain one connected link tree.");
-  return { id: crypto.randomUUID(), name: required(robot, "name"), links, joints, rootLinks, diagnostics };
+  return { name: required(robot, "name"), links, joints, rootLinks, diagnostics };
 }
 
 export function jointPose(joint: URDFJoint, position: number): Pose3d {
@@ -271,7 +269,7 @@ export function jointPose(joint: URDFJoint, position: number): Pose3d {
   return composeFramePose(joint.origin, { translation: [0, 0, 0], rotation });
 }
 
-export function urdfEdges(robot: URDFRobot, positions: ReadonlyMap<string, number>): URDFEdge[] {
+export function urdfEdges(robot: URDFRobot, positions: ReadonlyMap<string, number>): SupplementalFrameEdge[] {
   const joints = new Map(robot.joints.map((joint) => [joint.name, joint]));
   const resolved = new Map<string, number>();
   function position(joint: URDFJoint): number {

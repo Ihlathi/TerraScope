@@ -9,7 +9,7 @@
         "objects": [
           {
             "type": "urdf",
-            "modelId": "6zoqydiie0wrx1a854oe1x0zm9m5znng",
+            "modelId": "u5l2r4luqtgzo4xvwk6tkdviqeg962es",
             "links": [
               {
                 "name": "base_link",
@@ -160,7 +160,7 @@
         "objects": [
           {
             "type": "urdf",
-            "modelId": "6zoqydiie0wrx1a854oe1x0zm9m5znng",
+            "modelId": "u5l2r4luqtgzo4xvwk6tkdviqeg962es",
             "links": [
               {
                 "name": "base_link",
@@ -311,7 +311,7 @@
         "objects": [
           {
             "type": "urdf",
-            "modelId": "6zoqydiie0wrx1a854oe1x0zm9m5znng",
+            "modelId": "u5l2r4luqtgzo4xvwk6tkdviqeg962es",
             "links": [
               {
                 "name": "base_link",
@@ -463,7 +463,7 @@
       "objects": [
         {
           "type": "urdf",
-          "modelId": "jhm54v4xr1jw1tavvw4j1t416czz2k0n",
+          "modelId": "3sdsnugacmhdego86s6duypywe1fm1re",
           "links": [
             {
               "name": "base_link",

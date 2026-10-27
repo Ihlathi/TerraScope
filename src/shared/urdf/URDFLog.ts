@@ -39,7 +39,7 @@ export function valueAtURDFTime(log: Log, key: string, time: number): unknown {
   return range && range.timestamps.length && range.timestamps[0] <= time ? range.values[0] : undefined;
 }
 
-type Version = { field: LogField | null; revision: number; first?: number; last?: number };
+type Version = { field: LogField | null; history: ReturnType<LogField["getHistoryState"]> | null };
 type JointSample = { time: number; position: number };
 type TopicCache = {
   versions: Version[];
@@ -64,36 +64,27 @@ export function readURDFJointPositions(
   for (const topic of topics) {
     const versions = [topic, topic + "/name", topic + "/position"].map((key) => {
       const field = log.getField(key);
-      return {
-        field,
-        revision: field?.getRevision() ?? 0,
-        first: field?.getTimestampAt(0),
-        last: field?.getTimestampAt(field.getTimestampCount() - 1)
-      };
+      return { field, history: field?.getHistoryState() ?? null };
     });
     let entry = entries.get(topic);
     let start = entry ? Infinity : -Infinity;
     let trimBoundary: number | undefined;
     if (entry) {
       versions.forEach((version, i) => {
-        const previous = entry!.versions[i];
+        const previous = entry!.versions[i].history;
+        const current = version.history;
         if (
-          version.field !== previous.field ||
-          (version.revision !== previous.revision && !version.field?.hasOnlyAppendedOrTrimmedSince(previous.revision))
+          current?.source !== previous?.source ||
+          current?.offsetSeconds !== previous?.offsetSeconds ||
+          current?.rewriteRevision !== previous?.rewriteRevision
         ) {
           start = -Infinity;
-        } else if (version.field && version.revision !== previous.revision) {
-          const trimmed = version.first !== undefined && previous.first !== undefined && version.first > previous.first;
-          if (trimmed) trimBoundary = Math.max(trimBoundary ?? -Infinity, version.first!);
-          let low = 0,
-            high = version.field.getTimestampCount();
-          while (low < high) {
-            const mid = (low + high) >>> 1;
-            if (version.field.getTimestampAt(mid)! <= (previous.last ?? -Infinity)) low = mid + 1;
-            else high = mid;
-          }
-          if (trimmed) low = Math.max(low, 1);
-          if (low < version.field.getTimestampCount()) start = Math.min(start, version.field.getTimestampAt(low)!);
+        } else if (current && previous && current.revision !== previous.revision) {
+          if (current.trimRevision !== previous.trimRevision && current.trimmedBefore !== null)
+            trimBoundary = Math.max(trimBoundary ?? -Infinity, current.trimmedBefore);
+          const firstNewIndex = Math.max(0, previous.count - (current.removedCount - previous.removedCount));
+          const firstNewTime = version.field!.getTimestamp(firstNewIndex);
+          if (firstNewTime !== undefined) start = Math.min(start, firstNewTime);
         }
       });
     } else {
@@ -138,7 +129,7 @@ export function readURDFJointPositions(
       let firstError = 0;
       while (firstError < entry.errors.length && entry.errors[firstError].time <= trimBoundary) firstError++;
       entry.errors.splice(0, firstError);
-      if (versions[0].first === trimBoundary && trimBoundary < start) readSample(trimBoundary, true);
+      if (versions[0].field?.getTimestamp(0) === trimBoundary && trimBoundary < start) readSample(trimBoundary, true);
     }
     if (start < Infinity) {
       entry.tracks.forEach((samples, name) => {

@@ -178,3 +178,30 @@ test(
     assert.equal(fs.existsSync(registry), false);
   }
 );
+
+test("invalid registry entries are dropped without losing valid picked sources", async (t) => {
+  const { directory, registry, robot } = fixture(t);
+  const nextRobot = path.join(directory, "next.urdf");
+  fs.writeFileSync(nextRobot, '<robot name="next"><link name="base"/></robot>');
+  const valid = {
+    savedRobot: { kind: "robot", path: robot },
+    savedPackages: { kind: "packages", path: directory }
+  };
+  fs.writeFileSync(registry, JSON.stringify({ ...valid, broken: null, wrongPath: { kind: "robot", path: 42 } }));
+  const restored = await loadURDFSource(
+    registry,
+    { action: "restore", kind: "robot", reference: "savedRobot" },
+    async () => assert.fail("A valid saved source must restore without picking")
+  );
+  assert.equal(restored?.xml, fs.readFileSync(robot, "utf8"));
+  const picked = await loadURDFSource(registry, { action: "pick", kind: "robot" }, async () => nextRobot);
+  assert(picked?.reference);
+  const saved = JSON.parse(fs.readFileSync(registry, "utf8"));
+  assert.deepEqual(saved, { ...valid, [picked.reference]: { kind: "robot", path: nextRobot } });
+  const restoredPackages = await loadURDFSource(
+    registry,
+    { action: "restore", kind: "packages", reference: "savedPackages" },
+    async () => assert.fail("Picking another source must retain saved package references")
+  );
+  assert.equal(restoredPackages?.url, pathToFileURL(directory + path.sep).href);
+});

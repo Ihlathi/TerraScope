@@ -33,7 +33,7 @@ function readSources(filename: string): Record<string, Source> {
         typeof source.path !== "string" ||
         !path.isAbsolute(source.path)
       )
-        return empty();
+        continue;
       sources[id] = { kind: source.kind, path: source.path };
     }
     return sources;

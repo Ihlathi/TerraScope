@@ -264,8 +264,7 @@ export default class Log {
         throw new Error("Live projection requires an explicit source-to-display clock conversion");
       }
     }
-    const oldFields = this.fields;
-    const oldKeys = Object.keys(oldFields);
+    const oldKeys = Object.keys(this.fields);
     this.fields = {};
     this.generatedParents.clear();
     this.timestampRange = null;
@@ -275,13 +274,12 @@ export default class Log {
     for (const { log, namespace, conversion } of sources) {
       for (const key of log.getFieldKeys()) {
         const targetKey = applyKeyPrefix(namespace, key);
-        const oldField = oldFields[targetKey];
-        const sourceField = log.getField(key)!;
-        this.fields[targetKey] =
-          oldField instanceof ProjectedLogField &&
-          oldField.canReuse(sourceField, log.getDisplayClock(), namespace, conversion)
-            ? oldField
-            : new ProjectedLogField(sourceField, log.getDisplayClock(), namespace, conversion);
+        this.fields[targetKey] = new ProjectedLogField(
+          log.getField(key)!,
+          log.getDisplayClock(),
+          namespace,
+          conversion
+        );
         if (log.generatedParents.has(key)) this.generatedParents.add(targetKey);
         this.changedFields.add(targetKey);
       }

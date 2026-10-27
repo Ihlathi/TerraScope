@@ -34,7 +34,11 @@ export default class ProjectedLogField extends LogField {
 
   getHistoryState() {
     const state = this.source.getHistoryState();
-    return { ...state, offsetSeconds: state.offsetSeconds + this.conversion.offsetSeconds };
+    return {
+      ...state,
+      offsetSeconds: state.offsetSeconds + this.conversion.offsetSeconds,
+      trimmedBefore: state.trimmedBefore === null ? null : state.trimmedBefore + this.conversion.offsetSeconds
+    };
   }
 
   getTimestamp(index: number): number | undefined {

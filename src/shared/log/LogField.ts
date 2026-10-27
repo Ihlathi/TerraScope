@@ -23,7 +23,10 @@ import {
 /** A full log field that contains data. */
 export default class LogField {
   private revision = 0;
-  private nonAppendRevision = 0;
+  private rewriteRevision = 0;
+  private removedCount = 0;
+  private trimRevision = 0;
+  private trimmedBefore: number | null = null;
   private type: LoggableType;
   private data: LogValueSetAny = { timestamps: [], values: [] };
   private sourceTimestamps: (DomainTimestamp | null)[] | undefined;
@@ -56,15 +59,21 @@ export default class LogField {
     source: LogField;
     offsetSeconds: number;
     revision: number;
-    nonAppendRevision: number;
+    rewriteRevision: number;
     count: number;
+    removedCount: number;
+    trimRevision: number;
+    trimmedBefore: number | null;
   } {
     return {
       source: this,
       offsetSeconds: 0,
       revision: this.revision,
-      nonAppendRevision: this.nonAppendRevision,
-      count: this.data.timestamps.length
+      rewriteRevision: this.rewriteRevision,
+      count: this.data.timestamps.length,
+      removedCount: this.removedCount,
+      trimRevision: this.trimRevision,
+      trimmedBefore: this.trimmedBefore
     };
   }
 
@@ -99,8 +108,10 @@ export default class LogField {
 
   /** Clears all data before the provided timestamp. */
   clearBeforeTime(clearTimestamp: number) {
+    if (this.data.timestamps.length === 0 || !(this.data.timestamps[0] < clearTimestamp)) return;
     this.revision++;
-    this.nonAppendRevision++;
+    this.trimmedBefore = clearTimestamp;
+    this.trimRevision++;
     for (let i = 0; i < this.data.timestamps.length; i++) {
       // If there is more than 1 timestamps and if it occurs before the given timestamp, remove it
       if (this.data.timestamps.length >= 2 && this.data.timestamps[i + 1] < clearTimestamp) {
@@ -108,6 +119,7 @@ export default class LogField {
         continue;
       }
 
+      this.removedCount += i;
       this.data.timestamps.splice(0, i);
       this.data.values.splice(0, i);
       this.sourceTimestamps?.splice(0, i);
@@ -218,7 +230,7 @@ export default class LogField {
     if (value === null) return;
     this.revision++;
     if (this.data.timestamps.length > 0 && timestamp <= this.data.timestamps[this.data.timestamps.length - 1]) {
-      this.nonAppendRevision++;
+      this.rewriteRevision++;
     }
     this.onSample?.(time, value);
     if (source !== null && this.sourceTimestamps === undefined) {

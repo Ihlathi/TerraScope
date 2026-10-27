@@ -1,0 +1,63 @@
+{
+  "time": 1.5,
+  "command": {
+    "field": "custom",
+    "isRedAlliance": false,
+    "coordinateSystem": "center-red",
+    "objects": [
+      {
+        "type": "robot",
+        "model": "KitBot",
+        "poses": [
+          {
+            "pose": {
+              "translation": [0.8, 0.5, 0],
+              "rotation": [1, 0, 0, 0]
+            },
+            "annotation": {
+              "is2DSource": false
+            }
+          }
+        ],
+        "components": [],
+        "mechanisms": {
+          "xz": null,
+          "yz": null
+        },
+        "visionTargets": [],
+        "swerveModuleVelocities": []
+      }
+    ],
+    "cameraOverride": null,
+    "autoDriverStation": -1,
+    "allRobotModels": ["KitBot"],
+    "customEnvironment": {
+      "lengthMeters": 7,
+      "widthMeters": 5,
+      "originXMeters": -2,
+      "originYMeters": -2.5
+    },
+    "customAssetUrl": null
+  },
+  "managers": [
+    {
+      "type": "robot",
+      "meshCounts": [
+        {
+          "count": 1,
+          "meshes": [
+            {
+              "count": 1,
+              "vertices": 3410
+            },
+            {
+              "count": 1,
+              "vertices": 4
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "alert": ""
+}

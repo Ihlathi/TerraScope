@@ -2084,3 +2084,19 @@ div.image-sources {
   position: absolute;
   inset: 0;
 }
+
+div.field-3d-settings div.urdf-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
+  overflow-wrap: anywhere;
+}
+.urdf-controls select {
+  width: 100%;
+}
+.urdf-status,
+.urdf-package-name,
+.urdf-resource-name {
+  font-size: 11px;
+}

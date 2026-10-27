@@ -13,7 +13,7 @@ import { getAutonomousKey, getEnabledKey, getUtilityKey } from "../shared/log/Ro
 import ConsoleRenderer from "../shared/renderers/ConsoleRenderer";
 import DocumentationRenderer from "../shared/renderers/DocumentationRenderer";
 import Field2dRenderer from "../shared/renderers/Field2dRenderer";
-import Field3dRenderer from "../shared/renderers/Field3dRenderer";
+import Field3dRenderer, { Field3dRendererCommand } from "../shared/renderers/Field3dRenderer";
 import ImageRenderer, { ImageRendererCommand } from "../shared/renderers/ImageRenderer";
 import JoysticksRenderer from "../shared/renderers/JoysticksRenderer";
 import LineGraphRenderer from "../shared/renderers/LineGraphRenderer";
@@ -27,6 +27,7 @@ import TableRenderer from "../shared/renderers/TableRenderer";
 import VideoRenderer from "../shared/renderers/VideoRenderer";
 import { Units } from "../shared/units";
 import { clampValue } from "../shared/util";
+import Field3dSatellitePublisher from "./Field3dSatellitePublisher";
 import ImageSatellitePublisher from "./ImageSatellitePublisher";
 import ScrollSensor, { ScrollSensorMouseControl } from "./ScrollSensor";
 import Timeline from "./Timeline";
@@ -83,7 +84,11 @@ export default class Tabs {
   private selectedTab = 0;
   private activeSatellites: string[] = [];
   private imageSatellites = new ImageSatellitePublisher((update) => window.sendMainMessage("update-satellite", update));
+  private field3dSatellites = new Field3dSatellitePublisher((update) =>
+    window.sendMainMessage("update-satellite", update)
+  );
   private activeXRUUID: string | null = null;
+  private xrModelId: string | null | undefined = undefined;
   private controlsHandleActive = false;
 
   constructor() {
@@ -362,6 +367,8 @@ export default class Tabs {
           }
           let command = tab.controller.getCommand();
           if (activeLocal) {
+            if (tab.type === TabType.Field3d)
+              (tab.renderer as Field3dRenderer).setURDFModel((tab.controller as Field3dController).getURDFModel());
             tab.renderer.render(command);
           }
           if (activeSatellite) {
@@ -373,6 +380,13 @@ export default class Tabs {
                 : tab.title;
             if (tab.type === TabType.Image) {
               this.imageSatellites.publish(tab.controller.UUID, command as ImageRendererCommand, title);
+            } else if (tab.type === TabType.Field3d) {
+              this.field3dSatellites.publish(
+                tab.controller.UUID,
+                command as Field3dRendererCommand,
+                (tab.controller as Field3dController).getURDFModel(),
+                title
+              );
             } else {
               window.sendMainMessage("update-satellite", {
                 uuid: tab.controller.UUID,
@@ -382,6 +396,11 @@ export default class Tabs {
             }
           }
           if (activeXR) {
+            const model = (tab.controller as Field3dController).getURDFModel();
+            if (this.xrModelId !== (model?.id ?? null)) {
+              window.sendMainMessage("update-xr-model", model);
+              this.xrModelId = model?.id ?? null;
+            }
             window.sendMainMessage("update-xr-command", command);
           }
         }
@@ -638,6 +657,7 @@ export default class Tabs {
   }
 
   private disposeTab(tab: Tabs["tabList"][number]): void {
+    this.field3dSatellites.clear(tab.controller.UUID);
     tab.controller.dispose?.();
     tab.renderer.dispose?.();
   }
@@ -700,21 +720,37 @@ export default class Tabs {
   /** Updates the list of active satellites for data publishing. */
   setActiveSatellites(activeSatellites: string[]) {
     this.activeSatellites.forEach((uuid) => {
-      if (!activeSatellites.includes(uuid)) this.imageSatellites.clear(uuid);
+      if (!activeSatellites.includes(uuid)) {
+        this.imageSatellites.clear(uuid);
+        this.field3dSatellites.clear(uuid);
+      }
     });
     this.activeSatellites = activeSatellites;
   }
 
   refreshSatellite(uuid: string, satelliteId: number): void {
     const tab = this.tabList.find((tab) => tab.controller.UUID === uuid);
-    if (tab?.type !== TabType.Image) return;
+    if (!tab) return;
     const title = tab.title === "" ? getDefaultTabTitle(tab.type) : tab.title;
-    this.imageSatellites.publish(uuid, tab.controller.getCommand() as ImageRendererCommand, title, satelliteId);
+    if (tab.type === TabType.Image) {
+      this.imageSatellites.publish(uuid, tab.controller.getCommand() as ImageRendererCommand, title, satelliteId);
+    } else if (tab.type === TabType.Field3d) {
+      const command = tab.controller.getCommand() as Field3dRendererCommand;
+      this.field3dSatellites.publish(
+        uuid,
+        command,
+        (tab.controller as Field3dController).getURDFModel(),
+        title,
+        satelliteId
+      );
+    }
   }
 
   /** Updates the UUID for the tab broadcasting to XR. */
   setActiveXRUUID(uuid: string | null) {
     this.activeXRUUID = uuid;
+    this.xrModelId = undefined;
+    if (uuid === null) window.sendMainMessage("update-xr-model", null);
     this.tabList.forEach((tab) => {
       if (tab.type === TabType.Field3d) {
         (tab.controller as Field3dController).setXRActive(tab.controller.UUID === uuid);

@@ -9,6 +9,7 @@ import { CoordinateSystem } from "../AdvantageScopeAssets";
 import { CustomEnvironment } from "../CustomEnvironment";
 import { AnnotatedPose3d, ModuleVelocity, Pose3d } from "../geometry";
 import { MechanismState } from "../log/LogMechanismState";
+import { URDFRobot } from "../urdf/URDF";
 import Field3dRendererImpl from "./Field3dRendererImpl";
 import TabRenderer from "./TabRenderer";
 
@@ -20,6 +21,7 @@ export default class Field3dRenderer implements TabRenderer {
   private FRAME_ALERT: HTMLElement;
 
   private implementation: Field3dRendererImpl | null = null;
+  private urdfModel: Field3dRendererURDFModel | null = null;
   private lastMode: "cinematic" | "standard" | "low-power" | null = null;
   private lastUseAA = true;
   private stateRestoreCache: unknown | null = null;
@@ -78,7 +80,7 @@ export default class Field3dRenderer implements TabRenderer {
     }
 
     // Recreate visualizer if necessary
-    if ((mode !== this.lastMode || useAA != this.lastUseAA) && mode !== null) {
+    if ((this.implementation === null || mode !== this.lastMode || useAA != this.lastUseAA) && mode !== null) {
       this.lastMode = mode;
       this.lastUseAA = useAA;
       let state: any = null;
@@ -103,6 +105,7 @@ export default class Field3dRenderer implements TabRenderer {
         this.ALERT,
         this.SPINNER
       );
+      this.implementation.setURDFModel(this.urdfModel);
       if (this.stateRestoreCache !== null) {
         this.implementation.restoreState(this.stateRestoreCache);
         this.stateRestoreCache = null;
@@ -112,14 +115,29 @@ export default class Field3dRenderer implements TabRenderer {
     }
   }
 
+  setURDFModel(model: Field3dRendererURDFModel | null): void {
+    if (this.urdfModel?.id === model?.id) return;
+    this.urdfModel = model;
+    this.implementation?.setURDFModel(model);
+  }
+
+  dispose(): void {
+    this.implementation?.stop();
+    this.implementation = null;
+    this.urdfModel = null;
+  }
+
   getAspectRatio(): number | null {
     return this.implementation === null ? null : this.implementation.getAspectRatio();
   }
 
   render(command: Field3dRendererCommand): void {
     this.updateImplementation();
-    this.FRAME_ALERT.textContent = (command.frameDiagnostics ?? []).join("\n");
-    this.FRAME_ALERT.hidden = !command.frameDiagnostics?.length;
+    this.FRAME_ALERT.textContent = [
+      ...(command.frameDiagnostics ?? []),
+      ...(this.implementation?.getURDFDiagnostics() ?? [])
+    ].join("\n");
+    this.FRAME_ALERT.hidden = !this.FRAME_ALERT.textContent;
     this.implementation?.render(command);
   }
 }
@@ -149,7 +167,8 @@ export type Field3dRendererCommand_AnyObj =
   | Field3dRendererCommand_AprilTagBuiltInObj
   | Field3dRendererCommand_AxesObj
   | Field3dRendererCommand_ConeObj
-  | Field3dRendererCommand_PointsObj;
+  | Field3dRendererCommand_PointsObj
+  | Field3dRendererCommand_URDFObj;
 
 export type Field3dRendererCommand_Component =
   | AnnotatedPose3d
@@ -230,4 +249,17 @@ export type Field3dRendererCommand_PointsObj = {
   color: string;
   positions: number[];
   pose?: Pose3d;
+};
+
+export type Field3dRendererURDFModel = {
+  id: string;
+  robot: URDFRobot;
+  baseUrl: string | null;
+  packageRootUrl: string | null;
+};
+
+export type Field3dRendererCommand_URDFObj = {
+  type: "urdf";
+  modelId: string;
+  links: { name: string; pose: Pose3d | null }[];
 };

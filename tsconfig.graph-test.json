@@ -4,6 +4,13 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["src/hub/controllers/LineGraphController.test.ts", "src/hub/hub.ts"],
+  "include": [
+    "src/hub/controllers/LineGraphController.test.ts",
+    "src/hub/hub.ts",
+    "src/hub/controllers/Field3dController.test.ts",
+    "src/shared/renderers/field3d/objectManagers/URDFManager.test.ts",
+    "src/shared/renderers/URDFTransport.test.ts",
+    "src/main/electron/XRURDFModel.test.ts"
+  ],
   "exclude": []
 }

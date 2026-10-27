@@ -26,6 +26,7 @@ import {
   rotationSequenceToQuaternion
 } from "../../shared/geometry";
 import { composeFramePose, frameGraphForSource, readSourceFrame, transformTopics } from "../../shared/log/FrameGraph";
+import Log from "../../shared/log/Log";
 import { MechanismState, getMechanismState, mergeMechanismStates } from "../../shared/log/LogMechanismState";
 import { getOrDefault } from "../../shared/log/LogUtil";
 import LoggableType from "../../shared/log/LoggableType";
@@ -35,8 +36,17 @@ import { readSensorPoints } from "../../shared/log/SpatialSensor";
 import {
   Field3dRendererCommand,
   Field3dRendererCommand_AnyObj,
-  Field3dRendererCommand_Component
+  Field3dRendererCommand_Component,
+  Field3dRendererURDFModel
 } from "../../shared/renderers/Field3dRenderer";
+import { URDFRobot, parseURDF, urdfEdges } from "../../shared/urdf/URDF";
+import {
+  discoverURDFTopics as findURDFTopics,
+  inURDFScope,
+  readURDFJointPositions,
+  urdfScope,
+  valueAtURDFTime
+} from "../../shared/urdf/URDFLog";
 import { clampValue, createUUID } from "../../shared/util";
 import SourceList from "../SourceList";
 import Field3dController_Config from "./Field3dController_Config";
@@ -55,6 +65,24 @@ export default class Field3dController implements TabController {
   private ASSET_INPUT: HTMLInputElement;
   private FIXED_FRAME_INPUT: HTMLInputElement;
 
+  private URDF_SELECT: HTMLSelectElement;
+  private JOINT_SELECT: HTMLSelectElement;
+  private URDF_STATUS: HTMLElement;
+  private PACKAGE_NAME: HTMLElement;
+  private urdfFile: { xml: string; url: string; name: string; reference?: string } | null = null;
+  private packageRootReference: string | null = null;
+  private meshBaseReference: string | null = null;
+  private urdfTopics: { log: Log; descriptions: string[]; joints: string[] } | null = null;
+  private urdfOptionsDirty = true;
+  private packageRootUrl: string | null = null;
+  private meshBaseUrl: string | null = null;
+  private RESOURCE_NAME: HTMLElement;
+  private urdfXML: string | null = null;
+  private urdfRobot: URDFRobot | null = null;
+  private urdfModel: Field3dRendererURDFModel | null = null;
+  private onURDFPicked: (event: Event) => void;
+  private urdfError: string | null = null;
+  private urdfLoadError: string | null = null;
   private sourceList: SourceList;
   private environment: CustomEnvironment = { ...DEFAULT_CUSTOM_ENVIRONMENT };
   private assetUrl: string | null = null;
@@ -67,6 +95,52 @@ export default class Field3dController implements TabController {
     );
     this.SETTINGS = root.getElementsByClassName("field-3d-settings")[0] as HTMLElement;
     this.XR_BUTTON = this.SETTINGS.getElementsByClassName("xr-button")[0] as HTMLButtonElement;
+    this.URDF_SELECT = this.SETTINGS.querySelector(".urdf-description") as HTMLSelectElement;
+    this.JOINT_SELECT = this.SETTINGS.querySelector(".urdf-joints") as HTMLSelectElement;
+    this.URDF_STATUS = this.SETTINGS.querySelector(".urdf-status") as HTMLElement;
+    this.PACKAGE_NAME = this.SETTINGS.querySelector(".urdf-package-name") as HTMLElement;
+    this.RESOURCE_NAME = this.SETTINGS.querySelector(".urdf-resource-name") as HTMLElement;
+    for (const [selector, kind] of [
+      [".urdf-load", "robot"],
+      [".urdf-packages", "packages"],
+      [".urdf-resources", "resources"]
+    ]) {
+      const button = this.SETTINGS.querySelector(selector) as HTMLButtonElement;
+      button.disabled = IS_LITE;
+      if (IS_LITE) button.title = "Local URDF resources require the desktop app.";
+      button.addEventListener("click", () => window.sendMainMessage("urdf-pick", { uuid: this.UUID, kind }));
+    }
+    this.onURDFPicked = (event: Event) => {
+      const data = (event as CustomEvent).detail;
+      if (data?.uuid !== this.UUID) return;
+      if (typeof data.error === "string") {
+        this.urdfLoadError = data.error;
+        this.URDF_STATUS.textContent = data.error;
+        return;
+      }
+      this.urdfLoadError = null;
+      if (
+        data.kind === "robot" &&
+        typeof data.xml === "string" &&
+        typeof data.url === "string" &&
+        typeof data.name === "string"
+      ) {
+        this.urdfFile = { xml: data.xml, url: data.url, name: data.name, reference: data.reference };
+        this.urdfOptionsDirty = true;
+        this.updateURDFOptions();
+        if (!data.restoring) this.URDF_SELECT.value = "file";
+      } else if (data.kind === "packages" && typeof data.url === "string") {
+        this.packageRootUrl = data.url;
+        this.packageRootReference = data.reference ?? null;
+        this.PACKAGE_NAME.textContent = data.url;
+      } else if (data.kind === "resources" && typeof data.url === "string") {
+        this.meshBaseUrl = data.url;
+        this.meshBaseReference = data.reference ?? null;
+        this.RESOURCE_NAME.textContent = data.url;
+      }
+    };
+    window.addEventListener("urdf-picked", this.onURDFPicked);
+
     this.FIELD_SELECT = this.SETTINGS.getElementsByClassName("field-select")[0] as HTMLSelectElement;
     this.LENGTH_INPUT = this.SETTINGS.getElementsByClassName("custom-length")[0] as HTMLInputElement;
     this.WIDTH_INPUT = this.SETTINGS.getElementsByClassName("custom-width")[0] as HTMLInputElement;
@@ -255,12 +329,61 @@ export default class Field3dController implements TabController {
     this.updateRobotOptions();
   }
 
+  private discoverURDFTopics() {
+    if (this.urdfTopics?.log === window.log) return this.urdfTopics;
+    const { descriptions, joints } = findURDFTopics(window.log);
+    this.urdfOptionsDirty = true;
+    return (this.urdfTopics = { log: window.log, descriptions, joints });
+  }
+
+  private updateURDFOptions() {
+    const topics = this.discoverURDFTopics();
+    if (!this.urdfOptionsDirty) return;
+    this.urdfOptionsDirty = false;
+    const update = (select: HTMLSelectElement, options: { value: string; label: string }[]) => {
+      const value = select.value;
+      if (value && !options.some((option) => option.value === value))
+        options.push({ value, label: `${value} (unavailable)` });
+      if (
+        JSON.stringify(Array.from(select.options).map((option) => [option.value, option.text])) ===
+        JSON.stringify(options.map((option) => [option.value, option.label]))
+      )
+        return;
+      select.replaceChildren(
+        ...options.map(({ value, label }) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = label;
+          return option;
+        })
+      );
+      select.value = value;
+      if (select.selectedIndex === -1) select.selectedIndex = 0;
+    };
+    update(this.URDF_SELECT, [
+      { value: "", label: "None" },
+      ...(this.urdfFile ? [{ value: "file", label: this.urdfFile.name }] : []),
+      ...topics.descriptions.map((key) => ({ value: key, label: key }))
+    ]);
+    update(this.JOINT_SELECT, [
+      { value: "", label: "Automatic" },
+      ...topics.joints.map((key) => ({ value: key, label: key }))
+    ]);
+  }
+
   saveState(): unknown {
     return {
       sources: this.sourceList.getState(),
       game: this.FIELD_SELECT.value,
       customEnvironment: this.readEnvironment(),
-      fixedFrame: this.FIXED_FRAME_INPUT.value
+      fixedFrame: this.FIXED_FRAME_INPUT.value,
+      urdf: {
+        file: this.urdfFile?.reference ? { reference: this.urdfFile.reference, name: this.urdfFile.name } : null,
+        description: this.URDF_SELECT.value,
+        joints: this.JOINT_SELECT.value,
+        packageRoot: this.packageRootReference,
+        meshBase: this.meshBaseReference
+      }
     };
   }
 
@@ -291,10 +414,65 @@ export default class Field3dController implements TabController {
         if (parsed) this.writeEnvironment(parsed);
       }
     }
+    if ("urdf" in state && typeof state.urdf === "object" && state.urdf !== null) {
+      const config = state.urdf;
+      this.urdfFile = null;
+      this.packageRootReference = null;
+      this.meshBaseReference = null;
+      this.packageRootUrl = null;
+      this.meshBaseUrl = null;
+      this.PACKAGE_NAME.textContent = "";
+      this.RESOURCE_NAME.textContent = "";
+      if (
+        "file" in config &&
+        typeof config.file === "object" &&
+        config.file !== null &&
+        "reference" in config.file &&
+        typeof config.file.reference === "string"
+      )
+        window.sendMainMessage("urdf-restore", { uuid: this.UUID, kind: "robot", reference: config.file.reference });
+
+      for (const [property, kind] of [
+        ["packageRoot", "packages"],
+        ["meshBase", "resources"]
+      ] as const) {
+        if (property in config && typeof (config as Record<string, unknown>)[property] === "string")
+          window.sendMainMessage("urdf-restore", {
+            uuid: this.UUID,
+            kind,
+            reference: (config as Record<string, unknown>)[property]
+          });
+      }
+      this.urdfOptionsDirty = true;
+      this.updateURDFOptions();
+      const restoreSelect = (select: HTMLSelectElement, value: unknown) => {
+        if (typeof value !== "string") return;
+        if (value && !Array.from(select.options).some((option) => option.value === value)) {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = `${value} (unavailable)`;
+          select.appendChild(option);
+        }
+        select.value = value;
+      };
+      if ("description" in config) restoreSelect(this.URDF_SELECT, config.description);
+      if ("joints" in config) restoreSelect(this.JOINT_SELECT, config.joints);
+    }
     this.updateFieldDependentControls();
   }
 
+  dispose(): void {
+    window.removeEventListener("urdf-picked", this.onURDFPicked);
+    this.sourceList.stop();
+    this.replaceAssetUrl(null);
+  }
+
+  getURDFModel(): Field3dRendererURDFModel | null {
+    return this.urdfModel;
+  }
+
   refresh(): void {
+    this.urdfTopics = null;
     this.sourceList.refresh();
   }
 
@@ -307,6 +485,9 @@ export default class Field3dController implements TabController {
     return [
       ...this.sourceList.getActiveFields(),
       ...transformTopics(window.log),
+      ...(this.URDF_SELECT.value
+        ? [...this.discoverURDFTopics().descriptions, ...this.discoverURDFTopics().joints]
+        : []),
       ...ALLIANCE_KEYS,
       ...DRIVER_STATION_KEYS
     ];
@@ -338,6 +519,92 @@ export default class Field3dController implements TabController {
 
     let objects: Field3dRendererCommand_AnyObj[] = [];
     const frameDiagnostics: string[] = [];
+    this.updateURDFOptions();
+    const description = this.URDF_SELECT.value;
+    const xml =
+      description === "file"
+        ? this.urdfFile?.xml
+        : description && time !== null
+        ? valueAtURDFTime(
+            window.log,
+            window.log.getType(description) === LoggableType.String ? description : description + "/data",
+            time
+          )
+        : null;
+    if (xml !== this.urdfXML) {
+      this.urdfXML = typeof xml === "string" ? xml : null;
+      this.urdfRobot = null;
+      this.urdfError = null;
+      if (typeof xml === "string") {
+        try {
+          this.urdfRobot = parseURDF(xml);
+        } catch (error) {
+          this.urdfError = String(error);
+        }
+      }
+    }
+    const robot = description ? this.urdfRobot : null;
+    const baseUrl = description === "file" ? this.urdfFile?.url ?? null : this.meshBaseUrl;
+    if (robot) {
+      if (
+        this.urdfModel?.robot !== robot ||
+        this.urdfModel.baseUrl !== baseUrl ||
+        this.urdfModel.packageRootUrl !== this.packageRootUrl
+      )
+        this.urdfModel = { id: createUUID(), robot, baseUrl, packageRootUrl: this.packageRootUrl };
+    } else {
+      this.urdfModel = null;
+    }
+    const allJointTopics = description ? this.discoverURDFTopics().joints : [];
+    const jointTopic =
+      this.JOINT_SELECT.value ||
+      allJointTopics.find((key) => description === "file" || inURDFScope(key, urdfScope(description))) ||
+      "";
+    const scope = urdfScope(description === "file" ? jointTopic : description);
+    const jointSample = robot
+      ? readURDFJointPositions(
+          window.log,
+          jointTopic && inURDFScope(jointTopic, scope) ? [jointTopic] : [],
+          time ?? -Infinity
+        )
+      : { positions: new Map<string, number>(), diagnostics: [] };
+    const edges = robot ? urdfEdges(robot, jointSample.positions) : [];
+    const robotGraph = robot
+      ? frameGraphForSource(window.log, description === "file" ? jointTopic || "/" : description)
+      : null;
+    const graphEdges = (key: string) =>
+      inURDFScope(key, scope) && frameGraphForSource(window.log, key) === robotGraph ? edges : [];
+    if (description) {
+      if (this.urdfError) frameDiagnostics.push(`URDF: ${this.urdfError}`);
+      else if (!robot) frameDiagnostics.push("URDF: No robot_description sample at this time.");
+      if (robot) frameDiagnostics.push(...robot.diagnostics, ...jointSample.diagnostics);
+      if (robot && jointTopic && !inURDFScope(jointTopic, scope))
+        frameDiagnostics.push(`URDF: JointState topic "${jointTopic}" is outside the description namespace.`);
+    }
+    this.URDF_STATUS.textContent =
+      this.urdfLoadError ??
+      this.urdfError ??
+      (robot
+        ? `${robot.name}. ${robot.links.length} links. ${
+            jointTopic || "No JointState topic; joints use zero."
+          } ${robot.diagnostics.join(" ")}`
+        : "");
+    if (robot && robotGraph) {
+      const graph = robotGraph;
+      const fixed = this.FIXED_FRAME_INPUT.value.trim() || graph.defaultFixedFrame(edges) || robot.rootLinks[0];
+      this.FIXED_FRAME_INPUT.placeholder = fixed;
+      objects.push({
+        type: "urdf",
+        modelId: this.urdfModel!.id,
+        links: robot.links.map((link) => {
+          const result = graph.resolve(link.name, fixed, time ?? -Infinity, edges);
+          if (result.status === "resolved") return { name: link.name, pose: result.pose };
+          frameDiagnostics.push(`URDF link "${link.name}": ${result.status} "${result.frame}".`);
+          return { name: link.name, pose: null };
+        })
+      });
+    }
+
     const sourceTransform = (key: string): Pose3d | null | undefined => {
       if (time === null) return undefined;
       const frame = readSourceFrame(window.log, key, time);
@@ -347,9 +614,13 @@ export default class Field3dController implements TabController {
         return null;
       }
       const graph = frameGraphForSource(window.log, key);
-      const fixedFrame = this.FIXED_FRAME_INPUT.value.trim() || graph.defaultFixedFrame();
+      const fixedFrame =
+        this.FIXED_FRAME_INPUT.value.trim() ||
+        graph.defaultFixedFrame(graphEdges(key)) ||
+        (inURDFScope(key, scope) ? robot?.rootLinks[0] : "") ||
+        "";
       this.FIXED_FRAME_INPUT.placeholder = fixedFrame || "Select a frame";
-      const result = graph.resolve(frame, fixedFrame, time);
+      const result = graph.resolve(frame, fixedFrame, time, graphEdges(key));
       if (result.status === "resolved") return result.pose;
       const reason = {
         "missing-parent": "Missing parent",

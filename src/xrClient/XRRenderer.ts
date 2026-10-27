@@ -17,7 +17,11 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { AdvantageScopeAssets, BuiltIn3dFields, Config3dField, CoordinateSystem } from "../shared/AdvantageScopeAssets";
 import { RaycastResult, XRCalibrationMode, XRFrameState, XRSettings } from "../shared/XRTypes";
 import { rotationSequenceToQuaternion } from "../shared/geometry";
-import { Field3dRendererCommand, Field3dRendererCommand_AnyObj } from "../shared/renderers/Field3dRenderer";
+import {
+  Field3dRendererCommand,
+  Field3dRendererCommand_AnyObj,
+  Field3dRendererURDFModel
+} from "../shared/renderers/Field3dRenderer";
 import { disposeObject, FTC_GRID_COLOR } from "../shared/renderers/Field3dRendererImpl";
 import makeAxesField from "../shared/renderers/field3d/AxesField";
 import makeEvergreenField from "../shared/renderers/field3d/EvergreenField";
@@ -31,12 +35,19 @@ import HeatmapManager from "../shared/renderers/field3d/objectManagers/HeatmapMa
 import PointsManager from "../shared/renderers/field3d/objectManagers/PointsManager";
 import RobotManager from "../shared/renderers/field3d/objectManagers/RobotManager";
 import TrajectoryManager from "../shared/renderers/field3d/objectManagers/TrajectoryManager";
+import URDFManager from "../shared/renderers/field3d/objectManagers/URDFManager";
 import { Units } from "../shared/units";
 import { clampValue, wrapRadians } from "../shared/util";
 import XRCamera from "./XRCamera";
 import { sendHostMessage } from "./xrClient";
 
 export default class XRRenderer {
+  private urdfModel: Field3dRendererURDFModel | null = null;
+
+  setURDFModel(model: Field3dRendererURDFModel | null): void {
+    this.urdfModel = model;
+  }
+
   private MATERIAL_SPECULAR: THREE.Color = new THREE.Color(0x000000);
   private MATERIAL_SHININESS = 0;
 
@@ -262,6 +273,9 @@ export default class XRRenderer {
         break;
       case "gamePiece":
         manager = new GamePieceManager(...args, this.fieldPieces);
+        break;
+      case "urdf":
+        manager = new URDFManager(...args);
         break;
       case "points":
         manager = new PointsManager(...args);
@@ -762,6 +776,7 @@ export default class XRRenderer {
           robotManager.newAssets();
         }
       }
+      if (entry.type === "urdf") (entry.manager as URDFManager).setModel(this.urdfModel);
       entry.manager.setObjectData(object);
     });
     this.objectManagers.forEach((entry) => {

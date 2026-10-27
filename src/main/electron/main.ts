@@ -76,6 +76,7 @@ import {
 import LiveRecordingManager from "./LiveRecordingManager";
 import { RlogTcpTransport } from "./RlogTcpTransport";
 import StateTracker, { ApplicationState, SatelliteWindowState, WindowState } from "./StateTracker";
+import { loadURDFSource } from "./URDFSources";
 import UpdateChecker from "./UpdateChecker";
 import { VideoProcessor } from "./VideoProcessor";
 import { XRControls } from "./XRControls";
@@ -244,6 +245,43 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
   if (window.isDestroyed()) return;
   let windowId = window.id;
   switch (message.name) {
+    case "urdf-restore":
+    case "urdf-pick": {
+      const uuid = message.data?.uuid;
+      const kind = message.data?.kind;
+      if (typeof uuid !== "string" || (kind !== "robot" && kind !== "packages" && kind !== "resources")) break;
+      try {
+        const source = await loadURDFSource(
+          path.join(app.getPath("userData"), "urdf-sources.json"),
+          message.name === "urdf-restore"
+            ? { action: "restore", kind, reference: message.data.reference }
+            : { action: "pick", kind },
+          async () => {
+            const result = await dialog.showOpenDialog(
+              window,
+              kind === "robot"
+                ? {
+                    title: "Load URDF robot",
+                    filters: [{ name: "URDF robot", extensions: ["urdf"] }],
+                    properties: ["openFile"]
+                  }
+                : {
+                    title:
+                      kind === "packages"
+                        ? "Choose a folder containing ROS packages"
+                        : "Choose the directory for logged URDF mesh paths",
+                    properties: ["openDirectory"]
+                  }
+            );
+            return result.canceled ? null : result.filePaths[0] ?? null;
+          }
+        );
+        if (source) sendMessage(window, "urdf-picked", { uuid, ...source });
+      } catch (error) {
+        sendMessage(window, "urdf-picked", { uuid, kind, error: String(error) });
+      }
+      break;
+    }
     case "recording-start": {
       const id = message.data?.id;
       if (!Number.isSafeInteger(id) || id < 1) break;
@@ -1326,7 +1364,11 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
           if (
             message.data.satelliteId === undefined ? satellite.isVisible() : satellite.id === message.data.satelliteId
           ) {
-            sendMessage(satellite, "render", { command: command, title: title });
+            sendMessage(satellite, "render", {
+              command: command,
+              title: title,
+              ...(Object.hasOwn(message.data, "urdfModel") ? { urdfModel: message.data.urdfModel } : {})
+            });
           }
         });
       }
@@ -1446,6 +1488,10 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
             }
           });
       }
+      break;
+
+    case "update-xr-model":
+      XRServer.setURDFModel(message.data);
       break;
 
     case "update-xr-command":
@@ -3371,11 +3417,16 @@ function createSatellite(
   satellite.loadFile(path.join(__dirname, "../www/satellite.html"));
   let firstLoad = true;
   let rendererReady = false;
-  const refreshImage = () => {
-    if ((configData?.type ?? state?.state.type) !== TabType.Image || !rendererReady || !satellite.isVisible()) return;
+  const refreshSatellite = () => {
+    if (
+      ![TabType.Image, TabType.Field3d].includes(configData?.type ?? state?.state.type) ||
+      !rendererReady ||
+      !satellite.isVisible()
+    )
+      return;
     hubWindows.forEach((hub) => sendMessage(hub, "refresh-satellite", { uuid, satelliteId: satellite.id }));
   };
-  satellite.on("show", refreshImage);
+  satellite.on("show", refreshSatellite);
   satellite.webContents.on("did-start-loading", () => {
     rendererReady = false;
   });
@@ -3474,7 +3525,7 @@ function createSatellite(
     sendAllPreferences();
     firstLoad = false;
     rendererReady = true;
-    refreshImage();
+    refreshSatellite();
   });
   satellite.webContents.setWindowOpenHandler((details) => {
     // Open docs URLs in browser

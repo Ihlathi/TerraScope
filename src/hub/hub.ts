@@ -666,6 +666,9 @@ setInterval(() => {
 async function handleMainMessage(message: NamedMessage) {
   if (recording.handleMessage(message.name, message.data)) return;
   switch (message.name) {
+    case "urdf-picked":
+      window.dispatchEvent(new CustomEvent("urdf-picked", { detail: message.data }));
+      break;
     case "show-when-ready":
       // Wait for DOM updates to finish
       window.requestAnimationFrame(() => {

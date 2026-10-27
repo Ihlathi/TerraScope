@@ -1946,3 +1946,16 @@ Checking formatting...
 All matched files use Prettier code style!
 
 Exit status: 0
+
+$ npm run check-format
+
+> advantagescope@27.0.0-alpha-6 check-format
+> license-check-and-add check -f file-header-config.json && prettier --check .
+
+No default format specified. Using {"prepend":"/*","append":"*/"} as backup
+[32m✔[0m All files have licenses.
+Command succeeded
+Checking formatting...
+All matched files use Prettier code style!
+
+Exit status: 0

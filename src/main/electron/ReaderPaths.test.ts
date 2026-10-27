@@ -41,9 +41,7 @@ async function openLog(logPath: string, deleteAfterRead = false): Promise<(Buffe
       complete(data.files);
     }
   };
-  if (source.statements.some((node) => ts.isFunctionDeclaration(node) && node.name?.text === "getDSLogPaths")) {
-    context.getDSLogPaths = loadFunction("getDSLogPaths", context);
-  }
+  context.getDSLogPaths = loadFunction("getDSLogPaths", context);
   const handle = loadFunction("handleHubMessage", context);
   await handle(
     { id: 1, isDestroyed: () => false },

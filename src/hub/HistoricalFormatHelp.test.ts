@@ -10,6 +10,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { runInNewContext } from "node:vm";
 import ts from "typescript";
+import Log from "../shared/log/Log";
 import { plugins } from "../shared/plugins/builtins";
 
 async function failedOpen(logPath: string, customError: string | null = null) {
@@ -75,4 +76,42 @@ for (const reader of plugins.getReaders().filter((reader) => reader.id !== "csv"
 
 test("a reader's custom error still replaces format help", async () => {
   assert.equal(await failedOpen("match.CSV", "Decoder diagnostic"), "Decoder diagnostic");
+});
+
+test("historical sources forward the selected DS events filename without rewriting it", () => {
+  const file = "src/hub/dataSources/HistoricalDataSource.ts";
+  const source = ts.createSourceFile(file, readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true);
+  const declaration = source.statements.find(
+    (node) => ts.isClassDeclaration(node) && node.name?.text === "HistoricalDataSource"
+  );
+  assert(declaration);
+  const script = ts.transpileModule(declaration.getText(source), {
+    compilerOptions: { target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.CommonJS }
+  }).outputText;
+  const messages: { name: string; data: { path: string } }[] = [];
+  const HistoricalDataSource = runInNewContext(script + "\nHistoricalDataSource", {
+    exports: {},
+    createUUID: () => "path-forwarding-test",
+    HistoricalDataSourceStatus: { Waiting: "Waiting", Reading: "Reading", Stopped: "Stopped" },
+    window: {
+      sendMainMessage: (name: string, data: { path: string }) => messages.push({ name, data }),
+      setInterval: () => 1,
+      clearInterval() {},
+      requestAnimationFrame: () => 1
+    }
+  });
+  for (const path of ["match.dsevents", "match.DSEVENTS", "match.practice.DsEvEnTs"]) {
+    const source = new HistoricalDataSource();
+    source.openFile(
+      new Log(),
+      path,
+      "",
+      () => {},
+      () => {},
+      () => {}
+    );
+    assert.equal(messages.at(-1)?.name, "historical-start");
+    assert.equal(messages.at(-1)?.data.path, path);
+    source.stop();
+  }
 });

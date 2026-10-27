@@ -132,9 +132,6 @@ export class HistoricalDataSource {
     this.refreshCallback = refreshCallback;
 
     // Post message to start reading
-    if (this.path.toLowerCase().endsWith(".dsevents")) {
-      this.path = this.path.slice(0, -8) + "dslog";
-    }
     this.setStatus(HistoricalDataSourceStatus.Reading);
     window.sendMainMessage("historical-start", { uuid: this.UUID, path: this.path });
 

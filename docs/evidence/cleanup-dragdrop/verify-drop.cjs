@@ -11,6 +11,7 @@ const path = require("node:path");
 const WebSocket = require("ws");
 const repo = path.resolve(__dirname, "../../..");
 const output = process.env.DROP_OUTPUT || __dirname;
+const mode = process.env.DROP_MODE || "unsupported";
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 (async () => {
@@ -58,7 +59,11 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     fs.mkdirSync(fixtures, { recursive: true });
     const rejected = path.join(fixtures, "notes.unknown");
     fs.writeFileSync(rejected, "Unsupported file.\n");
-    const data = { items: [], files: [rejected], dragOperationsMask: 1 };
+    const supported = path.join(fixtures, "telemetry.csv");
+    const field = mode === "mixed" ? "MixedDropValue" : "DropValue";
+    fs.writeFileSync(supported, `Timestamp,${field}\n1,42\n2,84\n`);
+    const files = mode === "mixed" ? [supported, rejected] : mode === "supported" ? [supported] : [rejected];
+    const data = { items: [], files, dragOperationsMask: 1 };
     for (const type of ["dragEnter", "dragOver", "drop"]) {
       await call("Input.dispatchDragEvent", { type, x: 600, y: 400, data });
     }
@@ -66,31 +71,39 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     const messages = await evaluate("window.dropMessages");
     assert.deepEqual(
       await evaluate("window.dropPaths"),
-      [rejected],
+      files,
       "Real dropped File resolves through electron.getFilePath"
     );
     console.log(JSON.stringify(messages, null, 2));
-    const shot = await call("Page.captureScreenshot", { format: "png" });
-    fs.writeFileSync(path.join(output, "unsupported-drop.png"), Buffer.from(shot.data, "base64"));
+    const error = {
+      title: "Failed to open log",
+      content: "The following files could not be opened because their file type is unsupported:\n\nnotes.unknown"
+    };
+    const expected = [];
+    if (mode !== "unsupported") expected.push({ name: "open-files-request", data: { files: [supported] } });
+    if (mode !== "supported") expected.push({ name: "error", data: error });
     assert.deepEqual(
       messages,
-      [
-        {
-          name: "error",
-          data: {
-            title: "Failed to open log",
-            content: "The following files could not be opened because their file type is unsupported:\n\nnotes.unknown"
-          }
-        }
-      ],
-      "Unsupported drop reports every rejected file through the existing error dialog"
+      expected,
+      "Drop opens supported files and reports every rejected file through the existing error dialog"
     );
-    fs.writeFileSync(
-      path.join(output, "dialog-message.txt"),
-      `${messages[0].data.title}\n\n${messages[0].data.content}\n`
-    );
+    if (mode !== "unsupported") {
+      for (let i = 0; i < 100; i++) {
+        if (await evaluate(`window.log.getFieldKeys().includes(${JSON.stringify(field)})`)) break;
+        await wait(100);
+      }
+      assert.deepEqual(
+        await evaluate(`window.log.getRange(${JSON.stringify(field)},-Infinity,Infinity)?.values`),
+        [42, 84],
+        "Supported CSV was parsed"
+      );
+    }
+    if (mode !== "supported")
+      fs.writeFileSync(path.join(output, "dialog-message.txt"), `${error.title}\n\n${error.content}\n`);
+    const shot = await call("Page.captureScreenshot", { format: "png" });
+    fs.writeFileSync(path.join(output, `${mode}-drop.png`), Buffer.from(shot.data, "base64"));
     console.log(
-      "PASS: real file dropped through CDP, unsupported file reported through error IPC, app state captured with Page.captureScreenshot."
+      `PASS (${mode}): real file paths verified, expected open/error messages matched, CSV values checked when supported, app state captured with Page.captureScreenshot.`
     );
   } finally {
     await evaluate(

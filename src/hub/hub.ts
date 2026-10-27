@@ -17,6 +17,7 @@ import { MERGE_PREFIX } from "../shared/log/LogKeyUtils";
 import { AKIT_TIMESTAMP_KEYS, getEnabledData } from "../shared/log/RobotState";
 import { plugins } from "../shared/plugins/builtins";
 import { calcMockProgress, clampValue, htmlEncode, scaleValue } from "../shared/util";
+import { classifyDroppedFiles } from "./DroppedFiles";
 import LiveRecording, { RecordingControlState } from "./LiveRecording";
 import SelectionImpl from "./SelectionImpl";
 import Sidebar from "./Sidebar";
@@ -608,13 +609,13 @@ document.addEventListener("drop", (event) => {
   event.stopPropagation();
 
   if (event.dataTransfer) {
-    let files: string[] = [];
-    for (const file of event.dataTransfer.files) {
-      const path = window.electron.getFilePath(file);
-      if (plugins.getReader(path) !== undefined) files.push(path);
+    const paths = Array.from(event.dataTransfer.files, (file) => window.electron.getFilePath(file));
+    const drop = classifyDroppedFiles(paths, plugins);
+    if (drop.files.length > 0) {
+      window.sendMainMessage("open-files-request", { files: drop.files });
     }
-    if (files.length > 0) {
-      window.sendMainMessage("open-files-request", { files: files });
+    if (drop.error !== undefined) {
+      window.sendMainMessage("error", drop.error);
     }
   }
 });

@@ -4,6 +4,25 @@ This splits [ROADMAP.md](ROADMAP.md) into pull requests against `Ihlathi/TerraSc
 
 The order favors the seams in [ARCHITECTURE.md](ARCHITECTURE.md): a shared semantic layer, readers for formats people already have, live sources that are not FRC-specific, and removal of fixed field dimensions. Later chunks are still one PR each. They are not started here.
 
+## v0.1
+
+TerraScope v0.1 consists of chunks 1 through 18 and a cleanup pass. It is complete. The cleanup pass includes these PRs merged after chunk 18:
+
+- #22 cached graph enum domains by field revision.
+- #24 deduplicated satellite image frames and drew decoded pixels on canvases.
+- #25 cached projected log field timestamps by revision and offset.
+- #26 vendored deslop for non-Cursor agents.
+- #27 sent recording field descriptions only when they changed.
+- #28 updated cached transforms across live appends and trims.
+- #30 kept the TerraLog example out of production readers.
+- #31 reported unsupported files dropped on the window.
+- #32 used the reader registry for Driver Station companions and format help.
+- #33 derived reader worker entries from reader declarations.
+- #34 gave the live recording test suites distinct names.
+- #35 reserved space for 3D field settings.
+
+The [later chunks](#later-chunks) are post-v0.1 work. See [FUTURE.md](FUTURE.md) for other post-v0.1 ideas.
+
 ## 1. Identity, audit, and architecture
 
 **Status: done.**

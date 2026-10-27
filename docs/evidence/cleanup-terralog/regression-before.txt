@@ -1,0 +1,87 @@
+TAP version 13
+# Subtest: reader lookup uses registered extensions for paths and bare extensions
+ok 1 - reader lookup uses registered extensions for paths and bare extensions
+  ---
+  duration_ms: 1.855881
+  type: 'test'
+  ...
+# Subtest: two readers cannot claim the same extension and both ids appear in the error
+ok 2 - two readers cannot claim the same extension and both ids appear in the error
+  ---
+  duration_ms: 0.646686
+  type: 'test'
+  ...
+# Subtest: open dialog filters contain every registered extension
+ok 3 - open dialog filters contain every registered extension
+  ---
+  duration_ms: 0.79519
+  type: 'test'
+  ...
+# Subtest: production readers and open dialog filters exclude the TerraLog example
+not ok 4 - production readers and open dialog filters exclude the TerraLog example
+  ---
+  duration_ms: 2.567214
+  type: 'test'
+  location: '/workspace/work/cleanup-terralog/work/registry-red.cjs:49846:23'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   displayName: 'TerraLog example',
+    +   extensions: [
+    +     'terralog'
+    +   ],
+    +   id: 'example-terralog',
+    +   preparation: 'none',
+    +   worker: 'terraLogWorker.js'
+    + }
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+    id: 'example-terralog'
+    displayName: 'TerraLog example'
+    extensions:
+      0: 'terralog'
+    worker: 'terraLogWorker.js'
+    preparation: 'none'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/workspace/work/cleanup-terralog/work/registry-red.cjs:49847:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: the TerraLog example can be registered explicitly
+ok 5 - the TerraLog example can be registered explicitly
+  ---
+  duration_ms: 1.330017
+  type: 'test'
+  ...
+# Subtest: duplicate extension rejection does not register part of a reader
+ok 6 - duplicate extension rejection does not register part of a reader
+  ---
+  duration_ms: 0.541217
+  type: 'test'
+  ...
+# Subtest: every existing custom schema exposes a decode entry point
+ok 7 - every existing custom schema exposes a decode entry point
+  ---
+  duration_ms: 0.454085
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 6
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 31.975975

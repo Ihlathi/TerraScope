@@ -32,7 +32,6 @@ import os from "os";
 import path from "path";
 import { Client, FileEntry, Stats } from "ssh2";
 import { Readable, Writable } from "stream";
-import { fileURLToPath, pathToFileURL } from "url";
 import { AdvantageScopeAssets } from "../../shared/AdvantageScopeAssets";
 import ButtonRect from "../../shared/ButtonRect";
 import { ensureThemeContrast } from "../../shared/Colors";
@@ -77,6 +76,7 @@ import {
 import LiveRecordingManager from "./LiveRecordingManager";
 import { RlogTcpTransport } from "./RlogTcpTransport";
 import StateTracker, { ApplicationState, SatelliteWindowState, WindowState } from "./StateTracker";
+import { loadURDFSource } from "./URDFSources";
 import UpdateChecker from "./UpdateChecker";
 import { VideoProcessor } from "./VideoProcessor";
 import { XRControls } from "./XRControls";
@@ -251,52 +251,32 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
       const kind = message.data?.kind;
       if (typeof uuid !== "string" || (kind !== "robot" && kind !== "packages" && kind !== "resources")) break;
       try {
-        const referencesPath = path.join(app.getPath("userData"), "urdf-sources.json");
-        let references: Record<string, { kind: string; path: string }> = fs.existsSync(referencesPath)
-          ? jsonfile.readFileSync(referencesPath)
-          : {};
-        const restoring = message.name === "urdf-restore";
-        let selected: string;
-        if (restoring) {
-          const reference = typeof message.data.reference === "string" ? references[message.data.reference] : null;
-          if (reference && reference.kind === kind) selected = reference.path;
-          else if (typeof message.data.url === "string") selected = fileURLToPath(message.data.url);
-          else throw new Error("URDF source is unavailable on this computer. Select the local source again.");
-        } else {
-          const result = await dialog.showOpenDialog(
-            window,
-            kind === "robot"
-              ? {
-                  title: "Load URDF robot",
-                  filters: [{ name: "URDF robot", extensions: ["urdf"] }],
-                  properties: ["openFile"]
-                }
-              : {
-                  title:
-                    kind === "packages"
-                      ? "Choose a folder containing ROS packages"
-                      : "Choose the directory for logged URDF mesh paths",
-                  properties: ["openDirectory"]
-                }
-          );
-          if (result.canceled || !result.filePaths[0]) break;
-          selected = result.filePaths[0];
-          references = fs.existsSync(referencesPath) ? jsonfile.readFileSync(referencesPath) : {};
-        }
-        const reference =
-          Object.keys(references).find((key) => references[key].kind === kind && references[key].path === selected) ??
-          createUUID();
-        references[reference] = { kind, path: selected };
-        jsonfile.writeFileSync(referencesPath, references);
-        sendMessage(window, "urdf-picked", {
-          uuid,
-          kind,
-          reference,
-          restoring,
-          url: pathToFileURL(selected + (kind !== "robot" ? path.sep : "")).href,
-          name: path.basename(selected),
-          ...(kind === "robot" ? { xml: await fs.promises.readFile(selected, "utf8") } : {})
-        });
+        const source = await loadURDFSource(
+          path.join(app.getPath("userData"), "urdf-sources.json"),
+          message.name === "urdf-restore"
+            ? { action: "restore", kind, reference: message.data.reference }
+            : { action: "pick", kind },
+          async () => {
+            const result = await dialog.showOpenDialog(
+              window,
+              kind === "robot"
+                ? {
+                    title: "Load URDF robot",
+                    filters: [{ name: "URDF robot", extensions: ["urdf"] }],
+                    properties: ["openFile"]
+                  }
+                : {
+                    title:
+                      kind === "packages"
+                        ? "Choose a folder containing ROS packages"
+                        : "Choose the directory for logged URDF mesh paths",
+                    properties: ["openDirectory"]
+                  }
+            );
+            return result.canceled ? null : result.filePaths[0] ?? null;
+          }
+        );
+        if (source) sendMessage(window, "urdf-picked", { uuid, ...source });
       } catch (error) {
         sendMessage(window, "urdf-picked", { uuid, kind, error: String(error) });
       }
@@ -1384,7 +1364,11 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
           if (
             message.data.satelliteId === undefined ? satellite.isVisible() : satellite.id === message.data.satelliteId
           ) {
-            sendMessage(satellite, "render", { command: command, title: title });
+            sendMessage(satellite, "render", {
+              command: command,
+              title: title,
+              ...(Object.hasOwn(message.data, "urdfModel") ? { urdfModel: message.data.urdfModel } : {})
+            });
           }
         });
       }
@@ -1504,6 +1488,10 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
             }
           });
       }
+      break;
+
+    case "update-xr-model":
+      XRServer.setURDFModel(message.data);
       break;
 
     case "update-xr-command":
@@ -3429,11 +3417,16 @@ function createSatellite(
   satellite.loadFile(path.join(__dirname, "../www/satellite.html"));
   let firstLoad = true;
   let rendererReady = false;
-  const refreshImage = () => {
-    if ((configData?.type ?? state?.state.type) !== TabType.Image || !rendererReady || !satellite.isVisible()) return;
+  const refreshSatellite = () => {
+    if (
+      ![TabType.Image, TabType.Field3d].includes(configData?.type ?? state?.state.type) ||
+      !rendererReady ||
+      !satellite.isVisible()
+    )
+      return;
     hubWindows.forEach((hub) => sendMessage(hub, "refresh-satellite", { uuid, satelliteId: satellite.id }));
   };
-  satellite.on("show", refreshImage);
+  satellite.on("show", refreshSatellite);
   satellite.webContents.on("did-start-loading", () => {
     rendererReady = false;
   });
@@ -3532,7 +3525,7 @@ function createSatellite(
     sendAllPreferences();
     firstLoad = false;
     rendererReady = true;
-    refreshImage();
+    refreshSatellite();
   });
   satellite.webContents.setWindowOpenHandler((details) => {
     // Open docs URLs in browser

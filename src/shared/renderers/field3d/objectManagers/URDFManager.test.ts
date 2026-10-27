@@ -11,7 +11,7 @@ import fs from "node:fs";
 import { test } from "node:test";
 import * as THREE from "three";
 import { parseURDF } from "../../../urdf/URDF";
-import type { Field3dRendererCommand_URDFObj } from "../../Field3dRenderer";
+import type { Field3dRendererCommand_URDFObj, Field3dRendererURDFModel } from "../../Field3dRenderer";
 import URDFManager from "./URDFManager";
 
 const pose = { translation: [0, 0, 0], rotation: [1, 0, 0, 0] } as const;
@@ -19,18 +19,23 @@ function scene(xml: string) {
   const root = new THREE.Group();
   const manager = new URDFManager(root, new THREE.Color("white"), 30, "standard", false, () => {});
   const robot = parseURDF(xml);
-  const command: Field3dRendererCommand_URDFObj = {
-    type: "urdf",
+  const model: Field3dRendererURDFModel = {
+    id: robot.id,
     robot,
     baseUrl: "file:///robot/robot.urdf",
-    packageRootUrl: null,
+    packageRootUrl: null
+  };
+  const command: Field3dRendererCommand_URDFObj = {
+    type: "urdf",
+    modelId: model.id,
     links: robot.links.map((link) => ({
       name: link.name,
       pose: { translation: [...pose.translation], rotation: [...pose.rotation] }
     }))
   };
+  manager.setModel(model);
   manager.setObjectData(command);
-  return { root, manager, command };
+  return { root, manager, command, model };
 }
 function meshes(root: THREE.Object3D): THREE.Mesh[] {
   const result: THREE.Mesh[] = [];
@@ -54,13 +59,13 @@ test("named materials share one instance across links and are disposed once", ()
 });
 
 test("cloned satellite commands update link poses without rebuilding visual resources", () => {
-  const { root, manager, command } = scene(
+  const { root, manager, command, model } = scene(
     '<robot name="one"><link name="a"><visual><geometry><box size="1 1 1"/></geometry></visual></link></robot>'
   );
   const before = meshes(root)[0];
   const cloned = structuredClone(command);
   cloned.links[0].pose!.translation[2] = 3;
-  Object.defineProperty(cloned.robot, "toJSON", {
+  Object.defineProperty(model.robot, "toJSON", {
     value: () => {
       throw new Error("Robot serialization during pose update");
     }
@@ -69,12 +74,11 @@ test("cloned satellite commands update link poses without rebuilding visual reso
   assert.equal(meshes(root)[0], before);
   root.updateMatrixWorld(true);
   assert.equal(before.getWorldPosition(new THREE.Vector3()).z, 3);
-  manager.setObjectData({
-    ...cloned,
-    robot: parseURDF(
-      '<robot name="two"><link name="a"><visual><geometry><sphere radius="1"/></geometry></visual></link></robot>'
-    )
-  });
+  const next = parseURDF(
+    '<robot name="two"><link name="a"><visual><geometry><sphere radius="1"/></geometry></visual></link></robot>'
+  );
+  manager.setModel({ ...model, id: next.id, robot: next });
+  manager.setObjectData({ ...cloned, modelId: next.id });
   assert.notEqual(meshes(root)[0], before);
   manager.dispose();
 });
@@ -103,6 +107,28 @@ test("COLLADA Y-up and Z-up authored vertical axes both render vertically in URD
       assert(vertical.distanceTo(new THREE.Vector3(0, 0, 1)) < 1e-10);
       manager.dispose();
     }
+  } finally {
+    globalThis.DOMParser = originalParser;
+    THREE.FileLoader.prototype.load = originalLoad;
+  }
+});
+
+test("X_UP COLLADA is skipped with a visible diagnostic while other visuals remain", () => {
+  const originalParser = globalThis.DOMParser;
+  const originalLoad = THREE.FileLoader.prototype.load;
+  globalThis.DOMParser = DOMParser as unknown as typeof globalThis.DOMParser;
+  const fixture = fs.readFileSync("src/hub/dataSources/ros2/fixtures/urdf/packages/demo/meshes/tool.dae", "utf8");
+  try {
+    THREE.FileLoader.prototype.load = function (_url, onLoad) {
+      onLoad!(fixture.replace(/<up_axis>[^<]+<\/up_axis>/, "<up_axis>X_UP</up_axis>"));
+      return undefined;
+    };
+    const { root, manager } = scene(
+      '<robot name="mesh"><link name="a"><visual><geometry><box size="1 1 1"/></geometry></visual><visual><geometry><mesh filename="tool.dae"/></geometry></visual></link></robot>'
+    );
+    assert.equal(meshes(root).length, 1);
+    assert.match(manager.getDiagnostics().join("\n"), /Unsupported COLLADA up axis "X_UP"/);
+    manager.dispose();
   } finally {
     globalThis.DOMParser = originalParser;
     THREE.FileLoader.prototype.load = originalLoad;

@@ -16,13 +16,7 @@ import LogField from "../log/LogField";
 import LoggableType from "../log/LoggableType";
 import { sourceClock } from "../log/ProjectedLogField";
 import { parseURDF, urdfEdges } from "./URDF";
-import {
-  inURDFScope,
-  jointStateTopics,
-  readURDFJointPositions,
-  urdfDescriptionTopics,
-  valueAtURDFTime
-} from "./URDFLog";
+import { discoverURDFTopics, inURDFScope, readURDFJointPositions, valueAtURDFTime } from "./URDFLog";
 
 const fixture = path.join(process.cwd(), "src/hub/dataSources/ros2/fixtures/urdf/robot.db3");
 function close(actual: number[], expected: number[]) {
@@ -32,17 +26,18 @@ function close(actual: number[], expected: number[]) {
 test("fixture bag drives named joints, limits, and attached frame-id geometry at the cursor", async () => {
   const log = new Log(false);
   await new ROS2BagDecoder().decode(log, new Uint8Array(readFileSync(fixture)), () => {});
-  assert.deepEqual(urdfDescriptionTopics(log), ["/robot_description"]);
-  assert.deepEqual(jointStateTopics(log), ["/joint_states"]);
+  const topics = discoverURDFTopics(log);
+  assert.deepEqual(topics.descriptions, ["/robot_description"]);
+  assert.deepEqual(topics.joints, ["/joint_states"]);
   const robot = parseURDF(valueAtURDFTime(log, "/robot_description/data", 1) as string);
   const graph = frameGraphForSource(log, "/scan");
-  const first = readURDFJointPositions(log, jointStateTopics(log), 1.5);
-  const second = readURDFJointPositions(log, jointStateTopics(log), 2.5);
+  const first = readURDFJointPositions(log, topics.joints, 1.5);
+  const second = readURDFJointPositions(log, topics.joints, 2.5);
   assert.equal(first.positions.get("shoulder"), 0);
   assert.equal(second.positions.get("shoulder"), 1);
   assert.equal(second.positions.get("slider"), 0.7);
-  assert.equal(readURDFJointPositions(log, jointStateTopics(log), 0).positions.size, 0);
-  assert.equal(readURDFJointPositions(log, jointStateTopics(log), 1.5).positions.get("slider"), 0);
+  assert.equal(readURDFJointPositions(log, topics.joints, 0).positions.size, 0);
+  assert.equal(readURDFJointPositions(log, topics.joints, 1.5).positions.get("slider"), 0);
   const edges = urdfEdges(robot, second.positions);
   assert.equal(graph.defaultFixedFrame(edges), "map");
   const frame = readSourceFrame(log, "/scan", 2.5)!;
@@ -52,7 +47,7 @@ test("fixture bag drives named joints, limits, and attached frame-id geometry at
   if (resolved.status !== "resolved") throw new Error("Fixture tool frame did not resolve");
   close(resolved.pose.translation, [2.1 * Math.cos(1), 2.1 * Math.sin(1), 0.7]);
   close(resolved.pose.rotation, [Math.cos(0.6), 0, 0, Math.sin(0.6)]);
-  const limited = urdfEdges(robot, readURDFJointPositions(log, jointStateTopics(log), 3).positions);
+  const limited = urdfEdges(robot, readURDFJointPositions(log, topics.joints, 3).positions);
   const slider = limited.find((edge) => edge.child === "carriage_link")!;
   const shoulder = limited.find((edge) => edge.child === "arm_link")!;
   close(shoulder.pose.rotation, [Math.cos(0.6), 0, 0, Math.sin(0.6)]);
@@ -172,7 +167,7 @@ test("appended JointState revisions do not read or process earlier samples", () 
   );
   reads.length = 0;
   assert.equal(readURDFJointPositions(log, ["/joint_states"], 1).positions.get("a"), 1);
-  assert.deepEqual(reads, []);
+  assert.equal(reads.length, 0);
 });
 
 test("JointState caches observe earlier corrections, late fields, and live trimming", () => {
@@ -281,4 +276,150 @@ test("projected live JointStates append without rescanning and retain correction
   project(20);
   assert.equal(readURDFJointPositions(display, [topic], 12.5).positions.size, 0);
   assert.equal(readURDFJointPositions(display, [topic], 22.5).positions.get("a"), 2);
+});
+
+test("live no-op discards keep revisions and trimming followed by append reads only the boundary and suffix", () => {
+  const log = new Log(false);
+  const keys = ["/joint_states", "/joint_states/name", "/joint_states/position"];
+  const sample = (time: number, name = "a", position = time) => {
+    log.putRaw(keys[0], time, new Uint8Array([time]));
+    log.putStringArray(keys[1], time, [name]);
+    log.putNumberArray(keys[2], time, [position]);
+  };
+  sample(1);
+  sample(2);
+  sample(3);
+  assert.equal(readURDFJointPositions(log, [keys[0]], 3).positions.get("a"), 3);
+  const revisions = keys.map((key) => log.getField(key)!.getRevision());
+  for (let i = 0; i < 120; i++) keys.forEach((key) => log.getField(key)!.clearBeforeTime(1));
+  assert.deepEqual(
+    keys.map((key) => log.getField(key)!.getRevision()),
+    revisions
+  );
+  const reads: { key: string; start: number }[] = [];
+  const getRange = log.getRange.bind(log);
+  log.getRange = (key, start, ...rest) => {
+    reads.push({ key, start });
+    return getRange(key, start, ...rest);
+  };
+  assert.equal(readURDFJointPositions(log, [keys[0]], 3).positions.get("a"), 3);
+  assert.equal(reads.length, 0);
+  keys.forEach((key) => log.getField(key)!.clearBeforeTime(2.5));
+  sample(4);
+  assert.equal(readURDFJointPositions(log, [keys[0]], 2.5).positions.get("a"), 2);
+  assert.equal(readURDFJointPositions(log, [keys[0]], 4).positions.get("a"), 4);
+  assert.ok(reads.length > 0);
+  assert.ok(
+    reads.every((read) => read.start >= 2.5),
+    JSON.stringify(reads)
+  );
+  assert.deepEqual(
+    reads.filter((read) => read.key === keys[0]).map((read) => read.start),
+    [4]
+  );
+});
+
+test("trimming retains held partial joint positions despite compressed child histories", () => {
+  const log = new Log(false);
+  const keys = ["/joint_states", "/joint_states/name", "/joint_states/position"];
+  const sample = (time: number, name: string, position: number) => {
+    log.putRaw(keys[0], time, new Uint8Array([time]));
+    log.putStringArray(keys[1], time, [name]);
+    log.putNumberArray(keys[2], time, [position]);
+  };
+  sample(1, "a", 10);
+  sample(2, "b", 20);
+  sample(3, "b", 20);
+  assert.equal(log.getField(keys[1])!.getTimestampCount(), 2);
+  assert.equal(log.getField(keys[2])!.getTimestampCount(), 2);
+  assert.deepEqual(
+    [...readURDFJointPositions(log, [keys[0]], 3).positions],
+    [
+      ["a", 10],
+      ["b", 20]
+    ]
+  );
+  keys.forEach((key) => log.getField(key)!.clearBeforeTime(2.5));
+  sample(4, "b", 30);
+  const getRange = log.getRange.bind(log);
+  log.getRange = (key, start, ...rest) => {
+    assert.notEqual(start, -Infinity, "trimming cannot rebuild the retained history");
+    return getRange(key, start, ...rest);
+  };
+  assert.equal(readURDFJointPositions(log, [keys[0]], 2).positions.size, 0);
+  assert.deepEqual(
+    [...readURDFJointPositions(log, [keys[0]], 2.5).positions],
+    [
+      ["a", 10],
+      ["b", 20]
+    ]
+  );
+  assert.deepEqual(
+    [...readURDFJointPositions(log, [keys[0]], 4).positions],
+    [
+      ["a", 10],
+      ["b", 30]
+    ]
+  );
+});
+
+test("JointState diagnostics stop at the cursor and summarize a bounded recent set", () => {
+  const log = new Log(false);
+  for (let time = 1; time <= 100; time++) {
+    log.putRaw("/joint_states", time, new Uint8Array([time]));
+    log.putStringArray("/joint_states/name", time, ["a"]);
+    log.putNumberArray("/joint_states/position", time, [NaN]);
+  }
+  assert.deepEqual(readURDFJointPositions(log, ["/joint_states"], 0).diagnostics, []);
+  const early = readURDFJointPositions(log, ["/joint_states"], 2).diagnostics;
+  assert.equal(early.length, 2);
+  assert.ok(early.every((message) => /at [12]\./.test(message)));
+  const later = readURDFJointPositions(log, ["/joint_states"], 50).diagnostics;
+  assert.equal(later.length, 6);
+  assert.match(later[0], /at 46\./);
+  assert.match(later[4], /at 50\./);
+  assert.match(later[5], /45 earlier invalid/);
+  assert.deepEqual(readURDFJointPositions(log, ["/joint_states"], 0).diagnostics, []);
+});
+
+test("projected live trimming and appending do not rebuild retained JointState history", () => {
+  const source = new Log(false);
+  const display = new Log(false);
+  const sample = (time: number) => {
+    source.putRaw("/joint_states", time, new Uint8Array([time]));
+    source.putStringArray("/joint_states/name", time, ["a"]);
+    source.putNumberArray("/joint_states/position", time, [time]);
+  };
+  const project = () =>
+    display.setProjectedSources([
+      {
+        log: source,
+        namespace: "/Live1",
+        conversion: {
+          from: sourceClock("/Live1", source.getDisplayClock()),
+          to: display.getDisplayClock(),
+          offsetSeconds: 10
+        }
+      }
+    ]);
+  for (const time of [1, 2, 3]) sample(time);
+  project();
+  assert.equal(readURDFJointPositions(display, ["/Live1/joint_states"], 13).positions.get("a"), 3);
+  for (const key of ["/joint_states", "/joint_states/name", "/joint_states/position"])
+    source.getField(key)!.clearBeforeTime(2.5);
+  sample(4);
+  project();
+  const starts: number[] = [];
+  const getRange = display.getRange.bind(display);
+  display.getRange = (key, start, ...rest) => {
+    starts.push(start);
+    return getRange(key, start, ...rest);
+  };
+  assert.equal(readURDFJointPositions(display, ["/Live1/joint_states"], 12.5).positions.get("a"), 2);
+  assert.equal(readURDFJointPositions(display, ["/Live1/joint_states"], 14).positions.get("a"), 4);
+  assert.ok(starts.length > 0);
+  assert.ok(
+    starts.every((start) => start >= 12.5),
+    JSON.stringify(starts)
+  );
 });

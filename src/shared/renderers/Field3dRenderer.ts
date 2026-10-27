@@ -21,6 +21,7 @@ export default class Field3dRenderer implements TabRenderer {
   private FRAME_ALERT: HTMLElement;
 
   private implementation: Field3dRendererImpl | null = null;
+  private urdfModel: Field3dRendererURDFModel | null = null;
   private lastMode: "cinematic" | "standard" | "low-power" | null = null;
   private lastUseAA = true;
   private stateRestoreCache: unknown | null = null;
@@ -79,7 +80,7 @@ export default class Field3dRenderer implements TabRenderer {
     }
 
     // Recreate visualizer if necessary
-    if ((mode !== this.lastMode || useAA != this.lastUseAA) && mode !== null) {
+    if ((this.implementation === null || mode !== this.lastMode || useAA != this.lastUseAA) && mode !== null) {
       this.lastMode = mode;
       this.lastUseAA = useAA;
       let state: any = null;
@@ -104,6 +105,7 @@ export default class Field3dRenderer implements TabRenderer {
         this.ALERT,
         this.SPINNER
       );
+      this.implementation.setURDFModel(this.urdfModel);
       if (this.stateRestoreCache !== null) {
         this.implementation.restoreState(this.stateRestoreCache);
         this.stateRestoreCache = null;
@@ -111,6 +113,18 @@ export default class Field3dRenderer implements TabRenderer {
         this.implementation.restoreState(state);
       }
     }
+  }
+
+  setURDFModel(model: Field3dRendererURDFModel | null): void {
+    if (this.urdfModel?.id === model?.id) return;
+    this.urdfModel = model;
+    this.implementation?.setURDFModel(model);
+  }
+
+  dispose(): void {
+    this.implementation?.stop();
+    this.implementation = null;
+    this.urdfModel = null;
   }
 
   getAspectRatio(): number | null {
@@ -237,10 +251,15 @@ export type Field3dRendererCommand_PointsObj = {
   pose?: Pose3d;
 };
 
-export type Field3dRendererCommand_URDFObj = {
-  type: "urdf";
+export type Field3dRendererURDFModel = {
+  id: string;
   robot: URDFRobot;
   baseUrl: string | null;
   packageRootUrl: string | null;
+};
+
+export type Field3dRendererCommand_URDFObj = {
+  type: "urdf";
+  modelId: string;
   links: { name: string; pose: Pose3d | null }[];
 };

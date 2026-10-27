@@ -48,8 +48,8 @@ export default class ProjectedLogField extends LogField {
     );
   }
 
-  hasOnlyAppendedSince(revision: number): boolean {
-    return this.source.hasOnlyAppendedSince(revision);
+  hasOnlyAppendedOrTrimmedSince(revision: number): boolean {
+    return this.source.hasOnlyAppendedOrTrimmedSince(revision);
   }
 
   getTimestampCount(): number {

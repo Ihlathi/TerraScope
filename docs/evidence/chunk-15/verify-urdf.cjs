@@ -133,6 +133,8 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         assert.equal(state.time, time);
         const command = state.command.objects.find((o) => o.type === "urdf");
         assert(command, "URDF command rendered");
+        assert.equal(Object.hasOwn(command, "robot"), false, "Robot model excluded from frame command");
+        assert.equal(typeof command.modelId, "string");
         assert.equal(command.links.length, 4);
         assert.equal(state.command.frameDiagnostics?.length ?? 0, 0);
         const rendered = state.managers.find((o) => o.type === "urdf");
@@ -171,12 +173,21 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       const upright = layout("Y_UP COLLADA model upright");
       upright.tabs[0].renderer.cameraTarget = [0, 0, 0.9];
       upright.tabs[0].renderer.cameraPosition = [4, 3, 4];
-      upright.tabs[0].controller.urdf = {
-        description: "file",
-        file: { xml, url: pathToFileURL(path.join(scratch, "upright.urdf")).href, name: "Y_UP upright" }
-      };
       fs.writeFileSync(path.join(scratch, "upright.urdf"), xml);
-      await evaluate(`window.tabs.restoreState(${JSON.stringify(upright)});window.selection.setSelectedTime(1.5)`);
+      const picked = {
+        kind: "robot",
+        xml,
+        url: pathToFileURL(path.join(scratch, "upright.urdf")).href,
+        name: "Y_UP upright",
+        reference: "verification-y-up"
+      };
+      await evaluate(
+        `window.tabs.restoreState(${JSON.stringify(
+          upright
+        )});window.messagePort.onmessage({data:{name:'urdf-picked',data:{...${JSON.stringify(
+          picked
+        )},uuid:window.tabs.tabList[0].controller.UUID}}});window.selection.setSelectedTime(1.5)`
+      );
       await wait(1800);
       const uprightState = await scene();
       const manager = uprightState.managers.find((e) => e.type === "urdf");

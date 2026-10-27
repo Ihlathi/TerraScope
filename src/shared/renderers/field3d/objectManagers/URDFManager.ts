@@ -10,7 +10,7 @@ import { ColladaLoader } from "three/examples/jsm/loaders/ColladaLoader";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { Pose3d } from "../../../geometry";
 import { resolveURDFMesh, URDFVisual } from "../../../urdf/URDF";
-import { Field3dRendererCommand_URDFObj } from "../../Field3dRenderer";
+import { Field3dRendererCommand_URDFObj, Field3dRendererURDFModel } from "../../Field3dRenderer";
 import ObjectManager from "../ObjectManager";
 
 function setPose(object: THREE.Object3D, pose: Pose3d) {
@@ -40,8 +40,6 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
   private group = new THREE.Group();
   private links = new Map<string, THREE.Group>();
   private modelId: string | null = null;
-  private baseUrl: string | null = null;
-  private packageRootUrl: string | null = null;
   private materials = new Map<string, THREE.MeshPhongMaterial>();
   private generation = 0;
   private diagnostics = new Set<string>();
@@ -78,7 +76,7 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
     return material;
   }
 
-  private addVisual(parent: THREE.Group, visual: URDFVisual, command: Field3dRendererCommand_URDFObj) {
+  private addVisual(parent: THREE.Group, visual: URDFVisual, command: Field3dRendererURDFModel) {
     const origin = new THREE.Group();
     setPose(origin, visual.origin);
     parent.add(origin);
@@ -159,6 +157,10 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
               try {
                 const xml = new DOMParser().parseFromString(text, "application/xml");
                 const upAxis = xml.getElementsByTagName("up_axis")[0]?.textContent?.trim();
+                if (upAxis && upAxis !== "Y_UP" && upAxis !== "Z_UP") {
+                  report(`Unsupported COLLADA up axis "${upAxis}". Use Y_UP or Z_UP.`);
+                  return;
+                }
                 const collada = new ColladaLoader(manager).parse(text, new URL(".", url).href);
                 // ColladaLoader normalizes to Y-up. RViz displays meshes in the URDF Z-up frame.
                 collada.scene.rotation.set(upAxis === "Z_UP" ? 0 : Math.PI / 2, 0, 0);
@@ -201,28 +203,27 @@ export default class URDFManager extends ObjectManager<Field3dRendererCommand_UR
     }
   }
 
-  setObjectData(object: Field3dRendererCommand_URDFObj): void {
-    if (
-      object.robot.id !== this.modelId ||
-      object.baseUrl !== this.baseUrl ||
-      object.packageRootUrl !== this.packageRootUrl
-    ) {
-      this.generation++;
-      disposeObject(this.group);
-      this.group.clear();
-      this.links.clear();
-      this.diagnostics.clear();
-      this.materials.clear();
-      this.modelId = object.robot.id;
-      this.baseUrl = object.baseUrl;
-      this.packageRootUrl = object.packageRootUrl;
-      for (const link of object.robot.links) {
-        const group = new THREE.Group();
-        this.links.set(link.name, group);
-        this.group.add(group);
-        for (const visual of link.visuals) this.addVisual(group, visual, object);
-      }
+  setModel(model: Field3dRendererURDFModel | null): void {
+    if ((model?.id ?? null) === this.modelId) return;
+    this.generation++;
+    disposeObject(this.group);
+    this.group.clear();
+    this.links.clear();
+    this.diagnostics.clear();
+    this.materials.clear();
+    this.modelId = model?.id ?? null;
+    if (model === null) return;
+    for (const link of model.robot.links) {
+      const group = new THREE.Group();
+      this.links.set(link.name, group);
+      this.group.add(group);
+      for (const visual of link.visuals) this.addVisual(group, visual, model);
     }
+  }
+
+  setObjectData(object: Field3dRendererCommand_URDFObj): void {
+    this.group.visible = object.modelId === this.modelId;
+    if (!this.group.visible) return;
     for (const link of object.links) {
       const group = this.links.get(link.name)!;
       group.visible = link.pose !== null;

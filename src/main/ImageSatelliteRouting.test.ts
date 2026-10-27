@@ -35,7 +35,7 @@ test("Lite accepts satellite clears without an unknown-message warning", async (
   assert.equal(warnings[0][0], "Unknown message from hub");
 });
 
-function mainSetup() {
+function mainSetup(type = 13) {
   const windows: FakeWindow[] = [];
   class FakeWindow extends EventEmitter {
     id = windows.length + 1;
@@ -64,7 +64,7 @@ function mainSetup() {
   const hub = { id: 100, isDestroyed: () => false, getBounds: () => ({ x: 0, y: 0, width: 1000, height: 800 }) };
   const context = {
     BrowserWindow: FakeWindow,
-    TabType: { Image: 13 },
+    TabType: { Image: 13, Field3d: 3 },
     SATELLITE_DEFAULT_WIDTH: 600,
     SATELLITE_DEFAULT_HEIGHT: 400,
     WINDOW_ICON: "icon",
@@ -81,7 +81,7 @@ function mainSetup() {
     powerMonitor: Object.assign(new EventEmitter(), { isOnBatteryPower: () => false }),
     stateTracker: {
       saveSatelliteIds() {},
-      getRendererState: () => ({ type: 13, visualizer: null })
+      getRendererState: () => ({ type, visualizer: null })
     },
     sendActiveSatellites() {},
     sendAllPreferences() {},
@@ -96,7 +96,7 @@ function mainSetup() {
     handle,
     context,
     create() {
-      create({ parentWindow: hub, uuid: "image", type: 13 });
+      create({ parentWindow: hub, uuid: "image", type });
       return windows.at(-1)!;
     }
   };
@@ -178,4 +178,54 @@ test("reload before the first state save still initializes the image renderer", 
   satellite.webContents.emit("dom-ready");
   assert.equal(app.messages.filter((message) => message.name === "set-type").length, 2);
   assert.equal(app.messages.filter((message) => message.name === "refresh-satellite").length, 2);
+});
+
+test("3D satellite initialization, reload, and show request the current model resource", () => {
+  const app = mainSetup(3);
+  const satellite = app.create();
+  satellite.show();
+  assert.equal(app.messages.filter((message) => message.name === "refresh-satellite").length, 0);
+  satellite.webContents.emit("dom-ready");
+  satellite.webContents.emit("did-start-loading");
+  satellite.webContents.emit("dom-ready");
+  satellite.visible = false;
+  satellite.show();
+  const requests = app.messages.filter((message) => message.name === "refresh-satellite");
+  assert.deepEqual(
+    requests.map((message) => message.data.satelliteId),
+    [satellite.id, satellite.id, satellite.id]
+  );
+});
+
+test("main forwards one-time 3D resources, preserves absent resources, and forwards explicit clears", async () => {
+  const app = mainSetup(3);
+  const first = app.create();
+  const second = app.create();
+  first.visible = true;
+  second.visible = true;
+  const command = { objects: [{ type: "urdf", modelId: "robot-1", links: [] }] };
+  const model = {
+    id: "robot-1",
+    robot: { links: [{ name: "base", visuals: [] }] },
+    baseUrl: null,
+    packageRootUrl: null
+  };
+  await app.handle(app.hub, {
+    name: "update-satellite",
+    data: { uuid: "image", command, title: "Robot", urdfModel: model, satelliteId: second.id }
+  });
+  assert.equal(app.messages.length, 1);
+  assert.equal(app.messages[0].window.id, second.id);
+  assert.equal(app.messages[0].data.urdfModel, model);
+  await app.handle(app.hub, { name: "update-satellite", data: { uuid: "image", command, title: "Robot" } });
+  assert.ok(app.messages.slice(1).every((message) => !Object.hasOwn(message.data, "urdfModel")));
+  await app.handle(app.hub, {
+    name: "update-satellite",
+    data: { uuid: "image", command, title: "Robot", urdfModel: null }
+  });
+  assert.ok(
+    app.messages
+      .slice(-2)
+      .every((message) => Object.hasOwn(message.data, "urdfModel") && message.data.urdfModel === null)
+  );
 });

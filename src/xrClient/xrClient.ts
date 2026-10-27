@@ -9,7 +9,7 @@ import { Decoder } from "@msgpack/msgpack";
 import { AdvantageScopeAssets } from "../shared/AdvantageScopeAssets";
 import NamedMessage from "../shared/NamedMessage";
 import { XRPacket, XRFrameState as XRRenderState, XRSettings, XRStreamingMode } from "../shared/XRTypes";
-import { Field3dRendererCommand } from "../shared/renderers/Field3dRenderer";
+import { Field3dRendererCommand, Field3dRendererURDFModel } from "../shared/renderers/Field3dRenderer";
 import XRRenderer from "./XRRenderer";
 
 const bufferLengthMs = 250;
@@ -18,12 +18,14 @@ const msgpackDecoder = new Decoder();
 let renderer: XRRenderer;
 let settings: XRSettings | null = null;
 let command: Field3dRendererCommand | null = null;
+let urdfModel: Field3dRendererURDFModel | null = null;
 let assets: AdvantageScopeAssets | null = null;
 let isRendering = false;
 let serverTimeOffset: number | null = null;
 
 window.addEventListener("load", () => {
   renderer = new XRRenderer();
+  renderer.setURDFModel(urdfModel);
 });
 
 // @ts-expect-error
@@ -33,6 +35,10 @@ window.setCommand = (commandRaw: string, isQueued: boolean) => {
   switch (packet.type) {
     case "settings":
       settings = packet.value;
+      break;
+    case "urdfModel":
+      urdfModel = packet.value;
+      renderer?.setURDFModel(urdfModel);
       break;
     case "command":
       if (!isQueued && serverTimeOffset === null) {

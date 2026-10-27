@@ -36,10 +36,17 @@ import { readSensorPoints } from "../../shared/log/SpatialSensor";
 import {
   Field3dRendererCommand,
   Field3dRendererCommand_AnyObj,
-  Field3dRendererCommand_Component
+  Field3dRendererCommand_Component,
+  Field3dRendererURDFModel
 } from "../../shared/renderers/Field3dRenderer";
 import { URDFRobot, parseURDF, urdfEdges } from "../../shared/urdf/URDF";
-import { inURDFScope, readURDFJointPositions, urdfScope, valueAtURDFTime } from "../../shared/urdf/URDFLog";
+import {
+  discoverURDFTopics as findURDFTopics,
+  inURDFScope,
+  readURDFJointPositions,
+  urdfScope,
+  valueAtURDFTime
+} from "../../shared/urdf/URDFLog";
 import { clampValue, createUUID } from "../../shared/util";
 import SourceList from "../SourceList";
 import Field3dController_Config from "./Field3dController_Config";
@@ -72,6 +79,8 @@ export default class Field3dController implements TabController {
   private RESOURCE_NAME: HTMLElement;
   private urdfXML: string | null = null;
   private urdfRobot: URDFRobot | null = null;
+  private urdfModel: Field3dRendererURDFModel | null = null;
+  private onURDFPicked: (event: Event) => void;
   private urdfError: string | null = null;
   private urdfLoadError: string | null = null;
   private sourceList: SourceList;
@@ -101,11 +110,7 @@ export default class Field3dController implements TabController {
       if (IS_LITE) button.title = "Local URDF resources require the desktop app.";
       button.addEventListener("click", () => window.sendMainMessage("urdf-pick", { uuid: this.UUID, kind }));
     }
-    const onPicked = (event: Event) => {
-      if (!root.isConnected) {
-        window.removeEventListener("urdf-picked", onPicked);
-        return;
-      }
+    this.onURDFPicked = (event: Event) => {
       const data = (event as CustomEvent).detail;
       if (data?.uuid !== this.UUID) return;
       if (typeof data.error === "string") {
@@ -134,7 +139,7 @@ export default class Field3dController implements TabController {
         this.RESOURCE_NAME.textContent = data.url;
       }
     };
-    window.addEventListener("urdf-picked", onPicked);
+    window.addEventListener("urdf-picked", this.onURDFPicked);
 
     this.FIELD_SELECT = this.SETTINGS.getElementsByClassName("field-select")[0] as HTMLSelectElement;
     this.LENGTH_INPUT = this.SETTINGS.getElementsByClassName("custom-length")[0] as HTMLInputElement;
@@ -326,17 +331,7 @@ export default class Field3dController implements TabController {
 
   private discoverURDFTopics() {
     if (this.urdfTopics?.log === window.log) return this.urdfTopics;
-    const descriptions: string[] = [];
-    const joints: string[] = [];
-    for (const key of window.log.getFieldKeys()) {
-      if (
-        /(?:^|\/)robot_description$/.test(key) &&
-        (window.log.getType(key) === LoggableType.String || window.log.getType(key + "/data") === LoggableType.String)
-      )
-        descriptions.push(key);
-      if (["sensor_msgs/msg/JointState", "sensor_msgs/JointState"].includes(window.log.getStructuredType(key) ?? ""))
-        joints.push(key);
-    }
+    const { descriptions, joints } = findURDFTopics(window.log);
     this.urdfOptionsDirty = true;
     return (this.urdfTopics = { log: window.log, descriptions, joints });
   }
@@ -432,24 +427,11 @@ export default class Field3dController implements TabController {
         "file" in config &&
         typeof config.file === "object" &&
         config.file !== null &&
-        "xml" in config.file &&
-        typeof config.file.xml === "string" &&
-        "url" in config.file &&
-        typeof config.file.url === "string" &&
-        "name" in config.file &&
-        typeof config.file.name === "string"
-      )
-        this.urdfFile = { xml: config.file.xml, url: config.file.url, name: config.file.name };
-      if (
-        "file" in config &&
-        typeof config.file === "object" &&
-        config.file !== null &&
         "reference" in config.file &&
         typeof config.file.reference === "string"
       )
         window.sendMainMessage("urdf-restore", { uuid: this.UUID, kind: "robot", reference: config.file.reference });
-      else if (this.urdfFile)
-        window.sendMainMessage("urdf-restore", { uuid: this.UUID, kind: "robot", url: this.urdfFile.url });
+
       for (const [property, kind] of [
         ["packageRoot", "packages"],
         ["meshBase", "resources"]
@@ -460,16 +442,6 @@ export default class Field3dController implements TabController {
             kind,
             reference: (config as Record<string, unknown>)[property]
           });
-      }
-      if ("packageRootUrl" in config && typeof config.packageRootUrl === "string") {
-        this.packageRootUrl = config.packageRootUrl;
-        this.PACKAGE_NAME.textContent = config.packageRootUrl;
-        window.sendMainMessage("urdf-restore", { uuid: this.UUID, kind: "packages", url: config.packageRootUrl });
-      }
-      if ("meshBaseUrl" in config && typeof config.meshBaseUrl === "string") {
-        this.meshBaseUrl = config.meshBaseUrl;
-        this.RESOURCE_NAME.textContent = config.meshBaseUrl;
-        window.sendMainMessage("urdf-restore", { uuid: this.UUID, kind: "resources", url: config.meshBaseUrl });
       }
       this.urdfOptionsDirty = true;
       this.updateURDFOptions();
@@ -487,6 +459,16 @@ export default class Field3dController implements TabController {
       if ("joints" in config) restoreSelect(this.JOINT_SELECT, config.joints);
     }
     this.updateFieldDependentControls();
+  }
+
+  dispose(): void {
+    window.removeEventListener("urdf-picked", this.onURDFPicked);
+    this.sourceList.stop();
+    this.replaceAssetUrl(null);
+  }
+
+  getURDFModel(): Field3dRendererURDFModel | null {
+    return this.urdfModel;
   }
 
   refresh(): void {
@@ -562,6 +544,17 @@ export default class Field3dController implements TabController {
       }
     }
     const robot = description ? this.urdfRobot : null;
+    const baseUrl = description === "file" ? this.urdfFile?.url ?? null : this.meshBaseUrl;
+    if (robot) {
+      if (
+        this.urdfModel?.robot !== robot ||
+        this.urdfModel.baseUrl !== baseUrl ||
+        this.urdfModel.packageRootUrl !== this.packageRootUrl
+      )
+        this.urdfModel = { id: createUUID(), robot, baseUrl, packageRootUrl: this.packageRootUrl };
+    } else {
+      this.urdfModel = null;
+    }
     const allJointTopics = description ? this.discoverURDFTopics().joints : [];
     const jointTopic =
       this.JOINT_SELECT.value ||
@@ -602,9 +595,7 @@ export default class Field3dController implements TabController {
       this.FIXED_FRAME_INPUT.placeholder = fixed;
       objects.push({
         type: "urdf",
-        robot,
-        baseUrl: description === "file" ? this.urdfFile!.url : this.meshBaseUrl,
-        packageRootUrl: this.packageRootUrl,
+        modelId: this.urdfModel!.id,
         links: robot.links.map((link) => {
           const result = graph.resolve(link.name, fixed, time ?? -Infinity, edges);
           if (result.status === "resolved") return { name: link.name, pose: result.pose };

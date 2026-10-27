@@ -166,6 +166,9 @@ window.addEventListener("message", (event) => {
           }
 
           // Render frame
+          if (type === TabType.Field3d && Object.hasOwn(message.data, "urdfModel")) {
+            (renderer as Field3dRenderer | null)?.setURDFModel(message.data.urdfModel);
+          }
           if (message.data.command !== undefined) lastCommand = message.data.command;
           if (renderer && message.data.command !== undefined) {
             renderer.render(message.data.command);

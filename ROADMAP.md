@@ -431,7 +431,7 @@ largely irrelevant to the debugging and visualization experience.
 
 - [x] URDF support. (Visual geometry and fixed, revolute, continuous, prismatic, and mimic joints. Planar and floating joints render as fixed with diagnostics.)
 - [ ] SDF support.
-- [x] Common 3D model formats. (glTF/GLB assets and local STL/DAE URDF visuals.)
+- [ ] Common 3D model formats. (glTF/GLB assets are supported. STL/DAE are supported only as URDF visuals. OBJ and other common formats are not supported.)
 - [x] Custom robot models.
 - [ ] Multiple articulated robots. (Several mechanisms can be combined, and 3D components attach to a robot.)
 - [x] Robot link visualization. (URDF visuals resolve through the shared frame graph.)

@@ -236,6 +236,24 @@ XRControls.addSourceUUIDCallback((uuid) => {
   });
 });
 
+function getDSLogPaths(logPath: string): [string, string] {
+  const { dir, name, ext } = path.parse(logPath);
+  const getPath = (extension: string) => {
+    if (ext.toLowerCase() === "." + extension) return logPath;
+    const companion = path.join(dir, name + "." + extension);
+    if (fs.existsSync(companion)) return companion;
+    try {
+      const filename = fs.readdirSync(dir || ".").find((filename) => {
+        const parsed = path.parse(filename);
+        return parsed.name === name && parsed.ext.toLowerCase() === "." + extension;
+      });
+      if (filename !== undefined) return path.join(dir, filename);
+    } catch {}
+    return companion;
+  };
+  return [getPath("dslog"), getPath("dsevents")];
+}
+
 /**
  * Process a message from a hub window.
  * @param window The source hub window
@@ -489,10 +507,7 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
           if (completedCount === targetCount) {
             if (message.data.deleteAfterRead) {
               paths.forEach((p) => {
-                if (p.endsWith(".dslog")) {
-                  let eventsPath = p.slice(0, p.length - 5) + "dsevents";
-                  if (fs.existsSync(eventsPath)) pathsToRemove.push(eventsPath);
-                }
+                if (plugins.getReader(p)?.preparation === "dslog") pathsToRemove.push(...getDSLogPaths(p));
               });
             }
             pathsToRemove.forEach((p) => {
@@ -551,8 +566,9 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
           // DSLog, open DSEvents too
           results = [null, null];
           targetCount += 2;
-          openPath(logPath, (buffer) => (results[0] = buffer));
-          openPath(logPath.slice(0, logPath.length - 5) + "dsevents", (buffer) => (results[1] = buffer));
+          const [dsLogPath, dsEventsPath] = getDSLogPaths(logPath);
+          openPath(dsLogPath, (buffer) => (results[0] = buffer));
+          openPath(dsEventsPath, (buffer) => (results[1] = buffer));
         } else if (plugins.getReader(logPath)?.preparation === "hoot") {
           // Hoot, convert to WPILOG
           targetCount += 1;

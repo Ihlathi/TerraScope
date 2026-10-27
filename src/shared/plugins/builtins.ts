@@ -10,66 +10,11 @@ import URCLSchemaLegacy from "../../hub/dataSources/schema/URCLSchemaLegacy";
 import { decodeCompressedImage, decodeRawImage } from "../log/ImageSensor";
 import { SemanticType } from "../log/SemanticType";
 import { PluginRegistry } from "./PluginRegistry";
+import { readers } from "./readers";
 
 export const plugins = new PluginRegistry();
 
-plugins.registerReader({
-  id: "wpilog",
-  displayName: "WPILib robot log",
-  extensions: ["wpilog"],
-  worker: "wpilogWorker.js"
-});
-plugins.registerReader({
-  id: "wpilogxz",
-  displayName: "Compressed WPILib robot log",
-  extensions: ["wpilogxz"],
-  worker: "wpilogWorker.js",
-  preparation: "wpilogxz"
-});
-plugins.registerReader({
-  id: "hoot",
-  displayName: "Hoot robot log",
-  extensions: ["hoot"],
-  worker: "wpilogWorker.js",
-  preparation: "hoot"
-});
-plugins.registerReader({
-  id: "revlog",
-  displayName: "REV Robotics CAN log",
-  extensions: ["revlog"],
-  worker: "wpilogWorker.js",
-  preparation: "revlog"
-});
-plugins.registerReader({ id: "rlog", displayName: "Robot log", extensions: ["rlog"], worker: "rlogWorker.js" });
-plugins.registerReader({
-  id: "roadrunner",
-  displayName: "Road Runner log",
-  extensions: ["log"],
-  worker: "roadRunnerWorker.js"
-});
-plugins.registerReader({
-  id: "csv",
-  displayName: "Comma-separated values",
-  extensions: ["csv"],
-  worker: "csvWorker.js"
-});
-plugins.registerReader({ id: "tsv", displayName: "Tab-separated values", extensions: ["tsv"], worker: "tsvWorker.js" });
-plugins.registerReader({ id: "json", displayName: "JSON log", extensions: ["json"], worker: "jsonWorker.js" });
-plugins.registerReader({ id: "jsonl", displayName: "JSON Lines log", extensions: ["jsonl"], worker: "jsonlWorker.js" });
-plugins.registerReader({ id: "mcap", displayName: "MCAP log", extensions: ["mcap"], worker: "mcapWorker.js" });
-plugins.registerReader({
-  id: "ros2",
-  displayName: "ROS 2 sqlite3 bag",
-  extensions: ["db3"],
-  worker: "ros2BagWorker.js"
-});
-plugins.registerReader({
-  id: "dslog",
-  displayName: "NI Driver Station log",
-  extensions: ["dslog", "dsevents"],
-  worker: "dsLogWorker.js",
-  preparation: "dslog"
-});
+for (const reader of readers) plugins.registerReader(reader);
 
 plugins.registerSchema({ id: "URCL", displayName: "URCL revision 1", decode: URCLSchemaLegacy.parseURCLr1 });
 plugins.registerSchema({

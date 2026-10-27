@@ -1,0 +1,5 @@
+Failed to open log
+
+The following files could not be opened because their file type is unsupported:
+
+notes.unknown

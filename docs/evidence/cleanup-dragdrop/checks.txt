@@ -1,0 +1,1887 @@
+$ node --version
+v22.23.4
+
+$ npm ci
+(node:3568) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm warn skipping integrity check for git dependency ssh://git@github.com/jwbonner/youtube-dl-exec.git
+npm warn skipping integrity check for git dependency ssh://git@github.com/jwbonner/heatmap.js.git
+npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+> advantagescope@27.0.0-alpha-6 postinstall
+> cd docs && npm install && cd .. && node getLicenses.mjs && node tesseractLangDownload.mjs && node bundleLiteAssets.mjs && npm run download-owlet
+
+(node:4626) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+up to date in 1s
+(node:4641) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Saved 746 licenses
+(node:4659) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4673) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Finished downloading 'Joystick_XboxControllerWhiteV3'
+Finished downloading 'Joystick_XboxControllerBlueV3'
+Finished downloading 'Joystick_PS4ControllerV3'
+Finished downloading 'Field2d_20262027FTCFieldV1'
+Finished downloading 'Joystick_LogitechF310V3'
+Finished downloading 'Field2d_2026FRCFieldV2'
+Finished downloading 'Field3d_20262027FTCFieldV1'
+Finished downloading 'Field3d_2026FRCFieldV2'
+Finished downloading 'Robot_2026FRCKitBotV2'
+Finished downloading 'Robot_FTCDriveBaseV2'
+(node:4690) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> advantagescope@27.0.0-alpha-6 download-owlet
+> rolldown -c --configRunOwletDownload && node runOwletDownload.js
+
+(node:4703) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ WARN  Option configRunOwletDownload is unrecognized. We will ignore this option.
+
+<DIR>/runOwletDownload.js  chunk │ size: 12.02 kB
+
+✔ rolldown v1.0.2 Finished in 11.48 s
+Downloading owlet...
+(node:4752) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Finished downloading for linux-armv7l
+Finished downloading for win-arm64
+Finished downloading for linux-arm64
+Finished downloading for win-x64
+Finished downloading for linux-x64
+Finished downloading for mac-arm64
+Finished downloading for mac-x64
+
+added 742 packages in 2m
+
+$ npm run wasm:compile
+
+> advantagescope@27.0.0-alpha-6 wasm:compile
+> node wasmCompile.mjs
+
+$ npm run compile
+
+> advantagescope@27.0.0-alpha-6 compile
+> rolldown -c
+
+<DIR>/record.js  chunk │ size: 2,014.36 kB
+<DIR>/main.js  chunk │ size: 1,916.55 kB
+<DIR>/preload.js  chunk │ size: 0.64 kB
+<DIR>/chunk/WPILOGShared.js         chunk │ size:     0.48 kB
+<DIR>/chunk/buildConstants.js       chunk │ size:     0.77 kB
+<DIR>/rlogWorker.js                 chunk │ size:     0.89 kB
+<DIR>/chunk/LoggableType.js         chunk │ size:     0.91 kB
+<DIR>/chunk/Preferences.js          chunk │ size:     0.92 kB
+<DIR>/chunk/prepareTransfer.js      chunk │ size:     0.95 kB
+<DIR>/csvWorker.js                  chunk │ size:     1.01 kB
+<DIR>/tsvWorker.js                  chunk │ size:     1.01 kB
+<DIR>/jsonWorker.js                 chunk │ size:     1.02 kB
+<DIR>/jsonlWorker.js                chunk │ size:     1.02 kB
+<DIR>/terraLogWorker.js             chunk │ size:     1.20 kB
+<DIR>/renameTab.js                  chunk │ size:     1.30 kB
+<DIR>/editFov.js                    chunk │ size:     1.37 kB
+<DIR>/betaWelcome.js                chunk │ size:     1.50 kB
+<DIR>/editRange.js                  chunk │ size:     1.61 kB
+<DIR>/loadRobot.js                  chunk │ size:     1.92 kB
+<DIR>/chunk/chunk.js                chunk │ size:     2.14 kB
+<DIR>/chunk/JSONDecoder.js          chunk │ size:     2.40 kB
+<DIR>/export.js                     chunk │ size:     2.82 kB
+<DIR>/chunk/CSVDecoder.js           chunk │ size:     3.21 kB
+<DIR>/loadField.js                  chunk │ size:     4.14 kB
+<DIR>/chunk/SemanticType.js         chunk │ size:     4.64 kB
+<DIR>/chunk/util.js                 chunk │ size:     5.46 kB
+<DIR>/preferences.js                chunk │ size:     5.65 kB
+<DIR>/sourceListHelp.js             chunk │ size:     5.97 kB
+<DIR>/mcapWorker.js                 chunk │ size:     7.47 kB
+<DIR>/dsLogWorker.js                chunk │ size:     7.79 kB
+<DIR>/roadRunnerWorker.js           chunk │ size:     8.09 kB
+<DIR>/satellite.js                  chunk │ size:     8.95 kB
+<DIR>/download.js                   chunk │ size:    10.25 kB
+<DIR>/chunk/RLOGDecoder.js          chunk │ size:    10.80 kB
+<DIR>/wpilogWorker.js               chunk │ size:    15.50 kB
+<DIR>/exportWorker.js               chunk │ size:    19.35 kB
+<DIR>/chunk/units.js                chunk │ size:    25.24 kB
+<DIR>/chunk/Colors.js               chunk │ size:    28.11 kB
+<DIR>/ros2BagWorker.js              chunk │ size:    65.94 kB
+<DIR>/xrControls.js                 chunk │ size:    80.68 kB
+<DIR>/chunk/src.js                  chunk │ size:    88.85 kB
+<DIR>/chunk/Log.js                  chunk │ size:    97.79 kB
+<DIR>/chunk/ROS2Decoder.js          chunk │ size:   220.91 kB
+<DIR>/chunk/RobotState.js           chunk │ size:   288.30 kB
+<DIR>/hub.js                        chunk │ size:   428.99 kB
+<DIR>/chunk/VideoRenderer.js        chunk │ size:   534.16 kB
+<DIR>/unitConversion.js             chunk │ size: 1,040.25 kB
+<DIR>/licenses.js                   chunk │ size: 1,405.91 kB
+<DIR>/chunk/builtins.js             chunk │ size: 1,547.40 kB
+<DIR>/chunk/Field3dRendererImpl.js  chunk │ size: 1,674.59 kB
+<DIR>/xrClient.js  chunk │ size: 1,213.96 kB
+
+✔ rolldown v1.0.2 Finished in 130.47 s
+
+$ npm test
+
+> advantagescope@27.0.0-alpha-6 test
+> tsc -p tsconfig.test.json && node --test build/unit-test/hub/DroppedFiles.test.js build/unit-test/main/electron/URDFSources.test.js build/unit-test/shared/urdf/URDF.test.js build/unit-test/shared/urdf/URDFLog.test.js build/unit-test/hub/controllers/ImageController.test.js build/unit-test/hub/ImageSatellitePublisher.test.js build/unit-test/main/ImageSatelliteRouting.test.js build/unit-test/shared/log/ImageSensor.test.js build/unit-test/shared/renderers/ImageRenderer.test.js build/unit-test/hub/dataSources/nt4/NT4Lifecycle.test.js build/unit-test/cli/record.test.js build/unit-test/shared/log/FrameGraph.test.js build/unit-test/hub/dataSources/ros2/FrameGraphReaders.test.js build/unit-test/shared/plugins/PluginRegistry.test.js build/unit-test/hub/LiveRecording.test.js build/unit-test/shared/recording/RecordingCapture.test.js build/unit-test/shared/recording/WPILOGRecordingWriter.test.js build/unit-test/hub/dataSources/LiveRecording.test.js build/unit-test/shared/log/SpatialSensor.test.js build/unit-test/hub/dataSources/ros2/SpatialSensorReaders.test.js build/unit-test/hub/dataSources/LiveSession.test.js build/unit-test/hub/dataSources/ros2/ROS2BagDecoder.test.js build/unit-test/hub/dataSources/mcap/MCAPDecoder.test.js build/unit-test/hub/dataSources/csv/CSVDecoder.test.js build/unit-test/hub/dataSources/json/JSONDecoder.test.js build/unit-test/hub/dataSources/foxglove/FoxgloveSession.test.js build/unit-test/shared/live/LiveFrameTransport.test.js build/unit-test/shared/log/LogTimestamp.test.js build/unit-test/hub/dataSources/nt4/NT4Timestamp.test.js && node --experimental-strip-types --experimental-detect-module --test src/shared/log/SemanticType.test.ts src/shared/CustomEnvironment.test.ts && tsc -p tsconfig.graph-test.json && rolldown src/hub/controllers/LineGraphController.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/LineGraphController.test.cjs && node build/unit-test/LineGraphController.test.cjs && node --test scripts/reader-fixtures.test.mjs && rolldown src/hub/controllers/Field3dController.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/Field3dController.test.cjs && node build/unit-test/Field3dController.test.cjs && rolldown src/shared/renderers/field3d/objectManagers/URDFManager.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/URDFManager.test.cjs && node build/unit-test/URDFManager.test.cjs && rolldown src/shared/renderers/URDFTransport.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/URDFTransport.test.cjs && node build/unit-test/URDFTransport.test.cjs && rolldown src/main/electron/XRURDFModel.test.ts --platform node --format cjs --external node:assert/strict --external node:test -o build/unit-test/XRURDFModel.test.cjs && node build/unit-test/XRURDFModel.test.cjs
+
+TAP version 13
+# Subtest: CLI duration records actual NT4 values, metadata, schemas and repeated samples through the existing reader
+ok 1 - CLI duration records actual NT4 values, metadata, schemas and repeated samples through the existing reader
+  ---
+  duration_ms: 1206.948582
+  type: 'test'
+  ...
+# Subtest: CLI SIGINT drains accepted samples and closes a readable recording
+ok 2 - CLI SIGINT drains accepted samples and closes a readable recording
+  ---
+  duration_ms: 1409.190926
+  type: 'test'
+  ...
+# Subtest: CLI connection failure exits nonzero with the address and a clear message
+ok 3 - CLI connection failure exits nonzero with the address and a clear message
+  ---
+  duration_ms: 448.959227
+  type: 'test'
+  ...
+# Subtest: CLI connection timeout closes an unfinished WebSocket handshake
+ok 4 - CLI connection timeout closes an unfinished WebSocket handshake
+  ---
+  duration_ms: 574.092045
+  type: 'test'
+  ...
+# Subtest: CLI reconnect timeout reports a lost connection and retains recorded data
+ok 5 - CLI reconnect timeout reports a lost connection and retains recorded data
+  ---
+  duration_ms: 1562.773026
+  type: 'test'
+  ...
+# Subtest: CLI SIGINT during a delayed HTTP probe never starts a late WebSocket
+ok 6 - CLI SIGINT during a delayed HTTP probe never starts a late WebSocket
+  ---
+  duration_ms: 561.389612
+  type: 'test'
+  ...
+# Subtest: CLI low disk failure reports nonzero and leaves an existing destination intact
+ok 7 - CLI low disk failure reports nonzero and leaves an existing destination intact
+  ---
+  duration_ms: 314.9104
+  type: 'test'
+  ...
+# Subtest: CLI rejects invalid duration before touching the output
+ok 8 - CLI rejects invalid duration before touching the output
+  ---
+  duration_ms: 387.755278
+  type: 'test'
+  ...
+# Subtest: supported drops open every file in order without an error
+ok 9 - supported drops open every file in order without an error
+  ---
+  duration_ms: 5.368635
+  type: 'test'
+  ...
+# Subtest: unsupported drops open nothing and report every rejected file name
+ok 10 - unsupported drops open nothing and report every rejected file name
+  ---
+  duration_ms: 0.299641
+  type: 'test'
+  ...
+# Subtest: mixed drops open supported files and report every unsupported file
+ok 11 - mixed drops open supported files and report every unsupported file
+  ---
+  duration_ms: 0.401572
+  type: 'test'
+  ...
+# Subtest: drop extension matching preserves the existing open path rules
+ok 12 - drop extension matching preserves the existing open path rules
+  ---
+  duration_ms: 3.575832
+  type: 'test'
+  ...
+# Subtest: an empty drop opens nothing and reports nothing
+ok 13 - an empty drop opens nothing and reports nothing
+  ---
+  duration_ms: 0.229978
+  type: 'test'
+  ...
+# Subtest: unchanged image commands send pixels once and a new id sends the new frame
+ok 14 - unchanged image commands send pixels once and a new id sends the new frame
+  ---
+  duration_ms: 3.801649
+  type: 'test'
+  ...
+# Subtest: renaming a satellite updates its title without resending pixels
+ok 15 - renaming a satellite updates its title without resending pixels
+  ---
+  duration_ms: 0.255157
+  type: 'test'
+  ...
+# Subtest: ready, second, and reloaded windows receive targeted frames without resetting broadcasts
+ok 16 - ready, second, and reloaded windows receive targeted frames without resetting broadcasts
+  ---
+  duration_ms: 0.254579
+  type: 'test'
+  ...
+# Subtest: clearing a source or closing its last window permits fresh delivery
+ok 17 - clearing a source or closing its last window permits fresh delivery
+  ---
+  duration_ms: 0.164296
+  type: 'test'
+  ...
+# Subtest: delivery state is independent for each image tab
+ok 18 - delivery state is independent for each image tab
+  ---
+  duration_ms: 0.157938
+  type: 'test'
+  ...
+# Subtest: stop drains accepted samples after acknowledgments and detaches the live source
+ok 19 - stop drains accepted samples after acknowledgments and detaches the live source
+  ---
+  duration_ms: 2.242916
+  type: 'test'
+  ...
+# Subtest: restart ignores an old generation's acknowledgments and terminal status
+ok 20 - restart ignores an old generation's acknowledgments and terminal status
+  ---
+  duration_ms: 0.346198
+  type: 'test'
+  ...
+# Subtest: a stalled writer stops capture at the pending byte limit and preserves its accepted samples
+ok 21 - a stalled writer stops capture at the pending byte limit and preserves its accepted samples
+  ---
+  duration_ms: 0.420203
+  type: 'test'
+  ...
+# Subtest: stop during the save dialog completes and ignores a late ready message
+ok 22 - stop during the save dialog completes and ignores a late ready message
+  ---
+  duration_ms: 0.162589
+  type: 'test'
+  ...
+# Subtest: main cancellation before the save dialog returns never creates a writer
+ok 23 - main cancellation before the save dialog returns never creates a writer
+  ---
+  duration_ms: 0.42418
+  type: 'test'
+  ...
+# Subtest: main acknowledges a batch only after the writer has accepted it
+ok 24 - main acknowledges a batch only after the writer has accepted it
+  ---
+  duration_ms: 0.66266
+  type: 'test'
+  ...
+# Subtest: reload shutdown drains a write and reports one terminal failure
+ok 25 - reload shutdown drains a write and reports one terminal failure
+  ---
+  duration_ms: 0.442921
+  type: 'test'
+  ...
+# Subtest: automatic writer shutdown detaches capture and does not flush pending samples after an acknowledgment
+ok 26 - automatic writer shutdown detaches capture and does not flush pending samples after an acknowledgment
+  ---
+  duration_ms: 0.216224
+  type: 'test'
+  ...
+# Subtest: automatic low-disk shutdown preserves its reason when writes or batches arrive during close
+ok 27 - automatic low-disk shutdown preserves its reason when writes or batches arrive during close
+  ---
+  duration_ms: 0.558157
+  type: 'test'
+  ...
+# Subtest: unchanged fields send their description once, changes stay ordered, and restart re-seeds it
+ok 28 - unchanged fields send their description once, changes stay ordered, and restart re-seeds it
+  ---
+  duration_ms: 0.788504
+  type: 'test'
+  ...
+# Subtest: live IPC batches write the same WPILOG bytes as full samples across changes and restart
+ok 29 - live IPC batches write the same WPILOG bytes as full samples across changes and restart
+  ---
+  duration_ms: 189.064595
+  type: 'test'
+  ...
+# Subtest: main rejects partial field descriptions at the IPC boundary
+ok 30 - main rejects partial field descriptions at the IPC boundary
+  ---
+  duration_ms: 0.73288
+  type: 'test'
+  ...
+# Subtest: controller keeps empty and repeated decoder errors stable across cursor and field revisions
+ok 31 - controller keeps empty and repeated decoder errors stable across cursor and field revisions
+  ---
+  duration_ms: 160.261676
+  type: 'test'
+  ...
+# Subtest: controller source reset and layout UUID replacement invalidate old commands
+ok 32 - controller source reset and layout UUID replacement invalidate old commands
+  ---
+  duration_ms: 18.666355
+  type: 'test'
+  ...
+# Subtest: cached frames keep ids, cursor changes replace frames, and same-timestamp revisions repaint
+ok 33 - cached frames keep ids, cursor changes replace frames, and same-timestamp revisions repaint
+  ---
+  duration_ms: 16.415846
+  type: 'test'
+  ...
+# Subtest: source and log changes replace equal empty states and clear the old renderer
+ok 34 - source and log changes replace equal empty states and clear the old renderer
+  ---
+  duration_ms: 19.886339
+  type: 'test'
+  ...
+# Subtest: frame and message transitions always replace the command
+ok 35 - frame and message transitions always replace the command
+  ---
+  duration_ms: 17.944052
+  type: 'test'
+  ...
+# Subtest: records both namespaces before display callbacks and retains samples after memory discard
+ok 36 - records both namespaces before display callbacks and retains samples after memory discard
+  ---
+  duration_ms: 3.618843
+  type: 'test'
+  ...
+# Subtest: recording follows log replacements and ignores writes from a disconnected source's old log
+ok 37 - recording follows log replacements and ignores writes from a disconnected source's old log
+  ---
+  duration_ms: 0.663384
+  type: 'test'
+  ...
+# Subtest: stop and restart exclude stopped samples and seed schemas without exporting display history
+ok 38 - stop and restart exclude stopped samples and seed schemas without exporting display history
+  ---
+  duration_ms: 2.200559
+  type: 'test'
+  ...
+# Subtest: adding a source during recording preserves existing recording paths and captures its first samples
+ok 39 - adding a source during recording preserves existing recording paths and captures its first samples
+  ---
+  duration_ms: 0.49279
+  type: 'test'
+  ...
+# Subtest: a source added while recording observes synchronous writes inside connect
+ok 40 - a source added while recording observes synchronous writes inside connect
+  ---
+  duration_ms: 0.472186
+  type: 'test'
+  ...
+# Subtest: recording batches resend descriptions after source log replacement and clear previous metadata
+ok 41 - recording batches resend descriptions after source log replacement and clear previous metadata
+  ---
+  duration_ms: 1.577353
+  type: 'test'
+  ...
+# Subtest: two sources with the same topic have independent namespaces and explicit clock provenance
+ok 42 - two sources with the same topic have independent namespaces and explicit clock provenance
+  ---
+  duration_ms: 4.353539
+  type: 'test'
+  ...
+# Subtest: one disconnect cannot stop the other source's timeline or discard its history
+ok 43 - one disconnect cannot stop the other source's timeline or discard its history
+  ---
+  duration_ms: 0.930262
+  type: 'test'
+  ...
+# Subtest: retained timeline suppliers survive disconnects, reconnects and stopping the session
+ok 44 - retained timeline suppliers survive disconnects, reconnects and stopping the session
+  ---
+  duration_ms: 1.152647
+  type: 'test'
+  ...
+# Subtest: reconnect replaces only its namespace and invalidates equal-count timestamp caches
+ok 45 - reconnect replaces only its namespace and invalidates equal-count timestamp caches
+  ---
+  duration_ms: 1.340462
+  type: 'test'
+  ...
+# Subtest: removal ignores late callbacks and reuses only the freed namespace
+ok 46 - removal ignores late callbacks and reuses only the freed namespace
+  ---
+  duration_ms: 1.402529
+  type: 'test'
+  ...
+# Subtest: legacy replacement keeps original keys, clock and source log across reconnect
+ok 47 - legacy replacement keeps original keys, clock and source log across reconnect
+  ---
+  duration_ms: 0.498149
+  type: 'test'
+  ...
+# Subtest: adding a connection preserves existing history and maps subscriptions only to their owner
+ok 48 - adding a connection preserves existing history and maps subscriptions only to their owner
+  ---
+  duration_ms: 0.518433
+  type: 'test'
+  ...
+# Subtest: grouped subscriptions preserve source key syntax without requiring a parent field
+ok 49 - grouped subscriptions preserve source key syntax without requiring a parent field
+  ---
+  duration_ms: 0.304079
+  type: 'test'
+  ...
+# Subtest: initial announcements and unavailable clock sync cannot freeze the display conversion
+ok 50 - initial announcements and unavailable clock sync cannot freeze the display conversion
+  ---
+  duration_ms: 0.530665
+  type: 'test'
+  ...
+# Subtest: Foxglove numeric timestamps and generated children retain their source identity
+ok 51 - Foxglove numeric timestamps and generated children retain their source identity
+  ---
+  duration_ms: 1.082203
+  type: 'test'
+  ...
+# Subtest: live projection rejects a mislabeled source or display conversion before changing data
+ok 52 - live projection rejects a mislabeled source or display conversion before changing data
+  ---
+  duration_ms: 0.309075
+  type: 'test'
+  ...
+# Subtest: comma-separated table and list imports are unchanged
+ok 53 - comma-separated table and list imports are unchanged
+  ---
+  duration_ms: 5.498455
+  type: 'test'
+  ...
+# Subtest: tab-separated fixture uses the same timestamp and columns
+ok 54 - tab-separated fixture uses the same timestamp and columns
+  ---
+  duration_ms: 1.052274
+  type: 'test'
+  ...
+# Subtest: address uses the typed host and default port
+ok 55 - address uses the typed host and default port
+  ---
+  duration_ms: 1.337367
+  type: 'test'
+  ...
+# Subtest: subscribe is sent after serverInfo for each advertised channel
+ok 56 - subscribe is sent after serverInfo for each advertised channel
+  ---
+  duration_ms: 3.046912
+  type: 'test'
+  ...
+# Subtest: JSON samples become log fields and other encodings stay raw
+ok 57 - JSON samples become log fields and other encodings stay raw
+  ---
+  duration_ms: 2.699792
+  type: 'test'
+  ...
+# Subtest: existing live modes keep their names
+ok 58 - existing live modes keep their names
+  ---
+  duration_ms: 0.379125
+  type: 'test'
+  ...
+# Subtest: fixture server delivers a JSON sample
+ok 59 - fixture server delivers a JSON sample
+  ---
+  duration_ms: 57.795352
+  type: 'test'
+  ...
+# Subtest: JSON array of timestamped objects becomes log fields
+ok 60 - JSON array of timestamped objects becomes log fields
+  ---
+  duration_ms: 4.433202
+  type: 'test'
+  ...
+# Subtest: JSONL records use the same timestamp and fields
+ok 61 - JSONL records use the same timestamp and fields
+  ---
+  duration_ms: 33.678306
+  type: 'test'
+  ...
+# Subtest: reads declared MCAP channels and schemas into log fields
+ok 62 - reads declared MCAP channels and schemas into log fields
+  ---
+  duration_ms: 6.91542
+  type: 'test'
+  ...
+# Subtest: rejects a buffer that is not an MCAP file
+ok 63 - rejects a buffer that is not an MCAP file
+  ---
+  duration_ms: 0.308766
+  type: 'test'
+  ...
+# [NT4] Connected with protocol "v4.1.networktables.first.wpi.edu"
+# [NT4] Connected with protocol "rtt.networktables.first.wpi.edu"
+# Subtest: native NT4 disconnect hook can stop both main and RTT sockets once
+ok 64 - native NT4 disconnect hook can stop both main and RTT sockets once
+  ---
+  duration_ms: 138.536238
+  type: 'test'
+  ...
+# [NT4] Connected with protocol "v4.1.networktables.first.wpi.edu"
+# [NT4] Connected with protocol "rtt.networktables.first.wpi.edu"
+# Subtest: browser-compatible NT4 disconnect hook can stop both main and RTT sockets once
+ok 65 - browser-compatible NT4 disconnect hook can stop both main and RTT sockets once
+  ---
+  duration_ms: 66.071579
+  type: 'test'
+  ...
+# Subtest: NetworkTables explicitly converts receive time to its latency-adjusted server cursor
+ok 66 - NetworkTables explicitly converts receive time to its latency-adjusted server cursor
+  ---
+  duration_ms: 14.599669
+  type: 'test'
+  ...
+# Subtest: NetworkTables server samples retain server time without cursor latency subtraction
+ok 67 - NetworkTables server samples retain server time without cursor latency subtraction
+  ---
+  duration_ms: 4.920746
+  type: 'test'
+  ...
+# Subtest: ROS 2 bag resolves static and dynamic transforms around a constant child-frame scan
+ok 68 - ROS 2 bag resolves static and dynamic transforms around a constant child-frame scan
+  ---
+  duration_ms: 162.947975
+  type: 'test'
+  ...
+# Subtest: MCAP resolves the same transform-tree CDR through the shared decoder
+ok 69 - MCAP resolves the same transform-tree CDR through the shared decoder
+  ---
+  duration_ms: 39.361083
+  type: 'test'
+  ...
+# Subtest: reads sqlite3 ROS 2 topics, CDR fields, types, and recording timestamps
+ok 70 - reads sqlite3 ROS 2 topics, CDR fields, types, and recording timestamps
+  ---
+  duration_ms: 157.376828
+  type: 'test'
+  ...
+# Subtest: opens older sqlite3 bags without embedded definitions using common ROS 2 types
+ok 71 - opens older sqlite3 bags without embedded definitions using common ROS 2 types
+  ---
+  duration_ms: 47.403715
+  type: 'test'
+  ...
+# Subtest: prefers embedded definitions to the common type catalog
+ok 72 - prefers embedded definitions to the common type catalog
+  ---
+  duration_ms: 11.726853
+  type: 'test'
+  ...
+# Subtest: converts sqlite integer nanoseconds without first rounding them to a number
+ok 73 - converts sqlite integer nanoseconds without first rounding them to a number
+  ---
+  duration_ms: 78.053094
+  type: 'test'
+  ...
+# Subtest: rejects invalid databases, missing topics, and truncated CDR
+ok 74 - rejects invalid databases, missing topics, and truncated CDR
+  ---
+  duration_ms: 57.589286
+  type: 'test'
+  ...
+# Subtest: uses the same ROS 2 CDR path when a message comes from MCAP
+ok 75 - uses the same ROS 2 CDR path when a message comes from MCAP
+  ---
+  duration_ms: 16.466256
+  type: 'test'
+  ...
+# Subtest: ROS 2 sqlite3 fixture feeds laser scans and clouds through the shared decoder
+ok 76 - ROS 2 sqlite3 fixture feeds laser scans and clouds through the shared decoder
+  ---
+  duration_ms: 143.69007
+  type: 'test'
+  ...
+# Subtest: MCAP feeds the same scan and cloud CDR through the shared decoder
+ok 77 - MCAP feeds the same scan and cloud CDR through the shared decoder
+  ---
+  duration_ms: 20.767901
+  type: 'test'
+  ...
+# Subtest: Lite accepts satellite clears without an unknown-message warning
+ok 78 - Lite accepts satellite clears without an unknown-message warning
+  ---
+  duration_ms: 912.74749
+  type: 'test'
+  ...
+# Subtest: satellite requests its frame only after both renderer readiness and visibility
+ok 79 - satellite requests its frame only after both renderer readiness and visibility
+  ---
+  duration_ms: 887.150171
+  type: 'test'
+  ...
+# Subtest: a second window, reload, and hide/show each request the current frame for that window
+ok 80 - a second window, reload, and hide/show each request the current frame for that window
+  ---
+  duration_ms: 225.94924
+  type: 'test'
+  ...
+# Subtest: main sends targeted pixels only to their destination and accepts title-only updates
+ok 81 - main sends targeted pixels only to their destination and accepts title-only updates
+  ---
+  duration_ms: 294.316745
+  type: 'test'
+  ...
+# Subtest: reload before the first state save still initializes the image renderer
+ok 82 - reload before the first state save still initializes the image renderer
+  ---
+  duration_ms: 415.226555
+  type: 'test'
+  ...
+# Subtest: 3D satellite initialization, reload, and show request the current model resource
+ok 83 - 3D satellite initialization, reload, and show request the current model resource
+  ---
+  duration_ms: 198.36957
+  type: 'test'
+  ...
+# Subtest: main forwards one-time 3D resources, preserves absent resources, and forwards explicit clears
+ok 84 - main forwards one-time 3D resources, preserves absent resources, and forwards explicit clears
+  ---
+  duration_ms: 168.345784
+  type: 'test'
+  ...
+# Subtest: layout-supplied URLs cannot read a file or persist a source
+ok 85 - layout-supplied URLs cannot read a file or persist a source
+  ---
+  duration_ms: 6.590038
+  type: 'test'
+  ...
+# Subtest: corrupt and wrong-shaped registries do not prevent picking and saving a robot
+ok 86 - corrupt and wrong-shaped registries do not prevent picking and saving a robot
+  ---
+  duration_ms: 36.418084
+  type: 'test'
+  ...
+# Subtest: restore requires an own registry ID and matching kind
+ok 87 - restore requires an own registry ID and matching kind
+  ---
+  duration_ms: 2.645211
+  type: 'test'
+  ...
+# Subtest: picked robot sources require a regular URDF file no larger than 10 MiB
+ok 88 - picked robot sources require a regular URDF file no larger than 10 MiB
+  ---
+  duration_ms: 5.160069
+  type: 'test'
+  ...
+# Subtest: package and mesh directories restore only after user selection
+ok 89 - package and mesh directories restore only after user selection
+  ---
+  duration_ms: 2.675147
+  type: 'test'
+  ...
+# Subtest: corrupt registries do not prevent picking package or mesh directories
+ok 90 - corrupt registries do not prevent picking package or mesh directories
+  ---
+  duration_ms: 3.146631
+  type: 'test'
+  ...
+# Subtest: a picked FIFO with a URDF extension is rejected without blocking
+ok 91 - a picked FIFO with a URDF extension is rejected without blocking
+  ---
+  duration_ms: 8.400564
+  type: 'test'
+  ...
+# Subtest: invalid registry entries are dropped without losing valid picked sources
+ok 92 - invalid registry entries are dropped without losing valid picked sources
+  ---
+  duration_ms: 5.181043
+  type: 'test'
+  ...
+# Subtest: TCP delivers opaque frames across split headers, bodies, heartbeats and coalesced packets
+ok 93 - TCP delivers opaque frames across split headers, bodies, heartbeats and coalesced packets
+  ---
+  duration_ms: 105.512258
+  type: 'test'
+  ...
+# Subtest: TCP payloads decode with the unchanged RLOG decoder and writes reach the peer
+ok 94 - TCP payloads decode with the unchanged RLOG decoder and writes reach the peer
+  ---
+  duration_ms: 46.246264
+  type: 'test'
+  ...
+# Subtest: TCP stop and restart discard partial frames and suppress the old connection's close
+ok 95 - TCP stop and restart discard partial frames and suppress the old connection's close
+  ---
+  duration_ms: 57.629339
+  type: 'test'
+  ...
+# Subtest: TCP frame rejection stops delivery of the rest of a packet
+ok 96 - TCP frame rejection stops delivery of the rest of a packet
+  ---
+  duration_ms: 21.066208
+  type: 'test'
+  ...
+# Subtest: TCP data timeout disconnects even while outbound heartbeats keep the socket busy
+ok 97 - TCP data timeout disconnects even while outbound heartbeats keep the socket busy
+  ---
+  duration_ms: 137.37599
+  type: 'test'
+  ...
+# Subtest: TCP rejects a negative length without hanging or delivering bytes
+ok 98 - TCP rejects a negative length without hanging or delivering bytes
+  ---
+  duration_ms: 21.78802
+  type: 'test'
+  ...
+# Subtest: TCP connection errors notify once despite the following close event
+ok 99 - TCP connection errors notify once despite the following close event
+  ---
+  duration_ms: 31.263742
+  type: 'test'
+  ...
+# Subtest: WebSocket preserves text, binary, subprotocol and outbound writes
+ok 100 - WebSocket preserves text, binary, subprotocol and outbound writes
+  ---
+  duration_ms: 57.915825
+  type: 'test'
+  ...
+# Subtest: WebSocket restart suppresses old callbacks and a rejected frame closes once
+ok 101 - WebSocket restart suppresses old callbacks and a rejected frame closes once
+  ---
+  duration_ms: 56.446985
+  type: 'test'
+  ...
+# Subtest: Foxglove session decodes negotiated telemetry through the frame transport
+ok 102 - Foxglove session decodes negotiated telemetry through the frame transport
+  ---
+  duration_ms: 16.257175
+  type: 'test'
+  ...
+# Subtest: compose rotated chains and resolve between sibling or inverse reference frames
+ok 103 - compose rotated chains and resolve between sibling or inverse reference frames
+  ---
+  duration_ms: 6.98931
+  type: 'test'
+  ...
+# Subtest: static is bag-wide while dynamic uses latest logged display time without future samples
+ok 104 - static is bag-wide while dynamic uses latest logged display time without future samples
+  ---
+  duration_ms: 2.5998
+  type: 'test'
+  ...
+# Subtest: sparse TF messages and reordered array slots retain independent edge histories
+ok 105 - sparse TF messages and reordered array slots retain independent edge histories
+  ---
+  duration_ms: 1.125791
+  type: 'test'
+  ...
+# Subtest: missing parent, empty frame, cycle, and invalid transforms report failure
+ok 106 - missing parent, empty frame, cycle, and invalid transforms report failure
+  ---
+  duration_ms: 2.484335
+  type: 'test'
+  ...
+# Subtest: static/dynamic conflicting authorities fail rather than choose silently
+ok 107 - static/dynamic conflicting authorities fail rather than choose silently
+  ---
+  duration_ms: 0.455638
+  type: 'test'
+  ...
+# Subtest: source frames follow the sample, while absent metadata leaves legacy objects unframed
+ok 108 - source frames follow the sample, while absent metadata leaves legacy objects unframed
+  ---
+  duration_ms: 0.27316
+  type: 'test'
+  ...
+# Subtest: independent recordings and live sources never share same-named frames
+ok 109 - independent recordings and live sources never share same-named frames
+  ---
+  duration_ms: 0.638175
+  type: 'test'
+  ...
+# Subtest: cached graph observes appends, out-of-order inserts, same-time corrections and trimming
+ok 110 - cached graph observes appends, out-of-order inserts, same-time corrections and trimming
+  ---
+  duration_ms: 1.502838
+  type: 'test'
+  ...
+# Subtest: projected log fields expose source mutations to cached graph
+ok 111 - projected log fields expose source mutations to cached graph
+  ---
+  duration_ms: 1.193549
+  type: 'test'
+  ...
+# Subtest: composing a frame pose preserves local object orientation
+ok 112 - composing a frame pose preserves local object orientation
+  ---
+  duration_ms: 0.555484
+  type: 'test'
+  ...
+# Subtest: unchanged renders reuse the graph without reading transform history
+ok 113 - unchanged renders reuse the graph without reading transform history
+  ---
+  duration_ms: 1.650076
+  type: 'test'
+  ...
+# Subtest: live appends reuse the graph and read only new transform messages
+ok 114 - live appends reuse the graph and read only new transform messages
+  ---
+  duration_ms: 2.919741
+  type: 'test'
+  ...
+# Subtest: appending transforms does not scan accumulated timestamp arrays
+ok 115 - appending transforms does not scan accumulated timestamp arrays
+  ---
+  duration_ms: 1102.357331
+  type: 'test'
+  ...
+# One live append after 4096 samples visited 90 timestamps.
+# One projected live append after 4097 samples visited 90 timestamps.
+# Subtest: incremental poses match a fresh graph at every boundary across sparse and reordered messages
+ok 116 - incremental poses match a fresh graph at every boundary across sparse and reordered messages
+  ---
+  duration_ms: 73.174016
+  type: 'test'
+  ...
+# Subtest: late decoded children, field replacement, type changes and log replacement invalidate cached poses
+ok 117 - late decoded children, field replacement, type changes and log replacement invalidate cached poses
+  ---
+  duration_ms: 2.119124
+  type: 'test'
+  ...
+# Subtest: new child fields retroactively complete an existing transform
+ok 118 - new child fields retroactively complete an existing transform
+  ---
+  duration_ms: 0.792706
+  type: 'test'
+  ...
+# Subtest: topic priority and duplicate-time conflicts survive incremental insertion
+ok 119 - topic priority and duplicate-time conflicts survive incremental insertion
+  ---
+  duration_ms: 1.468474
+  type: 'test'
+  ...
+# Subtest: live projection refresh reuses history and invalidates source or clock replacement
+ok 120 - live projection refresh reuses history and invalidates source or clock replacement
+  ---
+  duration_ms: 1.163704
+  type: 'test'
+  ...
+# Subtest: transform field range boundaries preserve held values, future endpoints and cached seeks
+ok 121 - transform field range boundaries preserve held values, future endpoints and cached seeks
+  ---
+  duration_ms: 0.760391
+  type: 'test'
+  ...
+# Subtest: Log discard ticks leave no-op field history unchanged and reuse the graph between live appends
+ok 122 - Log discard ticks leave no-op field history unchanged and reuse the graph between live appends
+  ---
+  duration_ms: 11.234993
+  type: 'test'
+  ...
+# Subtest: real Log trims prune sparse static and dynamic histories and preserve every boundary
+ok 123 - real Log trims prune sparse static and dynamic histories and preserve every boundary
+  ---
+  duration_ms: 91.21256
+  type: 'test'
+  ...
+# Subtest: Log trims stay incremental while appending, refreshing projections and compacting queues
+ok 124 - Log trims stay incremental while appending, refreshing projections and compacting queues
+  ---
+  duration_ms: 384.453778
+  type: 'test'
+  ...
+# Subtest: live-discard measurements include no-op and real 60 Hz trims
+ok 125 - live-discard measurements include no-op and real 60 Hz trims
+  ---
+  duration_ms: 10023.606484
+  type: 'test'
+  ...
+# disabled discard, 4097 initial samples, four 60 Hz append ticks: graph 360 timestamp reads; Log.clearBeforeTime 0 timestamp reads; 0 rebuilds.
+# no-op discard, 4097 initial samples, four 60 Hz append ticks: graph 360 timestamp reads; Log.clearBeforeTime 44 timestamp reads; 0 rebuilds.
+# real discard, 4097 initial samples, four 60 Hz append ticks: graph 628 timestamp reads; Log.clearBeforeTime 96 timestamp reads; 0 rebuilds.
+# real-20-minute discard, 72001 initial samples, four 60 Hz append ticks: graph 724 timestamp reads; Log.clearBeforeTime 432120 timestamp reads; 0 rebuilds.
+# Subtest: repeating a cutoff after a historical rewrite still prunes the rewritten prefix
+ok 126 - repeating a cutoff after a historical rewrite still prunes the rewritten prefix
+  ---
+  duration_ms: 46.59042
+  type: 'test'
+  ...
+# Subtest: real ROS 2 image fixture decodes channel order, padded rows, mono, JPEG, and PNG pixels
+ok 127 - real ROS 2 image fixture decodes channel order, padded rows, mono, JPEG, and PNG pixels
+  ---
+  duration_ms: 411.286623
+  type: 'test'
+  ...
+# Subtest: selects latest at or before cursor, at, between, before, and after every fixture topic
+ok 128 - selects latest at or before cursor, at, between, before, and after every fixture topic
+  ---
+  duration_ms: 38.707096
+  type: 'test'
+  ...
+# Subtest: compressed format uses the real bytes and accepts ROS compound format strings
+ok 129 - compressed format uses the real bytes and accepts ROS compound format strings
+  ---
+  duration_ms: 13.469831
+  type: 'test'
+  ...
+# Subtest: registered codecs run only for selected frames and cache at most three decoded frames
+ok 130 - registered codecs run only for selected frames and cache at most three decoded frames
+  ---
+  duration_ms: 62.584257
+  type: 'test'
+  ...
+# Subtest: corrupt unselected compressed frames stay undecoded
+ok 131 - corrupt unselected compressed frames stay undecoded
+  ---
+  duration_ms: 85.9364
+  type: 'test'
+  ...
+# Subtest: malformed raw images return visible diagnostics
+ok 132 - malformed raw images return visible diagnostics
+  ---
+  duration_ms: 127.498967
+  type: 'test'
+  ...
+# Subtest: registry rejects duplicate decoder ids and semantic registrations
+ok 133 - registry rejects duplicate decoder ids and semantic registrations
+  ---
+  duration_ms: 0.367263
+  type: 'test'
+  ...
+# Subtest: missing endianness defaults to little-endian while explicit big-endian remains unsupported
+ok 134 - missing endianness defaults to little-endian while explicit big-endian remains unsupported
+  ---
+  duration_ms: 0.445613
+  type: 'test'
+  ...
+# Subtest: legacy numeric timestamps and serialized logs keep the same display coordinates
+ok 135 - legacy numeric timestamps and serialized logs keep the same display coordinates
+  ---
+  duration_ms: 4.656111
+  type: 'test'
+  ...
+# Subtest: receive, log and named clock timestamps retain their domain
+ok 136 - receive, log and named clock timestamps retain their domain
+  ---
+  duration_ms: 1.734774
+  type: 'test'
+  ...
+# Subtest: display clock ownership does not depend on mutable caller objects
+ok 137 - display clock ownership does not depend on mutable caller objects
+  ---
+  duration_ms: 0.507921
+  type: 'test'
+  ...
+# Subtest: unrelated clocks require an explicit conversion before insertion
+ok 138 - unrelated clocks require an explicit conversion before insertion
+  ---
+  duration_ms: 4.545436
+  type: 'test'
+  ...
+# Subtest: timestamp provenance follows insertion, duplicate replacement, both compression directions and trimming
+ok 139 - timestamp provenance follows insertion, duplicate replacement, both compression directions and trimming
+  ---
+  duration_ms: 1.333348
+  type: 'test'
+  ...
+# Subtest: structured children and queued schema decodes keep their original timestamp
+ok 140 - structured children and queued schema decodes keep their original timestamp
+  ---
+  duration_ms: 5.785316
+  type: 'test'
+  ...
+# Subtest: merge alignment shifts display coordinates while retaining explicit originals
+ok 141 - merge alignment shifts display coordinates while retaining explicit originals
+  ---
+  duration_ms: 1.439502
+  type: 'test'
+  ...
+# Subtest: queued decodes retain their insertion timestamp when the caller changes its stamp
+ok 142 - queued decodes retain their insertion timestamp when the caller changes its stamp
+  ---
+  duration_ms: 17.924138
+  type: 'test'
+  ...
+# Subtest: provenance uses the same samples as range queries after an exact-cutoff trim
+ok 143 - provenance uses the same samples as range queries after an exact-cutoff trim
+  ---
+  duration_ms: 0.72652
+  type: 'test'
+  ...
+# Subtest: projected fields preserve timestamps, values, ranges and source clocks
+ok 144 - projected fields preserve timestamps, values, ranges and source clocks
+  ---
+  duration_ms: 1.627717
+  type: 'test'
+  ...
+# Subtest: projected timestamps remap only when the source revision or mapping changes
+ok 145 - projected timestamps remap only when the source revision or mapping changes
+  ---
+  duration_ms: 0.814037
+  type: 'test'
+  ...
+# Subtest: converts laser bearings into XY points in meters
+ok 146 - converts laser bearings into XY points in meters
+  ---
+  duration_ms: 1.795115
+  type: 'test'
+  ...
+# Subtest: laser scans retain inclusive range limits and omit invalid returns
+ok 147 - laser scans retain inclusive range limits and omit invalid returns
+  ---
+  duration_ms: 1.073948
+  type: 'test'
+  ...
+# Subtest: point clouds honor offsets, organized row padding, byte offsets, scalar widths, and byte order
+ok 148 - point clouds honor offsets, organized row padding, byte offsets, scalar widths, and byte order
+  ---
+  duration_ms: 1.201193
+  type: 'test'
+  ...
+# Subtest: point clouds omit nonfinite coordinates and reject incomplete or invalid layouts
+ok 149 - point clouds omit nonfinite coordinates and reject incomplete or invalid layouts
+  ---
+  duration_ms: 0.446337
+  type: 'test'
+  ...
+# Subtest: fixed-stride downsampling bounds scan and cloud points without changing bearings
+ok 150 - fixed-stride downsampling bounds scan and cloud points without changing bearings
+  ---
+  duration_ms: 56.986704
+  type: 'test'
+  ...
+# Subtest: cursor reads select one complete scan, clear empty samples, and never select a future sample
+ok 151 - cursor reads select one complete scan, clear empty samples, and never select a future sample
+  ---
+  duration_ms: 6.746734
+  type: 'test'
+  ...
+# Subtest: cloud reads find named axes and use the current field descriptor count
+ok 152 - cloud reads find named axes and use the current field descriptor count
+  ---
+  duration_ms: 0.913619
+  type: 'test'
+  ...
+# Subtest: reader lookup uses registered extensions for paths and bare extensions
+ok 153 - reader lookup uses registered extensions for paths and bare extensions
+  ---
+  duration_ms: 1.058965
+  type: 'test'
+  ...
+# Subtest: two readers cannot claim the same extension and both ids appear in the error
+ok 154 - two readers cannot claim the same extension and both ids appear in the error
+  ---
+  duration_ms: 0.463952
+  type: 'test'
+  ...
+# Subtest: open dialog filters contain every registered extension
+ok 155 - open dialog filters contain every registered extension
+  ---
+  duration_ms: 0.357864
+  type: 'test'
+  ...
+# Subtest: duplicate extension rejection does not register part of a reader
+ok 156 - duplicate extension rejection does not register part of a reader
+  ---
+  duration_ms: 1.184151
+  type: 'test'
+  ...
+# Subtest: every existing custom schema exposes a decode entry point
+ok 157 - every existing custom schema exposes a decode entry point
+  ---
+  duration_ms: 0.202875
+  type: 'test'
+  ...
+# Subtest: capture preserves repeated, backdated and replaced samples before in-memory compression and trimming
+ok 158 - capture preserves repeated, backdated and replaced samples before in-memory compression and trimming
+  ---
+  duration_ms: 2.263899
+  type: 'test'
+  ...
+# Subtest: capture owns mutable values and includes array children, field metadata and original clock seconds
+ok 159 - capture owns mutable values and includes array children, field metadata and original clock seconds
+  ---
+  duration_ms: 0.868704
+  type: 'test'
+  ...
+# Subtest: capture rejects type conflicts exactly as the live log does
+ok 160 - capture rejects type conflicts exactly as the live log does
+  ---
+  duration_ms: 2.256706
+  type: 'test'
+  ...
+# Subtest: capture also follows writes to fields restored from worker serialization
+ok 161 - capture also follows writes to fields restored from worker serialization
+  ---
+  duration_ms: 0.621268
+  type: 'test'
+  ...
+# Subtest: file grows during recording and existing WPILOG reader round-trips fields, exact timestamps and values
+ok 162 - file grows during recording and existing WPILOG reader round-trips fields, exact timestamps and values
+  ---
+  duration_ms: 77.044445
+  type: 'test'
+  ...
+# Subtest: recording retains repeated, equal-timestamp and out-of-order records and metadata changes
+ok 163 - recording retains repeated, equal-timestamp and out-of-order records and metadata changes
+  ---
+  duration_ms: 25.882815
+  type: 'test'
+  ...
+# Subtest: stop drains accepted writes, rejects later samples, and restart resets file and entries
+ok 164 - stop drains accepted writes, rejects later samples, and restart resets file and entries
+  ---
+  duration_ms: 6.33294
+  type: 'test'
+  ...
+# Subtest: low disk before start leaves an existing destination untouched
+ok 165 - low disk before start leaves an existing destination untouched
+  ---
+  duration_ms: 5.708373
+  type: 'test'
+  ...
+# Subtest: low disk during idle recording closes a readable file and emits the visible reason
+ok 166 - low disk during idle recording closes a readable file and emits the visible reason
+  ---
+  duration_ms: 17.089476
+  type: 'test'
+  ...
+# Subtest: low disk before a batch stops without writing partial records
+ok 167 - low disk before a batch stops without writing partial records
+  ---
+  duration_ms: 46.46534
+  type: 'test'
+  ...
+# Subtest: bounded pending bytes stop a recording visibly instead of retaining an unbounded session
+ok 168 - bounded pending bytes stop a recording visibly instead of retaining an unbounded session
+  ---
+  duration_ms: 15.842056
+  type: 'test'
+  ...
+# Subtest: stop during start does not create an orphan open writer
+ok 169 - stop during start does not create an orphan open writer
+  ---
+  duration_ms: 5.06669
+  type: 'test'
+  ...
+# Subtest: redeclared types and newly added fields always use distinct WPILOG entries
+ok 170 - redeclared types and newly added fields always use distinct WPILOG entries
+  ---
+  duration_ms: 13.807913
+  type: 'test'
+  ...
+# Subtest: NetworkTables integer aliases use standard WPILOG integer types
+ok 171 - NetworkTables integer aliases use standard WPILOG integer types
+  ---
+  duration_ms: 2.206272
+  type: 'test'
+  ...
+# Subtest: a delayed disk check from a stopped recording cannot stop its restarted writer
+ok 172 - a delayed disk check from a stopped recording cannot stop its restarted writer
+  ---
+  duration_ms: 51.676161
+  type: 'test'
+  ...
+# Subtest: a writer requires field descriptions again after restart
+ok 173 - a writer requires field descriptions again after restart
+  ---
+  duration_ms: 18.627692
+  type: 'test'
+  ...
+# Subtest: renderer draws pixels and exposes aspect ratio synchronously without encoding PNG
+ok 174 - renderer draws pixels and exposes aspect ratio synchronously without encoding PNG
+  ---
+  duration_ms: 1.738892
+  type: 'test'
+  ...
+# Subtest: empty and error commands release the previous canvas and show their diagnostic
+ok 175 - empty and error commands release the previous canvas and show their diagnostic
+  ---
+  duration_ms: 0.363183
+  type: 'test'
+  ...
+# Subtest: topic reset and tab disposal release canvas storage and permit the current command again
+ok 176 - topic reset and tab disposal release canvas storage and permit the current command again
+  ---
+  duration_ms: 0.268689
+  type: 'test'
+  ...
+# Subtest: image payload survives message-port transport into a satellite canvas
+ok 177 - image payload survives message-port transport into a satellite canvas
+  ---
+  duration_ms: 5.051801
+  type: 'test'
+  ...
+# Subtest: hub and satellite templates provide an accessible image canvas
+ok 178 - hub and satellite templates provide an accessible image canvas
+  ---
+  duration_ms: 0.660698
+  type: 'test'
+  ...
+# Subtest: parse visual primitives, mesh scale, materials, origins and a connected joint tree
+ok 179 - parse visual primitives, mesh scale, materials, origins and a connected joint tree
+  ---
+  duration_ms: 14.965161
+  type: 'test'
+  ...
+# Subtest: parse default joint axis, default visual origin and inline color
+ok 180 - parse default joint axis, default visual origin and inline color
+  ---
+  duration_ms: 0.946551
+  type: 'test'
+  ...
+# Subtest: reject malformed XML and invalid numeric values
+ok 181 - reject malformed XML and invalid numeric values
+  ---
+  duration_ms: 9.307715
+  type: 'test'
+  ...
+# Subtest: reject duplicate links, duplicate joints, missing references, cycles, multiple parents and disconnected trees
+ok 182 - reject duplicate links, duplicate joints, missing references, cycles, multiple parents and disconnected trees
+  ---
+  duration_ms: 3.711349
+  type: 'test'
+  ...
+# Subtest: fixed joints preserve the static origin independently of a supplied position
+ok 183 - fixed joints preserve the static origin independently of a supplied position
+  ---
+  duration_ms: 0.191146
+  type: 'test'
+  ...
+# Subtest: revolute joints compose local-axis rotation after origin and respect both limits
+ok 184 - revolute joints compose local-axis rotation after origin and respect both limits
+  ---
+  duration_ms: 0.423825
+  type: 'test'
+  ...
+# Subtest: continuous joints rotate beyond a full revolution without limits
+ok 185 - continuous joints rotate beyond a full revolution without limits
+  ---
+  duration_ms: 5.370305
+  type: 'test'
+  ...
+# Subtest: prismatic joints translate in the rotated local axis and respect both limits
+ok 186 - prismatic joints translate in the rotated local axis and respect both limits
+  ---
+  duration_ms: 0.284136
+  type: 'test'
+  ...
+# Subtest: joint names select positions, absent positions default to zero, and fixed links compose
+ok 187 - joint names select positions, absent positions default to zero, and fixed links compose
+  ---
+  duration_ms: 0.947752
+  type: 'test'
+  ...
+# Subtest: resolve relative STL and DAE files against the URDF file
+ok 188 - resolve relative STL and DAE files against the URDF file
+  ---
+  duration_ms: 0.793967
+  type: 'test'
+  ...
+# Subtest: resolve package paths against a user-selected parent root and report every unresolved case
+ok 189 - resolve package paths against a user-selected parent root and report every unresolved case
+  ---
+  duration_ms: 0.436431
+  type: 'test'
+  ...
+# Subtest: mimic joints apply multipliers and offsets through chains regardless of joint order
+ok 190 - mimic joints apply multipliers and offsets through chains regardless of joint order
+  ---
+  duration_ms: 4.252614
+  type: 'test'
+  ...
+# Subtest: mimic defaults copy their source and bounded mimics respect their own limits
+ok 191 - mimic defaults copy their source and bounded mimics respect their own limits
+  ---
+  duration_ms: 1.226566
+  type: 'test'
+  ...
+# Subtest: reject missing mimic targets, mimic cycles and non-finite mimic coefficients
+ok 192 - reject missing mimic targets, mimic cycles and non-finite mimic coefficients
+  ---
+  duration_ms: 2.452992
+  type: 'test'
+  ...
+# Subtest: planar and floating joints keep their origin as fixed joints with a diagnostic
+ok 193 - planar and floating joints keep their origin as fixed joints with a diagnostic
+  ---
+  duration_ms: 0.964452
+  type: 'test'
+  ...
+# Subtest: unsupported visual geometry is skipped with a diagnostic and supported visuals survive
+ok 194 - unsupported visual geometry is skipped with a diagnostic and supported visuals survive
+  ---
+  duration_ms: 0.85528
+  type: 'test'
+  ...
+# Subtest: named materials retain their identity and resolve across links including inline definitions
+ok 195 - named materials retain their identity and resolve across links including inline definitions
+  ---
+  duration_ms: 0.330059
+  type: 'test'
+  ...
+# Subtest: fixture bag drives named joints, limits, and attached frame-id geometry at the cursor
+ok 196 - fixture bag drives named joints, limits, and attached frame-id geometry at the cursor
+  ---
+  duration_ms: 96.889459
+  type: 'test'
+  ...
+# Subtest: logged TF owns matching child edges including before its first sample
+ok 197 - logged TF owns matching child edges including before its first sample
+  ---
+  duration_ms: 0.90525
+  type: 'test'
+  ...
+# Subtest: JointState samples retain partial joint updates and observe same-time corrections
+ok 198 - JointState samples retain partial joint updates and observe same-time corrections
+  ---
+  duration_ms: 0.69697
+  type: 'test'
+  ...
+# Subtest: URDF edges stay in the selected recording and topic namespace
+ok 199 - URDF edges stay in the selected recording and topic namespace
+  ---
+  duration_ms: 0.169261
+  type: 'test'
+  ...
+# Subtest: automatic fixed frame ignores shadowed URDF parents
+ok 200 - automatic fixed frame ignores shadowed URDF parents
+  ---
+  duration_ms: 0.398622
+  type: 'test'
+  ...
+# Subtest: appended JointState revisions do not read or process earlier samples
+ok 201 - appended JointState revisions do not read or process earlier samples
+  ---
+  duration_ms: 3.954433
+  type: 'test'
+  ...
+# Subtest: JointState caches observe earlier corrections, late fields, and live trimming
+ok 202 - JointState caches observe earlier corrections, late fields, and live trimming
+  ---
+  duration_ms: 0.573063
+  type: 'test'
+  ...
+# Subtest: replacing JointState field identity invalidates cached samples
+ok 203 - replacing JointState field identity invalidates cached samples
+  ---
+  duration_ms: 0.224185
+  type: 'test'
+  ...
+# Subtest: late appended child values update following JointState samples without inventing parent samples
+ok 204 - late appended child values update following JointState samples without inventing parent samples
+  ---
+  duration_ms: 0.452951
+  type: 'test'
+  ...
+# Subtest: projected live JointStates append without rescanning and retain correction and clock invalidation
+ok 205 - projected live JointStates append without rescanning and retain correction and clock invalidation
+  ---
+  duration_ms: 4.090062
+  type: 'test'
+  ...
+# Subtest: live no-op discards keep revisions and trimming followed by append reads only the boundary and suffix
+ok 206 - live no-op discards keep revisions and trimming followed by append reads only the boundary and suffix
+  ---
+  duration_ms: 0.808751
+  type: 'test'
+  ...
+# Subtest: trimming retains held partial joint positions despite compressed child histories
+ok 207 - trimming retains held partial joint positions despite compressed child histories
+  ---
+  duration_ms: 0.516065
+  type: 'test'
+  ...
+# Subtest: JointState diagnostics stop at the cursor and summarize a bounded recent set
+ok 208 - JointState diagnostics stop at the cursor and summarize a bounded recent set
+  ---
+  duration_ms: 1.861132
+  type: 'test'
+  ...
+# Subtest: projected live trimming and appending do not rebuild retained JointState history
+ok 209 - projected live trimming and appending do not rebuild retained JointState history
+  ---
+  duration_ms: 0.531449
+  type: 'test'
+  ...
+1..209
+# tests 209
+# suites 0
+# pass 209
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 39993.407146
+TAP version 13
+# (node:11754) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/dragdrop/src/shared/CustomEnvironment.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /workspace/dragdrop/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: size and origin define the rectangle from the minimum corner
+ok 1 - size and origin define the rectangle from the minimum corner
+  ---
+  duration_ms: 1.396279
+  type: 'test'
+  ...
+# Subtest: center frame puts the rectangle center at the origin the 2D view uses
+ok 2 - center frame puts the rectangle center at the origin the 2D view uses
+  ---
+  duration_ms: 0.225292
+  type: 'test'
+  ...
+# Subtest: an origin at the center leaves world (0, 0) in the middle
+ok 3 - an origin at the center leaves world (0, 0) in the middle
+  ---
+  duration_ms: 0.149868
+  type: 'test'
+  ...
+# Subtest: rejects a non-positive or non-finite size
+ok 4 - rejects a non-positive or non-finite size
+  ---
+  duration_ms: 0.107354
+  type: 'test'
+  ...
+# Subtest: pixel and inch size follow length and width, not a bundled field
+ok 5 - pixel and inch size follow length and width, not a bundled field
+  ---
+  duration_ms: 0.328307
+  type: 'test'
+  ...
+# (node:11762) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/dragdrop/src/shared/log/SemanticType.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /workspace/dragdrop/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: maps WPILib geometry structs onto semantic kinds
+ok 6 - maps WPILib geometry structs onto semantic kinds
+  ---
+  duration_ms: 0.879707
+  type: 'test'
+  ...
+# Subtest: maps AdvantageKit mechanism and Choreo trajectory structs
+ok 7 - maps AdvantageKit mechanism and Choreo trajectory structs
+  ---
+  duration_ms: 0.309737
+  type: 'test'
+  ...
+# Subtest: returns null for unmapped types
+ok 8 - returns null for unmapped types
+  ---
+  duration_ms: 0.22595
+  type: 'test'
+  ...
+# Subtest: pose source lists stay the field-tab sets
+ok 9 - pose source lists stay the field-tab sets
+  ---
+  duration_ms: 1.723196
+  type: 'test'
+  ...
+# Subtest: trajectory, rotation, mechanism, and numeric lists
+ok 10 - trajectory, rotation, mechanism, and numeric lists
+  ---
+  duration_ms: 0.313956
+  type: 'test'
+  ...
+# Subtest: pose reader accepts mapped spatial types and rejects mechanism joints
+ok 11 - pose reader accepts mapped spatial types and rejects mechanism joints
+  ---
+  duration_ms: 0.185785
+  type: 'test'
+  ...
+# Subtest: maps ROS laser scans and point clouds without admitting them to pose readers
+ok 12 - maps ROS laser scans and point clouds without admitting them to pose readers
+  ---
+  duration_ms: 0.206445
+  type: 'test'
+  ...
+# Subtest: maps ROS image types without admitting them to pose readers
+ok 13 - maps ROS image types without admitting them to pose readers
+  ---
+  duration_ms: 0.152031
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 598.22246
+<DIR>/LineGraphController.test.cjs  chunk │ size: 671.96 kB
+
+✔ rolldown v1.0.2 Finished in 523.36 ms
+TAP version 13
+# Subtest: detects bounded string and integer enum domains in first occurrence order
+ok 1 - detects bounded string and integer enum domains in first occurrence order
+  ---
+  duration_ms: 2.325033
+  type: 'test'
+  ...
+# Subtest: enum lanes preserve states over time and colors across zoom and layout reload
+ok 2 - enum lanes preserve states over time and colors across zoom and layout reload
+  ---
+  duration_ms: 5.422809
+  type: 'test'
+  ...
+# Subtest: enum lanes reuse unchanged field history and refresh after mutations
+ok 3 - enum lanes reuse unchanged field history and refresh after mutations
+  ---
+  duration_ms: 3.396791
+  type: 'test'
+  ...
+# Subtest: invalid enum history is cached and refreshed when the field becomes valid
+ok 4 - invalid enum history is cached and refreshed when the field becomes valid
+  ---
+  duration_ms: 1.127468
+  type: 'test'
+  ...
+# Subtest: enum lane colors handle arbitrary state names and invalid enum fields retain visible values
+ok 5 - enum lane colors handle arbitrary state names and invalid enum fields retain visible values
+  ---
+  duration_ms: 0.478835
+  type: 'test'
+  ...
+# Subtest: a declared source unit survives a saved layout and drives numeric conversion
+ok 6 - a declared source unit survives a saved layout and drives numeric conversion
+  ---
+  duration_ms: 7.125042
+  type: 'test'
+  ...
+# Subtest: metadata units take precedence and absent or invalid declarations keep legacy numeric output
+ok 7 - metadata units take precedence and absent or invalid declarations keep legacy numeric output
+  ---
+  duration_ms: 7.934742
+  type: 'test'
+  ...
+# Subtest: legacy discrete and numeric source types retain their defaults and output
+ok 8 - legacy discrete and numeric source types retain their defaults and output
+  ---
+  duration_ms: 0.484366
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 45.984182
+TAP version 13
+# Subtest: registered reader preserves fields in src/hub/dataSources/csv/fixtures/sample.tsv
+ok 1 - registered reader preserves fields in src/hub/dataSources/csv/fixtures/sample.tsv
+  ---
+  duration_ms: 349.875065
+  type: 'test'
+  ...
+# Subtest: registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.json
+ok 2 - registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.json
+  ---
+  duration_ms: 350.748487
+  type: 'test'
+  ...
+# Subtest: registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.jsonl
+ok 3 - registered reader preserves fields in src/hub/dataSources/json/fixtures/sample.jsonl
+  ---
+  duration_ms: 298.449173
+  type: 'test'
+  ...
+# Subtest: registered reader preserves fields in src/hub/dataSources/mcap/fixtures/sample.mcap
+ok 4 - registered reader preserves fields in src/hub/dataSources/mcap/fixtures/sample.mcap
+  ---
+  duration_ms: 306.316528
+  type: 'test'
+  ...
+# Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/images.db3
+ok 5 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/images.db3
+  ---
+  duration_ms: 349.51102
+  type: 'test'
+  ...
+# Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/sample.db3
+ok 6 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/sample.db3
+  ---
+  duration_ms: 577.07574
+  type: 'test'
+  ...
+# Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/spatial-sensors.db3
+ok 7 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/spatial-sensors.db3
+  ---
+  duration_ms: 918.480061
+  type: 'test'
+  ...
+# Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/transform-tree.db3
+ok 8 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/transform-tree.db3
+  ---
+  duration_ms: 767.977215
+  type: 'test'
+  ...
+# Subtest: registered reader preserves fields in src/hub/dataSources/ros2/fixtures/urdf/robot.db3
+ok 9 - registered reader preserves fields in src/hub/dataSources/ros2/fixtures/urdf/robot.db3
+  ---
+  duration_ms: 445.036747
+  type: 'test'
+  ...
+# Subtest: registered reader preserves fields in docs/evidence/chunk-11/generic-telemetry.csv
+ok 10 - registered reader preserves fields in docs/evidence/chunk-11/generic-telemetry.csv
+  ---
+  duration_ms: 271.386435
+  type: 'test'
+  ...
+# (node:11880) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/dragdrop/build/reader-fixtures/wpilogIndexer.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /workspace/dragdrop/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: registered reader preserves fields in docs/evidence/chunk-16/two-sources.wpilog
+ok 11 - registered reader preserves fields in docs/evidence/chunk-16/two-sources.wpilog
+  ---
+  duration_ms: 760.339737
+  type: 'test'
+  ...
+# Subtest: the regression baseline covers every existing reader fixture
+ok 12 - the regression baseline covers every existing reader fixture
+  ---
+  duration_ms: 51.508306
+  type: 'test'
+  ...
+# Subtest: the public API example reader opens numeric samples
+ok 13 - the public API example reader opens numeric samples
+  ---
+  duration_ms: 275.739422
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10160.173541
+<DIR>/Field3dController.test.cjs  chunk │ size: 8,998.01 kB
+
+✔ rolldown v1.0.2 Finished in 5.62 s
+TAP version 13
+# Subtest: URDF options reuse discovered topics until fields refresh or the log changes
+ok 1 - URDF options reuse discovered topics until fields refresh or the log changes
+  ---
+  duration_ms: 77.876663
+  type: 'test'
+  ...
+# Subtest: None excludes URDF descriptions and JointState subscriptions
+ok 2 - None excludes URDF descriptions and JointState subscriptions
+  ---
+  duration_ms: 1.254931
+  type: 'test'
+  ...
+# Subtest: layouts store local source references and reload them through the desktop boundary
+ok 3 - layouts store local source references and reload them through the desktop boundary
+  ---
+  duration_ms: 1.440341
+  type: 'test'
+  ...
+# Subtest: layout-supplied XML and file URLs never load or migrate local sources
+ok 4 - layout-supplied XML and file URLs never load or migrate local sources
+  ---
+  duration_ms: 0.570709
+  type: 'test'
+  ...
+# Subtest: disposing a tab removes its URDF event listener before any later picked event
+ok 5 - disposing a tab removes its URDF event listener before any later picked event
+  ---
+  duration_ms: 933.250211
+  type: 'test'
+  ...
+# Subtest: per-frame commands retain only the model id and source changes replace the separate resource
+ok 6 - per-frame commands retain only the model id and source changes replace the separate resource
+  ---
+  duration_ms: 11.242453
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1207.037166
+<DIR>/URDFManager.test.cjs  chunk │ size: 792.96 kB
+
+✔ rolldown v1.0.2 Finished in 724.48 ms
+THREE.ColladaLoader: File version 1.4.1
+THREE.ColladaLoader: File version 1.4.1
+THREE.ColladaLoader: You are loading an asset with a Z-UP coordinate system. The loader just rotates the asset to transform it into Y-UP. The vertex data are not converted, see #24289.
+TAP version 13
+# Subtest: named materials share one instance across links and are disposed once
+ok 1 - named materials share one instance across links and are disposed once
+  ---
+  duration_ms: 16.845574
+  type: 'test'
+  ...
+# Subtest: cloned satellite commands update link poses without rebuilding visual resources
+ok 2 - cloned satellite commands update link poses without rebuilding visual resources
+  ---
+  duration_ms: 8.147339
+  type: 'test'
+  ...
+# Subtest: COLLADA Y-up and Z-up authored vertical axes both render vertically in URDF Z-up
+ok 3 - COLLADA Y-up and Z-up authored vertical axes both render vertically in URDF Z-up
+  ---
+  duration_ms: 9.594889
+  type: 'test'
+  ...
+# Subtest: X_UP COLLADA is skipped with a visible diagnostic while other visuals remain
+ok 4 - X_UP COLLADA is skipped with a visible diagnostic while other visuals remain
+  ---
+  duration_ms: 3.299274
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 88.649115
+<DIR>/URDFTransport.test.cjs  chunk │ size: 9,979.99 kB
+
+✔ rolldown v1.0.2 Finished in 2.17 s
+TAP version 13
+# Subtest: renderer change detection serializes only pose commands and applies model updates once
+ok 1 - renderer change detection serializes only pose commands and applies model updates once
+  ---
+  duration_ms: 9.201038
+  type: 'test'
+  ...
+# Subtest: satellites clone model resources only on changes and replay them to new or reloaded windows
+ok 2 - satellites clone model resources only on changes and replay them to new or reloaded windows
+  ---
+  duration_ms: 3.172348
+  type: 'test'
+  ...
+# Subtest: stopping a 3D renderer releases the current model and all visual managers
+ok 3 - stopping a 3D renderer releases the current model and all visual managers
+  ---
+  duration_ms: 1.785048
+  type: 'test'
+  ...
+# Subtest: a cleared 3D satellite recreates its renderer and keeps diagnostics on the next command
+ok 4 - a cleared 3D satellite recreates its renderer and keeps diagnostics on the next command
+  ---
+  duration_ms: 369.368901
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 398.064399
+<DIR>/XRURDFModel.test.cjs  chunk │ size: 298.27 kB
+
+✔ rolldown v1.0.2 Finished in 304.87 ms
+TAP version 13
+# Subtest: XR sends each URDF model change once and replays only the current resource on connection
+ok 1 - XR sends each URDF model change once and replays only the current resource on connection
+  ---
+  duration_ms: 9.125782
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 64.426737
+npm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
+
+$ npm run check-format
+
+> advantagescope@27.0.0-alpha-6 check-format
+> license-check-and-add check -f file-header-config.json && prettier --check .
+
+No default format specified. Using {"prepend":"/*","append":"*/"} as backup
+✔ All files have licenses.
+Command succeeded
+Checking formatting...
+All matched files use Prettier code style!
+
+$ node docs/evidence/cleanup-dragdrop/verify-drop.cjs (before fix)
+[]
+AssertionError [ERR_ASSERTION]: Unsupported drop reports every rejected file through the existing error dialog
++ actual - expected
+
++ []
+- [
+-   {
+-     data: {
+-       content: 'The following files could not be opened because their file type is unsupported:\n' +
+-         '\n' +
+-         'notes.unknown',
+-       title: 'Failed to open log'
+-     },
+-     name: 'error'
+-   }
+- ]
+
+    at /workspace/dragdrop/docs/evidence/cleanup-dragdrop/verify-drop.cjs:75:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [],
+  expected: [Array],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+$ node docs/evidence/cleanup-dragdrop/verify-drop.cjs
+[
+  {
+    "name": "error",
+    "data": {
+      "title": "Failed to open log",
+      "content": "The following files could not be opened because their file type is unsupported:\n\nnotes.unknown"
+    }
+  }
+]
+PASS (unsupported): real file paths verified, expected open/error messages matched, CSV values checked when supported, app state captured with Page.captureScreenshot.
+
+$ DROP_MODE=supported node docs/evidence/cleanup-dragdrop/verify-drop.cjs
+[
+  {
+    "name": "open-files-request",
+    "data": {
+      "files": [
+        "/workspace/dragdrop/build/drop-fixtures/telemetry.csv"
+      ]
+    }
+  }
+]
+PASS: real files dropped through CDP, supported files opened, rejected files reported through error IPC, app state captured with Page.captureScreenshot.
+
+$ DROP_MODE=mixed node docs/evidence/cleanup-dragdrop/verify-drop.cjs
+[
+  {
+    "name": "open-files-request",
+    "data": {
+      "files": [
+        "/workspace/dragdrop/build/drop-fixtures/telemetry.csv"
+      ]
+    }
+  },
+  {
+    "name": "error",
+    "data": {
+      "title": "Failed to open log",
+      "content": "The following files could not be opened because their file type is unsupported:\n\nnotes.unknown"
+    }
+  }
+]
+PASS (mixed): real file paths verified, expected open/error messages matched, CSV values checked when supported, app state captured with Page.captureScreenshot.

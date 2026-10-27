@@ -461,7 +461,8 @@ async function startHistorical(path: string, clear = true, merge = false) {
           setWindowTitle(logFriendlyName, "Error");
           sourceEntry.progress = null;
           updateLoading();
-          let isCSV = path.endsWith(".csv");
+          let readerId = plugins.getReader(path)?.id;
+          let isCSV = readerId === "csv" || readerId === "tsv";
           let message =
             "There was a problem while reading the log file. " +
             (isCSV

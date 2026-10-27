@@ -145,8 +145,8 @@ Roadmap section 42 asks for independent layers. Today:
 
 A new recording format, without new visualizations:
 
-1. Declare the reader with `PluginRegistry.registerReader`, including its id, display name, extensions, and compiled worker filename. See [Add a log reader](reader-plugins.md).
-2. Import the registration from `src/shared/plugins/builtins.ts`. Worker sources ending in `Worker.ts` under `src/hub/dataSources/` are bundled automatically. The TerraLog reader in `src/examples/` is compiled and exercised by tests without production registration or worker bundling. Built-in preparation adapters handle DS companion files and compressed or converted WPILOG inputs.
+1. Add the reader to `src/shared/plugins/readers.ts`, including its id, display name, extensions, and compiled worker filename. See [Add a log reader](reader-plugins.md).
+2. `src/shared/plugins/builtins.ts` registers the shared declarations. The build bundles their worker sources under `src/hub/dataSources/`. The TerraLog reader in `src/examples/` is compiled and exercised by tests without production registration or worker bundling. Built-in preparation adapters handle DS companion files and compressed or converted WPILOG inputs.
 3. Write a worker that posts `HistoricalDataSource_WorkerResponse` (`initial`, and `parseField` if loading should stay lazy). `wpilogWorker.ts` is the lazy pattern. `csvWorker.ts` is the full-decode pattern.
 4. Insert samples only through `Log.put*`. If the payload is a struct or protobuf, reuse `StructDecoder` or `ProtoDecoder` instead of inventing fields by hand.
 5. Nested recordings use the `log:EXT` structured type (`LogKeyUtils.getChildLogExtension`) so `HistoricalDataSource.openRaw` can open them.

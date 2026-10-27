@@ -151,10 +151,6 @@ export default (cliArgs) => {
           .readdirSync("src/hub/dataSources", { recursive: true })
           .filter((file) => file.endsWith("Worker.ts"))
           .map((file) => "hub/dataSources/" + file),
-        ...fs
-          .readdirSync("src/examples", { recursive: true })
-          .filter((file) => file.endsWith("Worker.ts"))
-          .map((file) => "examples/" + file),
         ...(isLite ? ["main/lite/xzWorker.ts"] : []),
         ...(!isLite ? ["hub/exportWorker.ts"] : []),
         ...(!isDS

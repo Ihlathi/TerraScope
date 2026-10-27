@@ -9,7 +9,9 @@ import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import terraLogReader from "../build/unit-test/examples/terraLogReader.js";
 import builtins from "../build/unit-test/shared/plugins/builtins.js";
+import pluginRegistry from "../build/unit-test/shared/plugins/PluginRegistry.js";
 import { bundleReaders, decodeFixture, fixturePaths, openFixture } from "./reader-fixture-harness.mjs";
 
 const { plugins } = builtins;
@@ -22,7 +24,9 @@ const readers = fixturePaths.map((fixture) => {
   return reader;
 });
 const exampleFixture = "src/examples/fixtures/sample.terralog";
-const exampleReader = plugins.getReader(exampleFixture);
+const examplePlugins = new pluginRegistry.PluginRegistry();
+terraLogReader.registerTerraLogReader(examplePlugins);
+const exampleReader = examplePlugins.getReader(exampleFixture);
 assert.ok(exampleReader);
 await bundleReaders(root, [...readers.map((reader) => reader.worker), exampleReader.worker], output);
 

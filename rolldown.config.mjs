@@ -8,12 +8,15 @@
 import { getBabelOutputPlugin } from "@rollup/plugin-babel";
 import typescript from "@rollup/plugin-typescript";
 import fs from "fs";
+import path from "node:path";
 import { replacePlugin } from "rolldown/plugins";
 import cleanup from "rollup-plugin-cleanup";
+import { readers } from "./src/shared/plugins/readers.ts";
 
 const isWpilib = process.env.ASCOPE_DISTRIBUTION === "WPILIB";
 const isDS = process.env.ASCOPE_DISTRIBUTION === "LITEDS";
 const isLite = process.env.ASCOPE_DISTRIBUTION === "LITE" || isDS;
+const readerWorkers = new Set(readers.map((reader) => reader.worker.replace(/\.js$/, ".ts")));
 const licenseHeader =
   "// Copyright (c) 2021-2026 Littleton Robotics\n// http://github.com/Mechanical-Advantage\n//\n// Use of this source code is governed by a BSD\n// license that can be found in the LICENSE file\n// at the resources directory of this application.\n";
 
@@ -149,7 +152,7 @@ export default (cliArgs) => {
 
         ...fs
           .readdirSync("src/hub/dataSources", { recursive: true })
-          .filter((file) => file.endsWith("Worker.ts"))
+          .filter((file) => readerWorkers.has(path.basename(file)))
           .map((file) => "hub/dataSources/" + file),
         ...(isLite ? ["main/lite/xzWorker.ts"] : []),
         ...(!isLite ? ["hub/exportWorker.ts"] : []),

@@ -4,12 +4,11 @@ Use the TerraLog example in `src/examples/` as the template for a reader compile
 The example is compiled and exercised by tests. It is not registered or bundled in the shipped app.
 Its `.terralog` files contain one numeric sample per line, with tabs between the timestamp in seconds, field name, and value.
 
-1. Copy `src/examples/terraLogReader.ts` and `src/examples/terraLogWorker.ts` into a reader directory under `src/hub/dataSources/`. Adjust their relative imports for the new location.
-2. Give the registration a unique `id`, a `displayName`, and one or more `extensions` without leading dots.
-3. Set `worker` to the compiled worker filename. Name its source file `*Worker.ts` so the build discovers it.
+1. Copy `src/examples/terraLogWorker.ts` into a reader directory under `src/hub/dataSources/`. Adjust its relative imports for the new location.
+2. Add a declaration to `src/shared/plugins/readers.ts` with a unique `id`, a `displayName`, and one or more `extensions` without leading dots. Use `src/examples/terraLogReader.ts` as the declaration template.
+3. Set `worker` to the compiled worker filename. Name its source file `*Worker.ts`. The build bundles only workers named by the shared reader declarations.
 4. Replace the worker's parser with your decoder. Write samples through `Log.put*`.
-5. Import your registration function in `src/shared/plugins/builtins.ts` and call it with `plugins`.
-6. Run `npm run compile` and `npm start`. Open a file with your extension from **File > Open** or drag it into the app.
+5. Run `npm run compile` and `npm start`. Open a file with your extension from **File > Open** or drag it into the app.
 
 The open dialog, file acceptance, and worker dispatch use the registered extension.
 Register each extension once. A collision throws during startup and names both reader ids.

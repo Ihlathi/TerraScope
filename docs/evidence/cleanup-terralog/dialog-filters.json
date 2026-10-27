@@ -20,81 +20,54 @@
   },
   {
     "name": "WPILib robot log",
-    "extensions": [
-      "wpilog"
-    ]
+    "extensions": ["wpilog"]
   },
   {
     "name": "Compressed WPILib robot log",
-    "extensions": [
-      "wpilogxz"
-    ]
+    "extensions": ["wpilogxz"]
   },
   {
     "name": "Hoot robot log",
-    "extensions": [
-      "hoot"
-    ]
+    "extensions": ["hoot"]
   },
   {
     "name": "REV Robotics CAN log",
-    "extensions": [
-      "revlog"
-    ]
+    "extensions": ["revlog"]
   },
   {
     "name": "Robot log",
-    "extensions": [
-      "rlog"
-    ]
+    "extensions": ["rlog"]
   },
   {
     "name": "Road Runner log",
-    "extensions": [
-      "log"
-    ]
+    "extensions": ["log"]
   },
   {
     "name": "Comma-separated values",
-    "extensions": [
-      "csv"
-    ]
+    "extensions": ["csv"]
   },
   {
     "name": "Tab-separated values",
-    "extensions": [
-      "tsv"
-    ]
+    "extensions": ["tsv"]
   },
   {
     "name": "JSON log",
-    "extensions": [
-      "json"
-    ]
+    "extensions": ["json"]
   },
   {
     "name": "JSON Lines log",
-    "extensions": [
-      "jsonl"
-    ]
+    "extensions": ["jsonl"]
   },
   {
     "name": "MCAP log",
-    "extensions": [
-      "mcap"
-    ]
+    "extensions": ["mcap"]
   },
   {
     "name": "ROS 2 sqlite3 bag",
-    "extensions": [
-      "db3"
-    ]
+    "extensions": ["db3"]
   },
   {
     "name": "NI Driver Station log",
-    "extensions": [
-      "dslog",
-      "dsevents"
-    ]
+    "extensions": ["dslog", "dsevents"]
   }
 ]

@@ -18,7 +18,7 @@ The committed JSON contains the actual native dialog arguments after the fix, co
 
 ## Verification
 
-[Done-check output](done-check.txt) contains the real command output and exit codes for Node 22, npm ci, the WASM build with Emscripten 4.0.12, compile, tests, and formatting. The initial dependency setup needed a writable Electron cache and the session HTTP proxy for older download clients. These are environment settings only.
+[Done-check output](done-check.txt) contains fresh Node 22 command output and exit codes for compile, tests, and formatting from the corrected evidence tree. The initial dependency setup needed a writable Electron cache and the session HTTP proxy for older download clients. These are environment settings only.
 
 The production registry is shared by desktop, drag-drop, worker dispatch, and Lite. The clean desktop bundles and desktop/Lite build inputs were checked for example workers and references. The sample worker exists only in the test output.
 

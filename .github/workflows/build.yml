@@ -391,6 +391,8 @@ jobs:
         run: npx electron-builder build --${{ matrix.arch }} --publish never ${{ github.repository != 'Mechanical-Advantage/AdvantageScope' && '-c.mac.identity=-' || '' }}
         env:
           NODE_OPTIONS: --max-old-space-size=4096
+          # electron-builder skips all signing on PRs by default; ad-hoc signing needs no secrets.
+          CSC_FOR_PULL_REQUEST: ${{ github.repository != 'Mechanical-Advantage/AdvantageScope' }}
       - name: Prepare artifact
         run: |
           mv dist/TerraScope-*.dmg terrascope-mac-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.dmg

@@ -1,0 +1,51 @@
+name: Email privacy
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "**"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check commit emails
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Check new commits
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          script=.github/scripts/check-email-privacy.sh
+          zero=0000000000000000000000000000000000000000
+          if [[ "$EVENT" == "pull_request" ]]; then
+            git fetch --no-tags -q origin "$PR_HEAD"
+            bash "$script" "$PR_BASE..$PR_HEAD"
+          elif [[ "$AFTER" == "$zero" ]]; then
+            echo "Branch deleted; nothing to check."
+          elif [[ "$BEFORE" != "$zero" ]] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            bash "$script" "$BEFORE..$AFTER"
+          else
+            # New branch (or unknown before): check commits not on any other branch.
+            mapfile -t others < <(git for-each-ref --format='%(refname)' refs/remotes/origin \
+              | grep -vxF -e "refs/remotes/origin/$REF_NAME" -e refs/remotes/origin/HEAD)
+            if [[ ${#others[@]} -eq 0 ]]; then
+              bash "$script" "$AFTER"
+            else
+              bash "$script" "$AFTER" --not "${others[@]}"
+            fi
+          fi

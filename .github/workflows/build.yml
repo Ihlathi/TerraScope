@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Setup Emscripten
         uses: emscripten-core/setup-emsdk@v16
@@ -57,7 +57,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
@@ -101,7 +101,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci

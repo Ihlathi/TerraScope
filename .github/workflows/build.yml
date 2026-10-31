@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
@@ -43,7 +43,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
@@ -67,7 +67,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Setup Emscripten
         uses: emscripten-core/setup-emsdk@v16
@@ -99,7 +99,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Setup Emscripten
         uses: emscripten-core/setup-emsdk@v16
@@ -133,7 +133,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Setup Emscripten
         uses: emscripten-core/setup-emsdk@v16
@@ -155,23 +155,23 @@ jobs:
           ASCOPE_DISTRIBUTION: LITE
       - name: Prepare artifact (desktop)
         run: |
-          mkdir advantagescopelite-desktop
-          cp lite/lite_server.py advantagescopelite-desktop/lite_server.py
-          cp -rL lite/static advantagescopelite-desktop/static
+          mkdir terrascope-lite-desktop
+          cp lite/lite_server.py terrascope-lite-desktop/lite_server.py
+          cp -rL lite/static terrascope-lite-desktop/static
       - name: Upload development artifact (desktop)
         uses: actions/upload-artifact@v7
         with:
-          name: advantagescopelite-desktop
-          path: advantagescopelite-desktop/
+          name: terrascope-lite-desktop
+          path: terrascope-lite-desktop/
       - name: Build IPK (Systemcore)
         run: cd lite/ipk && ./build.sh
       - name: Prepare artifact (Systemcore)
-        run: mv lite/ipk/advantagescope-lite_*.ipk lite/ipk/advantagescopelite-systemcore.ipk
+        run: mv lite/ipk/advantagescope-lite_*.ipk lite/ipk/terrascope-lite-systemcore.ipk
       - name: Upload development artifact (Systemcore)
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: lite/ipk/advantagescopelite-systemcore.ipk
+          path: lite/ipk/terrascope-lite-systemcore.ipk
       - name: "Release: Get release info"
         if: github.event_name == 'release'
         id: get_release_info
@@ -179,7 +179,7 @@ jobs:
         with:
           token: ${{ github.token }}
       - name: "Release: Prepare artifact (Systemcore)"
-        run: mv lite/ipk/advantagescopelite-systemcore.ipk temp.ipk
+        run: mv lite/ipk/terrascope-lite-systemcore.ipk temp.ipk
       - name: "Release: Upload artifact (Systemcore)"
         if: github.event_name == 'release'
         uses: actions/upload-release-asset@v1
@@ -188,7 +188,7 @@ jobs:
         with:
           upload_url: ${{ steps.get_release_info.outputs.upload_url }}
           asset_path: temp.ipk
-          asset_name: advantagescope-lite-${{ steps.get_release_info.outputs.tag_name }}.ipk
+          asset_name: terrascope-lite-${{ steps.get_release_info.outputs.tag_name }}.ipk
           asset_content_type: "application/octet-stream"
 
   compile-lite-ds:
@@ -201,7 +201,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Setup Emscripten
         uses: emscripten-core/setup-emsdk@v16
@@ -221,12 +221,12 @@ jobs:
       - name: Prepare artifact
         run: |
           mkdir docs/build
-          cp -rL lite/static advantagescopelite-ds
+          cp -rL lite/static terrascope-lite-ds
       - name: Upload development artifact
         uses: actions/upload-artifact@v7
         with:
-          name: advantagescopelite-ds
-          path: advantagescopelite-ds/
+          name: terrascope-lite-ds
+          path: terrascope-lite-ds/
       - name: "Release: Get release info"
         if: github.event_name == 'release'
         id: get_release_info
@@ -235,8 +235,8 @@ jobs:
           token: ${{ github.token }}
       - name: "Release: Prepare artifact"
         run: |
-          cd advantagescopelite-ds
-          zip -r ../advantagescopelite-ds.zip ./*
+          cd terrascope-lite-ds
+          zip -r ../terrascope-lite-ds.zip ./*
           cd ..
       - name: "Release: Upload artifact"
         if: github.event_name == 'release'
@@ -245,8 +245,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release_info.outputs.upload_url }}
-          asset_path: advantagescopelite-ds.zip
-          asset_name: advantagescope-lite-ds-${{ steps.get_release_info.outputs.tag_name }}.zip
+          asset_path: terrascope-lite-ds.zip
+          asset_name: terrascope-lite-ds-${{ steps.get_release_info.outputs.tag_name }}.zip
           asset_content_type: "application/octet-stream"
 
   build-ios:
@@ -295,7 +295,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
@@ -326,18 +326,18 @@ jobs:
           ELECTRON_BUILDER_7Z_FILTER: BCJ # https://github.com/electron-userland/electron-builder/issues/9983
       - name: Prepare artifact
         run: |
-          Move-Item -Path "dist\AdvantageScope*.exe" -Destination "advantagescope-win-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.exe"
+          Move-Item -Path "dist\TerraScope*.exe" -Destination "terrascope-win-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.exe"
       - name: Upload development artifact
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: advantagescope-win-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.exe
+          path: terrascope-win-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.exe
       - name: "Release: Upload artifact"
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v3
         with:
-          files: advantagescope-win-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.exe
+          files: terrascope-win-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.exe
 
   build-mac:
     name: Build for macOS (${{ matrix.arch }})
@@ -355,7 +355,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
@@ -387,23 +387,26 @@ jobs:
           echo "APPLE_API_ISSUER=${{ secrets.APPLE_NOTARIZATION_API_ISSUER }}" >> $GITHUB_ENV
           echo "APPLE_TEAM_ID=${{ vars.APPLE_TEAM_ID }}" >> $GITHUB_ENV
       - name: Build app
-        run: npx electron-builder build --${{ matrix.arch }} --publish never
+        # Forks have no Developer ID certificate, so ad-hoc sign (required to launch on Apple Silicon).
+        run: npx electron-builder build --${{ matrix.arch }} --publish never ${{ github.repository != 'Mechanical-Advantage/AdvantageScope' && '-c.mac.identity=-' || '' }}
         env:
           NODE_OPTIONS: --max-old-space-size=4096
+          # electron-builder skips all signing on PRs by default; ad-hoc signing needs no secrets.
+          CSC_FOR_PULL_REQUEST: ${{ github.repository != 'Mechanical-Advantage/AdvantageScope' }}
       - name: Prepare artifact
         run: |
-          mv dist/AdvantageScope-*.dmg advantagescope-mac-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.dmg
+          mv dist/TerraScope-*.dmg terrascope-mac-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.dmg
       - name: Upload development artifact
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: advantagescope-mac-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.dmg
+          path: terrascope-mac-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.dmg
       - name: "Release: Upload artifact"
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v3
         with:
-          files: advantagescope-mac-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.dmg
+          files: terrascope-mac-${{ matrix.arch }}-${{ env.VERSION_SUFFIX }}.dmg
 
   build-linux:
     name: Build for Linux/${{ matrix.format }} (${{ matrix.arch.electronArch }})
@@ -430,7 +433,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
@@ -460,18 +463,18 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=4096
       - name: Prepare artifact
         run: |
-          mv dist/*.${{ matrix.format }} advantagescope-linux-${{ matrix.arch.electronArch }}-${{ env.VERSION_SUFFIX }}.${{ matrix.format }}
+          mv dist/*.${{ matrix.format }} terrascope-linux-${{ matrix.arch.electronArch }}-${{ env.VERSION_SUFFIX }}.${{ matrix.format }}
       - name: Upload development artifact
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: advantagescope-linux-${{ matrix.arch.electronArch }}-${{ env.VERSION_SUFFIX }}.${{ matrix.format }}
+          path: terrascope-linux-${{ matrix.arch.electronArch }}-${{ env.VERSION_SUFFIX }}.${{ matrix.format }}
       - name: "Release: Upload artifact"
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v3
         with:
-          files: advantagescope-linux-${{ matrix.arch.electronArch }}-${{ env.VERSION_SUFFIX }}.${{ matrix.format }}
+          files: terrascope-linux-${{ matrix.arch.electronArch }}-${{ env.VERSION_SUFFIX }}.${{ matrix.format }}
 
   build-wpilib-win:
     name: "WPILib: Build for Windows (${{ matrix.arch }})"
@@ -489,7 +492,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
@@ -521,20 +524,20 @@ jobs:
       - name: Prepare artifact
         run: |
           Set-Location -Path "dist\win*"
-          Move-Item -Path "AdvantageScope.exe" -Destination "AdvantageScope (WPILib).exe"
+          Move-Item -Path "TerraScope.exe" -Destination "TerraScope (WPILib).exe"
           Set-Location -Path "..\.."
-          Compress-Archive -Path "dist\win*\*" -DestinationPath "advantagescope-wpilib-win-${{ matrix.arch }}.zip"
+          Compress-Archive -Path "dist\win*\*" -DestinationPath "terrascope-wpilib-win-${{ matrix.arch }}.zip"
       - name: Upload development artifact
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: advantagescope-wpilib-win-${{ matrix.arch }}.zip
+          path: terrascope-wpilib-win-${{ matrix.arch }}.zip
       - name: "Release: Upload artifact"
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v3
         with:
-          files: advantagescope-wpilib-win-${{ matrix.arch }}.zip
+          files: terrascope-wpilib-win-${{ matrix.arch }}.zip
 
   build-wpilib-mac:
     name: "WPILib: Build for macOS (${{ matrix.arch }})"
@@ -552,7 +555,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
@@ -591,22 +594,22 @@ jobs:
       - name: Prepare artifact
         run: |
           if [ "${{ matrix.arch }}" == "arm64" ]; then
-            mv dist/mac-arm64/AdvantageScope.app "AdvantageScope (WPILib).app"
+            mv dist/mac-arm64/TerraScope.app "TerraScope (WPILib).app"
           else
-            mv dist/mac/AdvantageScope.app "AdvantageScope (WPILib).app"
+            mv dist/mac/TerraScope.app "TerraScope (WPILib).app"
           fi
-          tar -zcvf advantagescope-wpilib-mac-${{ matrix.arch }}.tar.gz "AdvantageScope (WPILib).app"
+          tar -zcvf terrascope-wpilib-mac-${{ matrix.arch }}.tar.gz "TerraScope (WPILib).app"
       - name: Upload development artifact
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: advantagescope-wpilib-mac-${{ matrix.arch }}.tar.gz
+          path: terrascope-wpilib-mac-${{ matrix.arch }}.tar.gz
       - name: "Release: Upload artifact"
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v3
         with:
-          files: advantagescope-wpilib-mac-${{ matrix.arch }}.tar.gz
+          files: terrascope-wpilib-mac-${{ matrix.arch }}.tar.gz
 
   build-wpilib-linux:
     name: "WPILib: Build for Linux (${{ matrix.arch }})"
@@ -624,7 +627,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
@@ -646,19 +649,19 @@ jobs:
         run: |
           cd dist/linux*
           mv advantagescope advantagescope-wpilib
-          zip -r ../../advantagescope-wpilib-linux-${{ matrix.arch }}.zip ./*
+          zip -r ../../terrascope-wpilib-linux-${{ matrix.arch }}.zip ./*
           cd ../..
       - name: Upload development artifact
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: advantagescope-wpilib-linux-${{ matrix.arch }}.zip
+          path: terrascope-wpilib-linux-${{ matrix.arch }}.zip
       - name: "Release: Upload artifact"
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v3
         with:
-          files: advantagescope-wpilib-linux-${{ matrix.arch }}.zip
+          files: terrascope-wpilib-linux-${{ matrix.arch }}.zip
 
   finalize-release:
     name: Finalize Release

@@ -1,0 +1,47 @@
+Emscripten SDK download attempt
+Error: Downloading URL 'https://storage.googleapis.com/webassembly/emscripten-releases-builds/deps/node-v24.19.0-linux-x64.tar.xz': <urlopen error Tunnel connection failed: 403 Forbidden>
+error: installation failed!
+Resolving SDK version '4.0.12' to 'sdk-releases-209b886304498eff50dd835850dc5715803401ed-64bit'
+Installing SDK 'sdk-releases-209b886304498eff50dd835850dc5715803401ed-64bit'..
+Installing tool 'node-24.19.0-64bit'..
+
+Official emscripten/emsdk:4.0.12 image pull attempt
+4.0.12: Pulling from emscripten/emsdk
+1d387567261e: Pulling fs layer
+0e23b0cec671: Pulling fs layer
+92b286f3b2be: Pulling fs layer
+3605396aa4b7: Pulling fs layer
+358eb9924492: Pulling fs layer
+3605396aa4b7: Waiting
+358eb9924492: Waiting
+92b286f3b2be: Verifying Checksum
+92b286f3b2be: Download complete
+1d387567261e: Verifying Checksum
+1d387567261e: Download complete
+358eb9924492: Verifying Checksum
+358eb9924492: Download complete
+1d387567261e: Pull complete
+3605396aa4b7: Verifying Checksum
+3605396aa4b7: Download complete
+0e23b0cec671: Verifying Checksum
+0e23b0cec671: Download complete
+0e23b0cec671: Pull complete
+92b286f3b2be: Pull complete
+3605396aa4b7: Pull complete
+failed to register layer: no space left on device
+
+Official image layers downloaded for selective toolchain extraction
+sha256:1d387567261efec2a352c45b8d512a8db5c246122fb9f246ae9190252a0c3adb 29536481
+sha256:0e23b0cec671e7201705ddc28c8865e0780cfe26981d098947e854e67b8a3878 562884150
+sha256:92b286f3b2bef4ed64c2ac2d43dd29b71943f2fff2d9b91896b246fbd38ac744 4345
+sha256:3605396aa4b7505ffbe54f41ab4c53dd3455267b05a25dc34490be69788702a2 228080240
+sha256:358eb99244924ff51098ab324ed8b470552a22497487378a425fa3af45db5bdf 91
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 4.0.12 (6f625bd62ee64f4f8cd11476774741b961e4a2d5)
+Copyright (C) 2025 the Emscripten authors (see AUTHORS.txt)
+This is free and open source software under the MIT license.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+1644 /workspace/xvfb/usr/bin/Xvfb :99 -screen 0 1600x1000x24
+W: Unable to read /etc/apt/apt.conf.d/80-applied-apt-retries - open (13: Permission denied)
+E: Could not open lock file /var/lib/dpkg/lock-frontend - open (13: Permission denied)
+E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), are you root?

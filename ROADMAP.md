@@ -1007,7 +1007,7 @@ but optional interactive control capabilities could be valuable.
 # 32. Remote Access and Collaboration
 
 - [ ] Connect to robots remotely. (NetworkTables, RLOG, Phoenix diagnostics, and FTC Dashboard use a robot address.)
-- [ ] Retrieve remote recordings. (SFTP download from the robot log directory.)
+- [x] Retrieve remote recordings. (Explicit SFTP sync from configurable Linux robot profiles with host-key verification and verified temporary downloads.)
 - [ ] Monitor remote recording status.
 - [ ] View remote telemetry sessions.
 - [x] Support LAN connections.
@@ -1019,8 +1019,8 @@ but optional interactive control capabilities could be valuable.
 - [ ] Shareable recording links or packages.
 - [ ] Collaborative annotations.
 - [ ] Team workspace sharing.
-- [ ] Recording metadata management.
-- [ ] Organize recordings by robot, project, or experiment.
+- [x] Recording metadata management. (Local library metadata cache and editable tags; built-in sample stays read-only.)
+- [x] Organize recordings by robot, project, or experiment. (Search and sort library robot names and local tags across configured folders and recently opened logs.)
 - [ ] Compare recordings from multiple team members.
 - [ ] Support offline collaboration workflows. (Log files and layout JSON can be shared without a service.)
 - [ ] Secure authentication.

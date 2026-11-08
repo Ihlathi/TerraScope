@@ -1,0 +1,2 @@
+PASS: fresh default sample, in-app open, decoded 2D/3D poses and motor graphs, first-trust prompt, controlled SFTP list and df polled during slow transfer, complete sync, byte equality, repeat skip, zero remote writes.
+PASS: sample 3D camera centered on elevated robot; real 2D satellite and motor-current hub tiled without overlap; raw screenshot captures.

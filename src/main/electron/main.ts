@@ -93,6 +93,10 @@ import {
   saveBetaWelcomeComplete,
   shouldPromptBetaSurvey
 } from "./betaUtil";
+import { LogLibrary } from "./logManager/Library";
+import { LogManagerWindow } from "./logManager/LogManagerWindow";
+import { MetadataClient } from "./logManager/MetadataClient";
+import { createPresets, ProfileStore } from "./logManager/Profiles";
 import { getOwletDownloadStatus, startOwletDownloadLoop } from "./owletDownloadLoop";
 import { checkHootIsPro, convertHoot, CTRE_LICENSE_URL } from "./owletInterface";
 
@@ -141,6 +145,50 @@ let downloadPath: string = "";
 let downloadFileSizeCache: { [id: string]: number } = {};
 let downloadDevice: "systemcore" | "roborio" = "systemcore";
 let downloadAuthFailedOnce: boolean = false;
+
+let logLibrary: LogLibrary | undefined;
+let logMetadata: MetadataClient | undefined;
+let logManager: LogManagerWindow | undefined;
+
+function getLogLibrary(): LogLibrary {
+  if (!logLibrary) {
+    logMetadata = new MetadataClient(path.join(__dirname, "metadataWorker.js"));
+    logLibrary = new LogLibrary(
+      path.join(app.getPath("userData"), "log-library.json"),
+      path.join(app.getPath("documents"), "TerraScope Logs"),
+      path.join(__dirname, "../sampleLogs/terrascope-sample.mcap"),
+      (filename) => shell.trashItem(filename),
+      (filename) => logMetadata!.extract(filename)
+    );
+    app.once("will-quit", () => logMetadata?.close());
+  }
+  return logLibrary;
+}
+
+function openLogManager(parent: BrowserWindow) {
+  try {
+    if (!logManager) {
+      const prefs: Preferences = jsonfile.readFileSync(PREFS_FILENAME);
+      logManager = new LogManagerWindow(
+        getLogLibrary(),
+        new ProfileStore(
+          path.join(app.getPath("userData"), "robot-profiles.json"),
+          createPresets({
+            host: prefs.robotAddress,
+            remotePath: prefs.remotePath,
+            roborioUser: DOWNLOAD_ROBORIO_USERNAME,
+            systemcoreUser: DOWNLOAD_SYSTEMCORE_USERNAME
+          })
+        ),
+        path.join(app.getPath("userData"), "known_hosts"),
+        (filename, source) => openFilesSmart([filename], source)
+      );
+    }
+    logManager.open(parent);
+  } catch (error) {
+    dialog.showErrorBox("Could not open Log Manager", error instanceof Error ? error.message : String(error));
+  }
+}
 
 // WINDOW MESSAGE HANDLING
 
@@ -488,6 +536,12 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
         const logPath: string = message.data.path;
         if (!message.data.deleteAfterRead) {
           app.addRecentDocument(logPath);
+          try {
+            for (const filename of typeof logPath === "string" ? [logPath] : logPath)
+              getLogLibrary().addOpened(filename);
+          } catch (error) {
+            dialog.showErrorBox("Could not update log library", error instanceof Error ? error.message : String(error));
+          }
           // Writing this file is a supplemental task, so we don't need to block/ensure success
           fs.writeFile(AKIT_PATH_OUTPUT, logPath, () => {});
         }
@@ -2367,6 +2421,14 @@ function setupMenu() {
               if (window !== undefined && hubWindows.includes(window)) sendMessage(window, "stop-live", "/Live" + id);
             }
           }))
+        },
+        {
+          label: "Log Manager...",
+          accelerator: "CmdOrCtrl+Shift+D",
+          click(_, baseWindow) {
+            const window = baseWindow as BrowserWindow | undefined;
+            if (window) openLogManager(window);
+          }
         },
         {
           label: "Download Logs...",

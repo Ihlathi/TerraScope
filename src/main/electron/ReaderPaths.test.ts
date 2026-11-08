@@ -29,11 +29,13 @@ function loadFunction(name: string, context: Record<string, unknown>) {
 async function openLog(logPath: string, deleteAfterRead = false): Promise<(Buffer | null)[]> {
   let complete!: (files: (Buffer | null)[]) => void;
   const result = new Promise<(Buffer | null)[]>((resolve) => (complete = resolve));
+  const indexed: string[] = [];
   const context: Record<string, unknown> = {
     fs,
     path,
     plugins,
     app: { addRecentDocument() {} },
+    getLogLibrary: () => ({ addOpened: (filename: string) => indexed.push(filename) }),
     AKIT_PATH_OUTPUT: path.join(path.dirname(logPath), "recent-path"),
     sendMessage: (_window: unknown, name: string, data: { files: (Buffer | null)[]; error: string | null }) => {
       assert.equal(name, "historical-data");
@@ -47,6 +49,7 @@ async function openLog(logPath: string, deleteAfterRead = false): Promise<(Buffe
     { id: 1, isDestroyed: () => false },
     { name: "historical-start", data: { path: logPath, uuid: "reader-test", deleteAfterRead } }
   );
+  assert.deepEqual(indexed, deleteAfterRead ? [] : [logPath]);
   return result;
 }
 

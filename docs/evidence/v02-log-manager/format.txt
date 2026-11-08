@@ -1,0 +1,14 @@
+
+> advantagescope@0.1.0 check-format
+> license-check-and-add check -f file-header-config.json && prettier --check .
+
+No default format specified. Using {"prepend":"/*","append":"*/"} as backup
+[32m✔[0m All files have licenses.
+Command succeeded
+Checking formatting...
+All matched files use Prettier code style!
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

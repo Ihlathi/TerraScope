@@ -1,0 +1,10 @@
+$ node --version
+v22.23.4
+$ sha256sum sampleLogs/terrascope-sample.mcap
+794991ad781f1d60ac105faf71a4797d254a613f0c59f13595fa338bdb34958e  sampleLogs/terrascope-sample.mcap
+$ node scripts/generate-sample-log.mjs
+/workspace/TerraScope/sampleLogs/terrascope-sample.mcap: 1973249 bytes
+$ sha256sum sampleLogs/terrascope-sample.mcap
+794991ad781f1d60ac105faf71a4797d254a613f0c59f13595fa338bdb34958e  sampleLogs/terrascope-sample.mcap
+$ ls -l sampleLogs/terrascope-sample.mcap
+-rw------- 1 agent agent 1973249 Nov  7 22:17 sampleLogs/terrascope-sample.mcap

@@ -44,6 +44,14 @@
     "src/hub/HistoricalFormatHelp.test.ts",
     "src/shared/urdf/URDF.test.ts",
     "src/shared/urdf/URDFLog.test.ts",
-    "src/main/electron/URDFSources.test.ts"
+    "src/main/electron/URDFSources.test.ts",
+    "src/main/electron/logManager/Library.test.ts",
+    "src/main/electron/logManager/Metadata.test.ts",
+    "src/main/electron/logManager/Remote.test.ts",
+    "src/main/electron/logManager/HostKeys.test.ts",
+    "src/main/electron/logManager/Profiles.test.ts",
+    "src/hub/dataSources/mcap/SampleLog.test.ts",
+    "src/main/electron/logManager/MetadataClient.test.ts",
+    "src/main/electron/logManager/metadataWorker.ts"
   ]
 }

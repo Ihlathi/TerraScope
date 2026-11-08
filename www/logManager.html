@@ -1,0 +1,167 @@
+<!--
+  Copyright (c) 2021-2026 Littleton Robotics
+  http://github.com/Mechanical-Advantage
+
+  Use of this source code is governed by a BSD
+  license that can be found in the LICENSE file
+  at the root directory of this project.
+-->
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="global.css" />
+    <link rel="stylesheet" href="logManager.css" />
+    <script type="module" src="../bundles/logManager.js"></script>
+    <title>Log Manager &mdash; TerraScope</title>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Log Manager</h1>
+        <span class="muted">Browse robot logs and your local library.</span>
+      </div>
+      <div class="profile-picker">
+        <label for="profile">Robot profile</label
+        ><select id="profile"></select>
+      </div>
+    </header>
+    <details id="settings" open>
+      <summary>Connection settings</summary>
+      <form id="profile-form">
+        <label>Name<input id="profile-name" required /></label>
+        <label>Host or IP<input id="host" placeholder="robot.local" required /></label>
+        <label class="port">Port<input id="port" type="number" min="1" max="65535" value="22" required /></label>
+        <label>User<input id="user" placeholder="Your Linux user" required /></label>
+        <label class="remote-path"
+          >Remote log directory<input id="remote-path" placeholder="/home/robot/logs" required
+        /></label>
+        <label
+          >Authentication<select id="auth">
+            <option value="agent">System SSH agent</option>
+            <option value="key">Private key file</option>
+            <option value="password">Password per session</option>
+            <option value="factory-roborio">roboRIO factory credentials</option>
+            <option value="factory-systemcore">SystemCore factory credentials</option>
+          </select></label
+        >
+        <label id="key-setting" hidden
+          >Private key<span class="inline"
+            ><input id="key-path" readonly /><button id="choose-key" type="button">Choose...</button></span
+          ></label
+        >
+        <div class="profile-buttons">
+          <button id="save-profile" type="button">Save profile</button
+          ><button id="connect" type="submit">Connect</button
+          ><button id="disconnect" type="button" disabled>Disconnect</button>
+        </div>
+      </form>
+    </details>
+    <main>
+      <section id="remote-section" aria-labelledby="remote-heading">
+        <div class="section-heading">
+          <h2 id="remote-heading">Robot logs</h2>
+          <span id="connection-status" role="status" data-status="disconnected">Disconnected</span
+          ><span id="disk-usage" class="muted"></span><span class="spacer"></span
+          ><input
+            id="remote-search"
+            type="search"
+            placeholder="Search remote logs"
+            aria-label="Search remote logs"
+          /><button id="refresh-remote" disabled>Refresh</button>
+        </div>
+        <div class="table-scroll remote-scroll">
+          <table id="remote-table">
+            <thead>
+              <tr>
+                <th class="check-column">
+                  <input id="select-all-remote" type="checkbox" aria-label="Select all visible remote logs" />
+                </th>
+                <th><button data-remote-sort="name">Name</button></th>
+                <th><button data-remote-sort="size">Size</button></th>
+                <th><button data-remote-sort="modified">Modified</button></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p id="remote-empty" class="empty">
+            Connect to a robot to browse logs. Downloads start only when you choose Sync.
+          </p>
+        </div>
+        <div class="pane-footer">
+          <span class="muted">Read-only remote access</span><span class="spacer"></span
+          ><button id="sync-selected" disabled>Sync selected</button><button id="sync-all" disabled>Sync all</button>
+        </div>
+      </section>
+      <section id="library-section" aria-labelledby="library-heading">
+        <div class="section-heading">
+          <h2 id="library-heading">Local library</h2>
+          <span id="library-count" class="muted"></span><span class="spacer"></span
+          ><input
+            id="local-search"
+            type="search"
+            placeholder="Search name, robot, tags"
+            aria-label="Search local logs"
+          /><button id="refresh-local">Refresh</button>
+        </div>
+        <div class="library-location">
+          <span>Downloads</span><span id="download-folder" class="path"></span
+          ><button id="choose-download-folder">Choose folder...</button
+          ><button id="add-folder">Add library folder...</button>
+          <details class="folder-details">
+            <summary>Library folders</summary>
+            <div id="folders"></div>
+          </details>
+        </div>
+        <div class="table-scroll local-scroll">
+          <table id="local-table">
+            <thead>
+              <tr>
+                <th><button data-local-sort="name">Name</button></th>
+                <th><button data-local-sort="robot">Robot</button></th>
+                <th><button data-local-sort="date">Date</button></th>
+                <th><button data-local-sort="duration">Duration</button></th>
+                <th><button data-local-sort="size">Size</button></th>
+                <th><button data-local-sort="format">Format</button></th>
+                <th><button data-local-sort="tags">Tags</button></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p id="local-empty" class="empty" hidden>No logs match your search.</p>
+        </div>
+        <div class="pane-footer">
+          <span id="selected-path" class="path muted">Choose a log to open it in TerraScope.</span
+          ><span class="spacer"></span><button id="open" disabled>Open</button
+          ><button id="reveal" disabled>Reveal</button><button id="rename" disabled>Rename</button
+          ><button id="tags" disabled>Tags</button><button id="trash" disabled>Move to Trash</button
+          ><button id="remove-missing" hidden>Remove from list</button>
+        </div>
+      </section>
+    </main>
+    <section id="activity-section" aria-labelledby="activity-heading">
+      <div class="section-heading">
+        <h2 id="activity-heading">Activity</h2>
+        <progress id="sync-progress" max="1" value="0" hidden></progress><span class="spacer"></span
+        ><button id="cancel" disabled>Cancel transfer</button>
+      </div>
+      <div id="activity" role="log" aria-live="polite">
+        <div class="muted">Ready. Open the sample robot log to explore without a connection.</div>
+      </div>
+    </section>
+    <div id="context-menu" role="menu" hidden></div>
+    <dialog id="prompt-dialog" aria-labelledby="prompt-title">
+      <h2 id="prompt-title"></h2>
+      <p id="prompt-detail"></p>
+      <label id="prompt-input-label"
+        ><span id="prompt-input-caption"></span><input id="prompt-input" autocomplete="off" spellcheck="false"
+      /></label>
+      <div class="dialog-buttons">
+        <button id="prompt-cancel">Cancel</button><button id="prompt-confirm">Continue</button>
+      </div>
+    </dialog>
+  </body>
+</html>

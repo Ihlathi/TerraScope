@@ -13,6 +13,11 @@ import { replacePlugin } from "rolldown/plugins";
 import cleanup from "rollup-plugin-cleanup";
 import { readers } from "./src/shared/plugins/readers.ts";
 
+function typescriptWithCleanup() {
+  const plugin = typescript();
+  return { ...plugin, closeBundle: plugin.buildEnd };
+}
+
 const isWpilib = process.env.ASCOPE_DISTRIBUTION === "WPILIB";
 const isDS = process.env.ASCOPE_DISTRIBUTION === "LITEDS";
 const isLite = process.env.ASCOPE_DISTRIBUTION === "LITE" || isDS;
@@ -50,7 +55,7 @@ function bundle(input, isMain, isXRClient, external = []) {
       pluginTimings: false
     },
     plugins: [
-      typescript(),
+      typescriptWithCleanup(),
       isXRClient
         ? getBabelOutputPlugin({
             presets: [["@babel/preset-env", { modules: false }]],
@@ -101,7 +106,7 @@ export default (cliArgs) => {
         },
         context: "this",
         external: ["download"],
-        plugins: [typescript()],
+        plugins: [typescriptWithCleanup()],
         onwarn() {}
       }
     ];
@@ -130,6 +135,10 @@ export default (cliArgs) => {
             "lzma-native",
             "@rev-robotics/revlog-converter"
           ]),
+          bundle(["main/electron/logManager/metadataWorker.ts"], true, false, [
+            "node:worker_threads",
+            "node:fs/promises"
+          ]),
           bundle(["preload.ts"], true, false, ["electron"])
         ]),
 
@@ -146,6 +155,7 @@ export default (cliArgs) => {
         "betaWelcome.ts",
         "licenses.ts",
         "download.ts",
+        ...(!isLite ? ["logManager.ts"] : []),
         ...(!isLite ? ["export.ts", "xrControls.ts"] : []),
         ...(!isDS ? ["preferences.ts", "editFov.ts"] : []),
         ...(isLite && !isDS ? ["uploadAsset.ts"] : []),

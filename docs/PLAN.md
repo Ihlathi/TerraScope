@@ -23,6 +23,10 @@ TerraScope v0.1 consists of chunks 1 through 18 and a cleanup pass. It is comple
 
 The [later chunks](#later-chunks) are post-v0.1 work. See [FUTURE.md](FUTURE.md) for other post-v0.1 ideas.
 
+## v0.2
+
+- [x] B. Log Manager. Browse Linux robots over verified SSH, pull logs safely into a local library, and open the built-in sample.
+
 ## 1. Identity, audit, and architecture
 
 **Status: done.**
